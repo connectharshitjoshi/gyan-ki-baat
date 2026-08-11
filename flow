@@ -1,0 +1,36 @@
+if you're using LinkedIn to drive people toward your technical content.
+
+If by “blog” you mean a static technical blog hosted on GitHub, the basic setup is:
+
+You write → GitHub stores it → GitHub Pages publishes it → LinkedIn sends traffic to it.
+
+A simple architecture could be:
+
+LinkedIn Post
+     ↓
+"Read the full explanation →"
+     ↓
+Your Blog
+     ↓
+GitHub Pages
+     ↓
+Markdown / HTML content
+For your use case, I'd keep it simple
+
+You don't need a backend, database, login system, etc.
+
+You could have:
+
+yourusername.github.io
+│
+├── index.html
+├── blogs/
+│   ├── cookies-vs-session-storage.html
+│   ├── http-vs-https.html
+│   └── api-testing-401.html
+│
+├── css/
+│   └── style.css
+│
+└── assets/
+    └── images/

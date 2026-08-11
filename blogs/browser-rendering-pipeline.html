@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Under the Hood: The Browser Rendering Pipeline | Gyaan Ki Baat #5</title>
+  <meta name="description" content="Exhaustive deep dive into DOM, CSSOM, Render Tree, Layout Reflows, Repaints, GPU Compositing, Layout Thrashing, and Core Web Vitals performance optimization.">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="logo" id="nav-logo">
+        ☕ Gyaan Ki Baat <span class="logo-badge">#5 Tech Guide</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="../index.html" id="nav-link-home">← Back to Articles</a></li>
+        <li><a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank" class="nav-btn" id="nav-btn-linkedin">Share on LinkedIn</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Article Header -->
+  <header class="article-header">
+    <div class="container">
+      <div class="article-breadcrumb">
+        <a href="../index.html">Articles</a> / <span>Web Performance & Browsers</span>
+      </div>
+      <h1 class="article-title">
+        Under the Hood: The Browser Rendering Pipeline (DOM, CSSOM, Layout & Compositing)
+      </h1>
+      <div class="article-author-bar">
+        <img src="../assets/images/harshit.jpg" alt="Harshit Joshi" class="author-avatar">
+        <div class="author-info">
+          <h4>Harshit Joshi</h4>
+          <p>Gyaan Ki Baat #5 • 13 min read • Updated Aug 2026</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Article Body -->
+  <main class="container">
+    <article class="article-content">
+
+      <p class="lead">
+        Ever wondered what actually happens inside Chrome's Blink or Firefox's Gecko rendering engine between receiving an HTML byte stream over TCP and rendering pixels at 60 FPS (or 120 FPS)? Understanding the Critical Rendering Path (CRP) is the master key to optimizing Core Web Vitals and eliminating jank.
+      </p>
+
+      <h2>1. The 5 Stages of the Critical Rendering Path</h2>
+
+      <h3>Stage 1: DOM Tree Construction</h3>
+      <p>
+        The browser receives raw HTML bytes from the network and performs a 4-step transformation:
+        <code>Bytes → Characters → Tokens → Nodes → DOM Tree</code>.
+      </p>
+
+      <h3>Stage 2: CSSOM Tree Construction</h3>
+      <p>
+        While parsing HTML, the browser encounters <code>&lt;link rel="stylesheet"&gt;</code> tags. It fetches and parses CSS rules into the CSS Object Model (CSSOM) tree. CSS is <strong>render-blocking</strong>: the browser will not paint any content until CSSOM construction completes.
+      </p>
+
+      <h3>Stage 3: Render Tree Creation</h3>
+      <p>
+        The browser combines the DOM and CSSOM trees to construct the <strong>Render Tree</strong>. The Render Tree contains only visible elements. Nodes with <code>display: none</code> or elements like <code>&lt;head&gt;</code>, <code>&lt;script&gt;</code>, <code>&lt;meta&gt;</code> are completely omitted.
+      </p>
+
+      <h3>Stage 4: Layout (Reflow)</h3>
+      <p>
+        The browser computes the exact geometry, width, height, and viewport position of every visible node in the Render Tree starting from the root <code>&lt;html&gt;</code> element down.
+      </p>
+
+      <h3>Stage 5: Paint & GPU Layer Compositing</h3>
+      <p>
+        Painting converts layout boxes into actual visual pixels (rasterization). Elements with <code>transform</code>, <code>opacity</code>, or 3D contexts are promoted to separate GPU Compositor Layers and drawn independently by the graphics hardware.
+      </p>
+
+      <h2>2. Reflow vs. Repaint vs. Compositing Trigger Matrix</h2>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Property Modifiers</th>
+              <th>Pipeline Triggers</th>
+              <th>Hardware Cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>width</code>, <code>height</code>, <code>padding</code>, <code>margin</code>, <code>fontSize</code>, <code>top</code></td>
+              <td>Layout → Paint → Composite</td>
+              <td><strong>Extremely High</strong> (Forces full page reflow and node recalculations).</td>
+            </tr>
+            <tr>
+              <td><code>color</code>, <code>background-color</code>, <code>box-shadow</code>, <code>visibility</code></td>
+              <td>Paint → Composite</td>
+              <td><strong>Medium</strong> (Recalculates pixels without modifying element geometry).</td>
+            </tr>
+            <tr>
+              <td><code>transform</code> (translate3d, scale), <code>opacity</code></td>
+              <td>Composite Only</td>
+              <td><strong>Ultra Low</strong> (Bypasses Layout & Paint; offloaded directly to GPU).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>3. Layout Thrashing: The Performance Antipattern</h2>
+      <p>
+        Layout thrashing occurs when JavaScript repeatedly reads geometric properties (forcing the browser to perform a synchronous layout calculation) and immediately writes style changes in a single loop execution:
+      </p>
+
+<pre><code>// ❌ BAD: Forces synchronous layout recalculation on EVERY loop iteration!
+for (let i = 0; i < cards.length; i++) {
+  const height = cards[i].offsetHeight; // FORCED SYNCHRONOUS LAYOUT (READ)
+  cards[i].style.height = (height + 20) + 'px'; // INVALIDATES LAYOUT (WRITE)
+}
+
+// ✅ GOOD: Read all properties first, then batch all style mutations!
+const heights = Array.from(cards).map(card => card.offsetHeight); // BATCH READS
+cards.forEach((card, i) => {
+  card.style.height = (heights[i] + 20) + 'px'; // BATCH WRITES
+});
+</code></pre>
+
+      <h2>4. Measuring Core Web Vitals with PerformanceObserver</h2>
+
+<pre><code>// Measuring Interaction to Next Paint (INP) & LCP via JS API
+const observer = new PerformanceObserver((list) => {
+  for (const entry of list.getEntries()) {
+    console.log(`[Core Web Vital] ${entry.name}:`, entry.startTime, entry.duration);
+  }
+});
+
+observer.observe({ type: 'largest-contentful-paint', buffered: true });
+observer.observe({ type: 'first-input', buffered: true });
+</code></pre>
+
+      <h2>5. GPU Hardware Acceleration with `will-change`</h2>
+      <p>
+        Adding <code>will-change: transform</code> informs the browser in advance that an element will animate, prompting it to promote the element to its own GPU compositor layer:
+      </p>
+
+<pre><code>// CSS GPU Layer Promotion
+.animated-card {
+  will-change: transform, opacity;
+  transform: translateZ(0); /* Hardware fallback */
+}
+</code></pre>
+      <p>
+        <em>Warning: Do NOT apply <code>will-change</code> to every element indiscriminately! Excessive GPU layer creation consumes video RAM and causes memory pressure crashes on mobile devices.</em>
+      </p>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h3>💬 Community Discussion</h3>
+      <p>
+        How do you audit layout thrashing in Chrome DevTools Performance tab? Let's discuss on <a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank">LinkedIn</a>!
+      </p>
+
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Gyaan Ki Baat by Harshit Joshi. Built with static HTML/CSS on GitHub Pages.</p>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

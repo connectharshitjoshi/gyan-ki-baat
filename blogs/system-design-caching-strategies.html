@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Design: Caching Patterns & Eviction Strategies | Gyaan Ki Baat #6</title>
+  <meta name="description" content="Master System Design caching patterns: Cache-Aside, Write-Through, Write-Back, Redis architecture, LRU eviction, CDN edge caching, and Thundering Herd mitigation.">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="logo" id="nav-logo">
+        ☕ Gyaan Ki Baat <span class="logo-badge">#6 Tech Guide</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="../index.html" id="nav-link-home">← Back to Articles</a></li>
+        <li><a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank" class="nav-btn" id="nav-btn-linkedin">Share on LinkedIn</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Article Header -->
+  <header class="article-header">
+    <div class="container">
+      <div class="article-breadcrumb">
+        <a href="../index.html">Articles</a> / <span>System Design & Architecture</span>
+      </div>
+      <h1 class="article-title">
+        System Design Essentials: Caching Strategies, Eviction Policies & Thundering Herds
+      </h1>
+      <div class="article-author-bar">
+        <img src="../assets/images/harshit.jpg" alt="Harshit Joshi" class="author-avatar">
+        <div class="author-info">
+          <h4>Harshit Joshi</h4>
+          <p>Gyaan Ki Baat #6 • 15 min read • Updated Aug 2026</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Article Body -->
+  <main class="container">
+    <article class="article-content">
+
+      <p class="lead">
+        Caching is the single most effective architectural technique to achieve sub-millisecond API latencies and scale web platforms to handle millions of concurrent requests. However, implementing caching without clear pattern boundaries introduces data corruption, stale reads, and catastrophic database thundering herd crashes.
+      </p>
+
+      <h2>1. The 4 Fundamental Caching Patterns</h2>
+
+      <h3>1. Cache-Aside (Lazy Loading)</h3>
+      <p>
+        The application directly communicates with both the cache and the primary database. On a read request:
+      </p>
+      <ol>
+        <li>App queries Cache key.</li>
+        <li>If <strong>Cache Hit</strong>, return cached value immediately.</li>
+        <li>If <strong>Cache Miss</strong>, app queries DB, writes the result to Cache with a Time-To-Live (TTL), and returns response.</li>
+      </ol>
+
+<pre><code>// Cache-Aside Pattern Implementation in Node.js + Redis
+async function getUserProfile(userId) {
+  const cacheKey = `user:profile:${userId}`;
+  
+  // 1. Check Redis Cache
+  const cachedData = await redis.get(cacheKey);
+  if (cachedData) {
+    return JSON.parse(cachedData); // Cache Hit
+  }
+  
+  // 2. Cache Miss: Fetch from PostgreSQL DB
+  const user = await db.query('SELECT * FROM users WHERE id = $1', [userId]);
+  
+  // 3. Populate Redis Cache with 1 hour TTL (3600s)
+  if (user) {
+    await redis.set(cacheKey, JSON.stringify(user), 'EX', 3600);
+  }
+  
+  return user;
+}
+</code></pre>
+
+      <h3>2. Read-Through Cache</h3>
+      <p>
+        The application treats the Cache as the main data store. On a cache miss, the Cache infrastructure itself transparently fetches the record from the underlying database and updates itself before returning to the caller.
+      </p>
+
+      <h3>3. Write-Through Cache</h3>
+      <p>
+        Data is written to the Cache and the primary Database in a single synchronous operation.
+      </p>
+      <ul>
+        <li><strong>Pros:</strong> Guarantees high data consistency between cache and DB.</li>
+        <li><strong>Cons:</strong> Write operations incur higher latency.</li>
+      </ul>
+
+      <h3>4. Write-Back (Write-Behind) Cache</h3>
+      <p>
+        Data is written immediately to the high-speed Cache layer. A background worker queue asynchronously flushes updates to the database in micro-batches.
+      </p>
+      <ul>
+        <li><strong>Pros:</strong> Extreme write throughput (ideal for high-frequency counters, tracking views, or IoT telemetry).</li>
+        <li><strong>Cons:</strong> Risk of data loss if the cache node crashes before flushing to disk.</li>
+      </ul>
+
+      <h2>2. Cache Eviction Policies & Data Structures</h2>
+      <p>
+        Because RAM is significantly more expensive than disk storage, caches must evict old entries when capacity limits are reached.
+      </p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Policy</th>
+              <th>Full Name</th>
+              <th>Underlying Data Structure & Mechanics</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>LRU</strong></td>
+              <td>Least Recently Used</td>
+              <td>Combines a <strong>Doubly Linked List + Hash Map</strong>. Evicts keys that haven't been accessed for the longest time. Default in Redis.</td>
+            </tr>
+            <tr>
+              <td><strong>LFU</strong></td>
+              <td>Least Frequently Used</td>
+              <td>Tracks access frequency counters for every key. Evicts keys with the lowest hit frequency.</td>
+            </tr>
+            <tr>
+              <td><strong>FIFO</strong></td>
+              <td>First In, First Out</td>
+              <td>Queue structure. Evicts the oldest key created regardless of access frequency.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>3. 3 Classic Caching Pitfalls & Solutions</h2>
+
+      <h3>1. Cache Stampede (Thundering Herd Problem)</h3>
+      <p>
+        Occurs when a popular hot key (e.g. homepage trending news) expires (TTL=0). Thousands of concurrent incoming requests experience a Cache Miss simultaneously and swarm the underlying Database at the exact same millisecond, triggering a complete DB outage.
+      </p>
+
+<pre><code>// Solution: Distributed Lock (Mutex) via Redis SET NX
+async function getHotDataWithMutex(key) {
+  let value = await redis.get(key);
+  if (!value) {
+    // Acquire distributed lock for 5 seconds
+    const acquired = await redis.set(`lock:${key}`, 'locked', 'NX', 'PX', 5000);
+    if (acquired) {
+      value = await db.fetchData(key);
+      await redis.set(key, value, 'EX', 600);
+      await redis.del(`lock:${key}`);
+    } else {
+      // Sleep 50ms and retry reading cache
+      await new Promise(r => setTimeout(r, 50));
+      return getHotDataWithMutex(key);
+    }
+  }
+  return value;
+}
+</code></pre>
+
+      <h3>2. Cache Penetration</h3>
+      <p>
+        Requests target keys that do NOT exist in either the Cache or the DB (e.g. malicious requests querying <code>user_id = -999</code>). Every request bypasses the cache and hits the DB.
+      </p>
+      <p><em>Solution:</em> Use a <strong>Bloom Filter</strong> in front of the cache or cache NULL values with short TTLs.</p>
+
+      <h3>3. Cache Avalanche</h3>
+      <p>
+        A large number of keys expire at the exact same second because they were seeded at startup with identical TTLs.
+      </p>
+      <p><em>Solution:</em> Add random jitter to key expiration TTLs (e.g. <code>TTL = 3600 + random(0, 300)</code> seconds).</p>
+
+      <h2>4. CDN Edge Caching & HTTP Cache-Control Headers</h2>
+      <p>
+        Edge caching offloads static and dynamic assets to global POP locations close to the end user:
+      </p>
+
+<pre><code>// Optimal HTTP Cache-Control Response Header
+Cache-Control: public, max-age=3600, s-maxage=86400, stale-while-revalidate=60
+ETag: "w/33a64df551425fbeb557af4e5ea7ac72"
+</code></pre>
+      <ul>
+        <li><code>max-age=3600</code>: Browser caches asset for 1 hour.</li>
+        <li><code>s-maxage=86400</code>: CDN edge proxy caches asset for 24 hours.</li>
+        <li><code>stale-while-revalidate=60</code>: Allows CDN to serve stale content while asynchronously fetching fresh content in background.</li>
+      </ul>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h3>💬 Community Discussion</h3>
+      <p>
+        Redis cluster vs Memcached multi-threading: which do you prefer for high-concurrency caching? Let's discuss on <a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank">LinkedIn</a>!
+      </p>
+
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Gyaan Ki Baat by Harshit Joshi. Built with static HTML/CSS on GitHub Pages.</p>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

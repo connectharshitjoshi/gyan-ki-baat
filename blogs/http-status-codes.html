@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTTP Status Codes Masterclass: 401 vs 403, 502 vs 504 & Idempotency | Gyaan Ki Baat #3</title>
+  <meta name="description" content="Deep dive into HTTP status codes, REST API response contracts, 401 vs 403 auth errors, 502 vs 504 gateway failures, RFC 7807 problem details, and idempotent HTTP methods.">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="logo" id="nav-logo">
+        ☕ Gyaan Ki Baat <span class="logo-badge">#3 Tech Guide</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="../index.html" id="nav-link-home">← Back to Articles</a></li>
+        <li><a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank" class="nav-btn" id="nav-btn-linkedin">Share on LinkedIn</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Article Header -->
+  <header class="article-header">
+    <div class="container">
+      <div class="article-breadcrumb">
+        <a href="../index.html">Articles</a> / <span>HTTP Protocols & REST APIs</span>
+      </div>
+      <h1 class="article-title">
+        HTTP Status Codes Masterclass: 401 vs. 403, 502 vs. 504 & Method Idempotency
+      </h1>
+      <div class="article-author-bar">
+        <img src="../assets/images/harshit.jpg" alt="Harshit Joshi" class="author-avatar">
+        <div class="author-info">
+          <h4>Harshit Joshi</h4>
+          <p>Gyaan Ki Baat #3 • 14 min read • Updated Aug 2026</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Article Body -->
+  <main class="container">
+    <article class="article-content">
+
+      <p class="lead">
+        HTTP status codes are the standardized communication language between clients, reverse proxies, API gateways, and microservices. Yet, subtle misinterpretations—such as returning a <code>401 Unauthorized</code> when a user lacks permission, or confusing a <code>502 Bad Gateway</code> with a <code>504 Gateway Timeout</code>—lead to broken API contracts, failing frontend error boundaries, and frustrating debugging sessions.
+      </p>
+
+      <h2>1. The 5 Status Code Families Overview</h2>
+      <p>
+        HTTP status codes are 3-digit integers defined under RFC 7231 / RFC 9110 and managed by IANA (Internet Assigned Numbers Authority). They are divided into 5 distinct families based on the first digit:
+      </p>
+      <ul>
+        <li><strong>1xx (Informational):</strong> Provisional response indicating request received, continuing process (e.g. <code>101 Switching Protocols</code> for WebSocket handshakes or <code>103 Early Hints</code> for preloading assets).</li>
+        <li><strong>2xx (Success):</strong> Action successfully received, understood, and accepted (e.g. <code>200 OK</code>, <code>201 Created</code>, <code>204 No Content</code>).</li>
+        <li><strong>3xx (Redirection):</strong> Further action needed to fulfill request (e.g. <code>301 Moved Permanently</code>, <code>304 Not Modified</code>, <code>307 Temporary Redirect</code>).</li>
+        <li><strong>4xx (Client Errors):</strong> Request contains bad syntax or cannot be fulfilled due to client failure (e.g. <code>400 Bad Request</code>, <code>401</code>, <code>403</code>, <code>429</code>).</li>
+        <li><strong>5xx (Server Errors):</strong> Server failed to fulfill an apparently valid request due to upstream crashes, timeouts, or unhandled exceptions (e.g. <code>500</code>, <code>502</code>, <code>503</code>, <code>504</code>).</li>
+      </ul>
+
+      <h2>2. Authentication vs. Authorization: 401 Unauthorized vs. 403 Forbidden</h2>
+      <p>
+        Despite its historical name, <strong>401 Unauthorized</strong> is strictly about <em>Authentication</em> (Identity Verification), whereas <strong>403 Forbidden</strong> is about <em>Authorization</em> (Permissions & Role Scopes).
+      </p>
+
+      <div class="callout">
+        <div class="callout-title">🔑 401 Unauthorized (Unauthenticated)</div>
+        <p>Returned when the client provides invalid, expired, or missing credentials (e.g., missing <code>Authorization: Bearer &lt;token&gt;</code> header). Per RFC 7235, the server MUST include a <code>WWW-Authenticate</code> header indicating how authentication should be performed. The client CAN retry after supplying valid credentials.</p>
+      </div>
+
+<pre><code>// Correct 401 Unauthorized Response Header & Body
+HTTP/1.1 401 Unauthorized
+WWW-Authenticate: Bearer realm="API Access", error="invalid_token", error_description="The access token expired"
+Content-Type: application/problem+json
+
+{
+  "type": "https://api.example.com/errors/unauthenticated",
+  "title": "Unauthenticated",
+  "status": 401,
+  "detail": "Your access token expired at 2026-08-11T20:00:00Z. Please refresh your session."
+}
+</code></pre>
+
+      <div class="callout">
+        <div class="callout-title">🚫 403 Forbidden (Unauthorized Role / Scope)</div>
+        <p>The server successfully authenticated who you are, but your account lacks the necessary privileges or OAuth scope to perform the action (e.g., a <code>Member</code> trying to DELETE an <code>Organization</code>). Retrying with the exact same credentials will NOT change the outcome.</p>
+      </div>
+
+      <h2>3. Gateway Failures: 502 Bad Gateway vs. 504 Gateway Timeout</h2>
+      <p>
+        In modern cloud architecture involving reverse proxies (Nginx, HAProxy, AWS ALB, Cloudflare), distinguishing 502 from 504 is essential for infrastructure debugging:
+      </p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Status Code</th>
+              <th>Meaning</th>
+              <th>Root Cause & Diagnostic</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>502 Bad Gateway</strong></td>
+              <td>Invalid Response Received</td>
+              <td>Proxy server received an unparseable, malformed, or dropped socket connection from upstream backend (e.g. Node.js process crashed or OOM killed).</td>
+            </tr>
+            <tr>
+              <td><strong>504 Gateway Timeout</strong></td>
+              <td>Upstream Response Timed Out</td>
+              <td>Proxy waited longer than its configured timeout threshold (e.g. 30s) without receiving any byte response from upstream (e.g. unindexed slow SQL query).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>4. 3xx Redirects: 301 vs. 302 vs. 307 vs. 308</h2>
+      <p>
+        HTTP redirects differ fundamentally in whether they allow browsers to change the original request method (e.g. POST to GET):
+      </p>
+      <ul>
+        <li><strong>301 Moved Permanently:</strong> Legacy redirect; modern browsers often change POST to GET. Cached permanently.</li>
+        <li><strong>302 Found:</strong> Temporary redirect; historically changes POST to GET.</li>
+        <li><strong>307 Temporary Redirect:</strong> Strict temporary redirect. Guaranteed to PRESERVE the request method (POST stays POST).</li>
+        <li><strong>308 Permanent Redirect:</strong> Strict permanent redirect. Guaranteed to PRESERVE the request method (POST stays POST). Cached permanently.</li>
+      </ul>
+
+      <h2>5. Rate Limiting & The 429 Too Many Requests Code</h2>
+      <p>
+        To protect backend services against DoS attacks or excessive API scraping, rate limiters return <code>429 Too Many Requests</code> alongside standard rate limit headers:
+      </p>
+
+<pre><code>HTTP/1.1 429 Too Many Requests
+Retry-After: 60
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 0
+X-RateLimit-Reset: 1786462000
+Content-Type: application/json
+
+{
+  "error": "Rate limit exceeded",
+  "message": "Quota exhausted. Retry after 60 seconds."
+}
+</code></pre>
+
+      <h2>6. HTTP Method Safety & Idempotency</h2>
+      <p>
+        An HTTP method is <strong>Safe</strong> if it does not modify server state. An HTTP method is <strong>Idempotent</strong> if executing the request multiple times produces the exact same server side state as executing it once.
+      </p>
+
+<pre><code>// Idempotency Matrix
+GET     : Safe = Yes | Idempotent = Yes
+HEAD    : Safe = Yes | Idempotent = Yes
+OPTIONS : Safe = Yes | Idempotent = Yes
+PUT     : Safe = No  | Idempotent = Yes (Replaces target resource state)
+DELETE  : Safe = No  | Idempotent = Yes (Repeated deletes result in same state)
+POST    : Safe = No  | Idempotent = No  (Appends new records on each call)
+PATCH   : Safe = No  | Idempotent = No  (Depends on JSON patch payload instructions)
+</code></pre>
+
+      <h2>7. Standardized Error Contracts: RFC 7807 Problem Details</h2>
+      <p>
+        Instead of inventing custom JSON error formats, industry best practice mandates RFC 7807 <code>application/problem+json</code> contracts:
+      </p>
+
+<pre><code>// RFC 7807 Problem Details Standard Payload
+{
+  "type": "https://api.gyanki-baat.com/errors/insufficient-funds",
+  "title": "Insufficient Funds",
+  "status": 403,
+  "detail": "Your current balance is $15.00, but the transaction requires $50.00.",
+  "instance": "/account/12345/transactions/tx_9988"
+}
+</code></pre>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h3>💬 Community Discussion</h3>
+      <p>
+        What’s your team’s policy on returning RFC 7807 error objects in REST APIs? Let's discuss on <a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank">LinkedIn</a>!
+      </p>
+
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Gyaan Ki Baat by Harshit Joshi. Built with static HTML/CSS on GitHub Pages.</p>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

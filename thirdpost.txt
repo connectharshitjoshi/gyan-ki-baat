@@ -1,0 +1,34 @@
+☕ Gyaan Ki Baat #3 — HTTP Status Codes: 401 vs 403, 502 vs 504 & Idempotency 🔍
+
+Ever received a 401 error when you actually meant 403? Or wondered why your app threw a 504 instead of a 502? 🤔👇
+
+Here is a 2-minute breakdown every developer & engineer should save:
+
+---
+
+1️⃣ 401 Unauthorized vs. 403 Forbidden 🔑
+• 401 = Unauthenticated (The server doesn't know who you are. Missing/invalid token).
+• 403 = Unauthorized Role (The server knows who you are, but you lack permission to perform this action).
+
+2️⃣ 502 Bad Gateway vs. 504 Gateway Timeout 🌐
+• 502 = Invalid Response (The proxy received an invalid or unparseable response from upstream backend).
+• 504 = Gateway Timeout (The upstream backend took too long to respond before the proxy timed out).
+
+3️⃣ HTTP Method Idempotency ⚡
+• Idempotent (Safe to retry): GET, PUT, DELETE (Multiple identical calls leave the server in the exact same state).
+• Non-Idempotent (Do NOT retry blindly): POST (Appends new records on each execution).
+
+---
+
+💡 Gyaan Ki Baat:
+Correct HTTP status codes aren't just cosmetic — they determine how frontend clients, API gateways, and automated retry logic handle failures! 🛠️
+
+---
+
+💬 What’s the most common API error status code you encounter in production? 
+
+Drop your thoughts below! 👇
+
+📌 Read the full in-depth 12-minute breakdown on my blog (Link in comments)! 🔗
+
+#GyaanKiBaat #SoftwareEngineering #WebDevelopment #APIDesign #SystemDesign #Backend

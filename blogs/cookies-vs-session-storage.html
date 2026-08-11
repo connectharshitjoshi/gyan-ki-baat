@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cookies, Storage, SSL & HTTPS — The Masterclass Engineering Guide | Gyaan Ki Baat #2</title>
+  <meta name="description" content="An exhaustive, in-depth technical breakdown of browser cookies, Web Storage APIs, SSL/TLS handshakes, HTTP vs HTTPS, and web security engineering.">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="logo" id="nav-logo">
+        ☕ Gyaan Ki Baat <span class="logo-badge">#2 Masterclass</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="../index.html" id="nav-link-home">← Back to Articles</a></li>
+        <li><a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank" class="nav-btn" id="nav-btn-linkedin">Share on LinkedIn</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Article Header -->
+  <header class="article-header">
+    <div class="container">
+      <div class="article-breadcrumb">
+        <a href="../index.html">Articles</a> / <span>Web Protocols & Security</span>
+      </div>
+      <h1 class="article-title">
+        Cookies, Web Storage, SSL/TLS & HTTPS — The Definitive Engineering & Web Architecture Guide
+      </h1>
+      <div class="article-author-bar">
+        <img src="../assets/images/harshit.jpg" alt="Harshit Joshi" class="author-avatar">
+        <div class="author-info">
+          <h4>Harshit Joshi</h4>
+          <p>Gyaan Ki Baat #2 • 12 min read • Updated Aug 2026</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Article Body -->
+  <main class="container">
+    <article class="article-content">
+
+      <p class="lead">
+        Modern web applications rely heavily on maintaining state, managing sessions securely, and encrypting data in transit. As a Software Engineer, Web Developer, or Systems Architect, understanding the distinction between Cookies, Web Storage APIs, and TLS protocols is foundational to building secure web applications.
+      </p>
+
+      <div class="article-image-wrapper">
+        <img src="../assets/images/gyan_ki_baat_hero.jpg" alt="Browser Storage & Security Architecture" class="article-img">
+        <p class="image-caption">Figure 1: Client-side storage mechanisms vs SSL/TLS encrypted transport layer.</p>
+      </div>
+
+      <!-- Table of Contents Callout -->
+      <div class="callout">
+        <div class="callout-title">📖 Table of Contents</div>
+        <ul>
+          <li><a href="#section-1">1. Deep Dive into Browser Cookies & Flags</a></li>
+          <li><a href="#section-2">2. Web Storage APIs: Local Storage & Session Storage</a></li>
+          <li><a href="#section-3">3. Storage Comparison Matrix & IndexedDB</a></li>
+          <li><a href="#section-4">4. HTTP vs. HTTPS & The TLS 1.3 Handshake</a></li>
+          <li><a href="#section-5">5. Automated Testing with Playwright & Modern Frameworks</a></li>
+          <li><a href="#section-6">6. Master 10-Point Web Security Audit Checklist</a></li>
+        </ul>
+      </div>
+
+      <!-- Section 1 -->
+      <h2 id="section-1">1. Deep Dive into Browser Cookies & Security Flags</h2>
+      <p>
+        Cookies were invented in 1994 by Lou Montulli to solve a fundamental property of the HTTP protocol: <strong>HTTP is stateless</strong>. Without cookies, a web server would forget who you are immediately after responding to your request.
+      </p>
+      <p>
+        A cookie is a small key-value pair stored by the browser. Whenever a user makes an HTTP request to a server, the browser automatically inspects its cookie store and appends all matching cookies in the request header:
+      </p>
+
+<pre><code>// Browser HTTP Request Header
+GET /api/user/profile HTTP/1.1
+Host: api.example.com
+Cookie: session_id=abc123xyz; theme=dark; tracking_id=98765
+</code></pre>
+
+      <h3>Cookie Security Attributes Explained</h3>
+      <p>
+        Setting raw cookies without security flags exposes your application to severe vulnerabilities like Cross-Site Scripting (XSS) and Cross-Site Request Forgery (CSRF). Server responses should always configure flags appropriately in the <code>Set-Cookie</code> header:
+      </p>
+
+<pre><code>// Secure Server Response Header Example
+Set-Cookie: session_token=e9a18f2d; Path=/; Domain=.example.com; Secure; HttpOnly; SameSite=Strict; Max-Age=86400;
+</code></pre>
+
+      <ul>
+        <li><strong><code>HttpOnly</code>:</strong> Prevents client-side scripts (JavaScript) from reading the cookie via <code>document.cookie</code>. This is the single most important line of defense against session hijacking via XSS.</li>
+        <li><strong><code>Secure</code>:</strong> Instructs the browser to send the cookie ONLY over encrypted <code>https://</code> connections. Never transmitted over plain <code>http://</code>.</li>
+        <li><strong><code>SameSite</code>:</strong> Controls whether cookies are sent with cross-site requests.
+          <ul>
+            <li><code>SameSite=Strict</code>: Cookie is never sent in cross-site requests (e.g., following a link from an external site). Provides maximum protection against CSRF.</li>
+            <li><code>SameSite=Lax</code>: Sent when navigating to the origin site via top-level GET requests (e.g. clicking a link). Default in modern browsers.</li>
+            <li><code>SameSite=None</code>: Sent on all cross-site requests (Requires the <code>Secure</code> flag).</li>
+          </ul>
+        </li>
+        <li><strong><code>Max-Age</code> / <code>Expires</code>:</strong> Defines the lifespan of the cookie. If omitted, the cookie becomes a <em>Session Cookie</em> and is deleted when the browser closes.</li>
+      </ul>
+
+      <!-- Section 2 -->
+      <h2 id="section-2">2. Web Storage APIs: Local Storage & Session Storage</h2>
+      <p>
+        Introduced in HTML5, the Web Storage API provides a mechanism to store key-value data directly in the client browser without sending it back and forth to the server on every HTTP request.
+      </p>
+
+      <h3>LocalStorage</h3>
+      <p>
+        Data stored in <code>localStorage</code> persists indefinitely until explicitly cleared by the user or client-side JavaScript.
+      </p>
+
+<pre><code>// LocalStorage API Usage
+localStorage.setItem('userTheme', 'dark');
+const theme = localStorage.getItem('userTheme');
+localStorage.removeItem('userTheme');
+</code></pre>
+
+      <h3>SessionStorage & Cross-Tab Isolation</h3>
+      <p>
+        <code>sessionStorage</code> maintains a separate storage area for each given origin that is available for the duration of the page session (as long as the tab is open).
+      </p>
+      
+      <div class="callout">
+        <div class="callout-title">⚡ Real-Time Cross-Tab State Synchronization</div>
+        <p>You can listen for storage changes across tabs using the <code>window.onstorage</code> event listener:</p>
+      </div>
+
+<pre><code>// Listen for state changes in other browser tabs
+window.addEventListener('storage', (event) => {
+  console.log(`Key changed: ${event.key}`);
+  console.log(`Old value: ${event.oldValue}`);
+  console.log(`New value: ${event.newValue}`);
+});
+</code></pre>
+
+      <!-- Section 3 -->
+      <h2 id="section-3">3. Storage Comparison Matrix & IndexedDB</h2>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Cookies 🍪</th>
+              <th>Local Storage 💾</th>
+              <th>Session Storage 🗂️</th>
+              <th>IndexedDB 🗄️</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Capacity</strong></td>
+              <td>~4 KB</td>
+              <td>~5 - 10 MB</td>
+              <td>~5 MB</td>
+              <td>> 250 MB (Varies)</td>
+            </tr>
+            <tr>
+              <td><strong>Lifetime</strong></td>
+              <td>Explicit Expiry</td>
+              <td>Permanent</td>
+              <td>Tab Session</td>
+              <td>Permanent</td>
+            </tr>
+            <tr>
+              <td><strong>Request Payload</strong></td>
+              <td>Sent Automatically</td>
+              <td>Not Sent</td>
+              <td>Not Sent</td>
+              <td>Not Sent</td>
+            </tr>
+            <tr>
+              <td><strong>XSS Protection</strong></td>
+              <td>Yes (if <code>HttpOnly</code>)</td>
+              <td>No (Vulnerable)</td>
+              <td>No (Vulnerable)</td>
+              <td>No (Vulnerable)</td>
+            </tr>
+            <tr>
+              <td><strong>Data Structure</strong></td>
+              <td>String Key-Value</td>
+              <td>String Key-Value</td>
+              <td>String Key-Value</td>
+              <td>NoSQL Object Store</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section 4 -->
+      <h2 id="section-4">4. HTTP vs. HTTPS & The TLS 1.3 Handshake</h2>
+      <p>
+        Understanding transportation encryption is essential for network testing. <strong>HTTP</strong> operates in plain text over port 80, whereas <strong>HTTPS</strong> wraps HTTP traffic inside a TLS (Transport Layer Security) tunnel over port 443.
+      </p>
+
+      <div class="article-image-wrapper">
+        <img src="../assets/images/tls_handshake_flow.jpg" alt="TLS 1.3 Handshake Flow Diagram" class="article-img">
+        <p class="image-caption">Figure 2: The 4-step TLS 1.3 cryptographic handshake process.</p>
+      </div>
+
+      <h3>The 4-Step TLS 1.3 Handshake Execution</h3>
+      <ol>
+        <li><strong>Client Hello:</strong> The browser sends supported TLS versions, cipher suites, and a random client key share.</li>
+        <li><strong>Server Hello & Certificate:</strong> The server selects the cipher suite, sends its digital SSL certificate containing its Public Key, and sends its server key share.</li>
+        <li><strong>Authentication & Key Generation:</strong> The browser validates the certificate against trusted Certificate Authorities (CAs). Both parties compute the shared secret session key using Diffie-Hellman algorithm.</li>
+        <li><strong>Finished & Encrypted Session:</strong> Both sides exchange encrypted finished messages. All future HTTP traffic is encrypted symmetrically.</li>
+      </ol>
+
+      <!-- Section 5 -->
+      <h2 id="section-5">5. Automated Testing with Playwright & Modern Frameworks</h2>
+      <p>
+        Modern development and testing frameworks allow you to easily inspect, inject, and validate cookies and web storage during automated pipeline runs.
+      </p>
+
+      <h3>Playwright (JavaScript/TypeScript) Cookie & Storage Assertion</h3>
+<pre><code>// Playwright Test Example: Cookie & LocalStorage Validation
+import { test, expect } from '@playwright/test';
+
+test('Verify session cookie has HttpOnly & Secure flags', async ({ page, context }) => {
+  await page.goto('https://example.com/login');
+  await page.fill('#username', 'testuser');
+  await page.fill('#password', 'SecretPass123!');
+  await page.click('#login-btn');
+
+  // Inspect Browser Cookies
+  const cookies = await context.cookies();
+  const sessionCookie = cookies.find(c => c.name === 'session_token');
+
+  expect(sessionCookie).toBeDefined();
+  expect(sessionCookie.httpOnly).toBe(true);
+  expect(sessionCookie.secure).toBe(true);
+  expect(sessionCookie.sameSite).toBe('Strict');
+
+  // Validate LocalStorage does NOT contain raw passwords
+  const localStorageData = await page.evaluate(() => JSON.stringify(window.localStorage));
+  expect(localStorageData).not.toContain('SecretPass123!');
+});
+</code></pre>
+
+      <!-- Section 6 -->
+      <h2 id="section-6">6. Master 10-Point Web Security Audit Checklist</h2>
+
+      <div class="article-image-wrapper">
+        <img src="../assets/images/devtools_audit_guide.jpg" alt="DevTools Security Audit Diagram" class="article-img">
+        <p class="image-caption">Figure 3: Chrome DevTools security tabs and cookie attribute inspection.</p>
+      </div>
+
+      <div class="callout">
+        <div class="callout-title">🛠️ The Ultimate Web Security Engineering Checklist</div>
+        <ol>
+          <li><strong>HttpOnly Cookie Flag:</strong> Are session identifiers protected against JavaScript access?</li>
+          <li><strong>Secure Cookie Flag:</strong> Are cookies restricted strictly to HTTPS channels?</li>
+          <li><strong>SameSite Policy:</strong> Are cookies configured with <code>SameSite=Lax</code> or <code>Strict</code>?</li>
+          <li><strong>Plain-Text Tokens in LocalStorage:</strong> Is sensitive PII or raw auth tokens stored in <code>localStorage</code>?</li>
+          <li><strong>HSTS Header:</strong> Does the server include <code>Strict-Transport-Security: max-age=31536000; includeSubDomains</code>?</li>
+          <li><strong>SSL Certificate Expiry:</strong> Is the TLS certificate issued by a trusted root CA and not expiring within 30 days?</li>
+          <li><strong>HTTP to HTTPS Redirection:</strong> Does unencrypted <code>http://</code> traffic return a <code>301 Redirect</code> to <code>https://</code>?</li>
+          <li><strong>CORS Policy:</strong> Are <code>Access-Control-Allow-Origin</code> headers restricted rather than wildcard <code>*</code> for authenticated endpoints?</li>
+          <li><strong>Content-Security-Policy (CSP):</strong> Is a robust CSP header configured to mitigate inline script injection?</li>
+          <li><strong>Session Termination:</strong> Does logging out invalidate the cookie on the server side as well as clearing browser storage?</li>
+        </ol>
+      </div>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h3>💬 Community Discussion</h3>
+      <p>
+        What security testing practices do you use in your team? What technical topic should we cover in <strong>Gyaan Ki Baat #2</strong>?
+      </p>
+      <p>
+        Join the conversation on <a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank">LinkedIn</a>!
+      </p>
+
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Gyaan Ki Baat by Harshit Joshi. Built with static HTML/CSS on GitHub Pages.</p>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

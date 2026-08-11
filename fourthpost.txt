@@ -1,0 +1,36 @@
+☕ Gyaan Ki Baat #4 — JWT & OAuth 2.0 Security Architecture 🔒
+
+Using JSON Web Tokens (JWT) in your web apps? 
+A single flaw in signature validation or key storage can compromise your entire auth system. ⚠️👇
+
+Here is a 2-minute breakdown every developer should know:
+
+---
+
+1️⃣ Base64 is NOT Encryption 🔑
+JWT payloads (header.payload.signature) are Base64Url encoded, NOT encrypted! Anyone can decode and read token claims. Never put passwords or raw secrets in a JWT payload.
+
+2️⃣ RS256 vs. HS256 Signing 🛡️
+• HS256 (Symmetric): Uses a single shared secret key to sign & verify tokens. Ideal for monoliths.
+• RS256 (Asymmetric): Uses a Private key to sign and Public key (JWKS) to verify. Ideal for microservices & OAuth providers.
+
+3️⃣ The "alg: none" Vulnerability 🚨
+Weak JWT parsers that accept `alg: none` allow attackers to strip the signature and modify payload claims (e.g. `role: admin`). Always enforce explicit algorithm whitelist!
+
+4️⃣ PKCE for SPAs & Mobile Apps 📱
+Proof Key for Code Exchange (PKCE) prevents authorization code interception attacks when building React/Vue/Mobile apps where client secrets cannot be hidden.
+
+---
+
+💡 Gyaan Ki Baat:
+Security isn't about using JWTs — it's about how you sign, store, and validate them! 🧠
+
+---
+
+💬 Do you store JWTs in HttpOnly Cookies or LocalStorage? What’s your team’s approach?
+
+Drop your thoughts below! 👇
+
+📌 Read the full in-depth security guide on my blog (Link in comments)! 🔗
+
+#GyaanKiBaat #SoftwareEngineering #CyberSecurity #OAuth #JWT #WebSecurity #Backend

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JWT & OAuth 2.0 Security Architecture: Tokens & Attacks | Gyaan Ki Baat #4</title>
+  <meta name="description" content="Deep dive into JSON Web Tokens (JWT), OAuth 2.0 grant types, RS256 vs HS256 signatures, PKCE security, token storage debates, and refresh token rotation.">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="logo" id="nav-logo">
+        ☕ Gyaan Ki Baat <span class="logo-badge">#4 Tech Guide</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="../index.html" id="nav-link-home">← Back to Articles</a></li>
+        <li><a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank" class="nav-btn" id="nav-btn-linkedin">Share on LinkedIn</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Article Header -->
+  <header class="article-header">
+    <div class="container">
+      <div class="article-breadcrumb">
+        <a href="../index.html">Articles</a> / <span>Web Security & Authentication</span>
+      </div>
+      <h1 class="article-title">
+        JWT & OAuth 2.0 Security Architecture: Tokens, Payloads & Signature Attacks
+      </h1>
+      <div class="article-author-bar">
+        <img src="../assets/images/harshit.jpg" alt="Harshit Joshi" class="author-avatar">
+        <div class="author-info">
+          <h4>Harshit Joshi</h4>
+          <p>Gyaan Ki Baat #4 • 15 min read • Updated Aug 2026</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Article Body -->
+  <main class="container">
+    <article class="article-content">
+
+      <p class="lead">
+        JSON Web Tokens (JWT) and OAuth 2.0 form the foundation of modern stateless authentication across microservices, mobile applications, and single-page apps (SPAs). However, improper signature verification, key reuse, or flawed token storage can instantly compromise your application security boundary.
+      </p>
+
+      <h2>1. Anatomy & Structure of a JWT</h2>
+      <p>
+        A JWT (RFC 7519) is a compact, URL-safe string composed of three distinct Base64Url-encoded sections joined by periods (<code>.</code>):
+      </p>
+
+<pre><code>// Format: [Header] . [Payload] . [Signature]
+eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9 . eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkhhcnNoaXQiLCJpYXQiOjE1MTYyMzkwMjJ9 . SflKxwRJJS...
+</code></pre>
+
+      <h3>1. Header</h3>
+      <p>Defines metadata including token type (<code>JWT</code>) and the cryptographic signing algorithm used (e.g. <code>HS256</code> or <code>RS256</code>).</p>
+
+      <h3>2. Payload (Claims)</h3>
+      <p>Contains statements about an entity (typically the user) and additional metadata. Standard registered claims include:</p>
+      <ul>
+        <li><code>iss</code> (Issuer): Identifies the principal that issued the JWT.</li>
+        <li><code>sub</code> (Subject): Identifies the subject of the JWT (e.g. user ID).</li>
+        <li><code>aud</code> (Audience): Identifies the recipients that the JWT is intended for.</li>
+        <li><code>exp</code> (Expiration Time): Timestamp after which the JWT MUST NOT be accepted.</li>
+        <li><code>iat</code> (Issued At): Timestamp when the JWT was created.</li>
+        <li><code>jti</code> (JWT ID): Unique identifier to prevent token replay attacks.</li>
+      </ul>
+
+      <div class="callout">
+        <div class="callout-title">⚠️ Base64 Encoding vs. Encryption</div>
+        <p>Base64Url encoding is NOT encryption! Anyone who captures a JWT can decode and view claims in plain text using <code>atob()</code> or jwt.io. Never store passwords, PINs, or raw API secrets inside unencrypted JWT payloads.</p>
+      </div>
+
+      <h2>2. Cryptographic Signing: HS256 vs. RS256</h2>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Property</th>
+              <th>HS256 (HMAC SHA-256)</th>
+              <th>RS256 (RSA Signature SHA-256)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Architecture</strong></td>
+              <td>Symmetric (Single Secret Key)</td>
+              <td>Asymmetric (Private Key signs, Public Key verifies)</td>
+            </tr>
+            <tr>
+              <td><strong>Key Distribution</strong></td>
+              <td>All microservices must share the secret key.</td>
+              <td>Only Auth Server holds Private Key. All API microservices fetch Public JWKS keys.</td>
+            </tr>
+            <tr>
+              <td><strong>Security Risk</strong></td>
+              <td>If 1 service leaks secret, all services can forge tokens.</td>
+              <td>Zero leakage risk from downstream verification services.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>3. Code Example: RS256 Verification in Node.js</h2>
+
+<pre><code>// Verifying RS256 JWT using Public Key in Node.js
+const jwt = require('jsonwebtoken');
+const fs = require('fs');
+
+const publicKey = fs.readFileSync('./public.pem', 'utf8');
+
+try {
+  const decoded = jwt.verify(token, publicKey, {
+    algorithms: ['RS256'],
+    issuer: 'https://auth.gyanki-baat.com',
+    audience: 'https://api.gyanki-baat.com'
+  });
+  console.log('Token verified for user:', decoded.sub);
+} catch (err) {
+  console.error('Invalid token signature or expired token:', err.message);
+}
+</code></pre>
+
+      <h2>4. Major JWT Attack Vectors & Security Mitigations</h2>
+
+      <h3>1. The "alg: none" Vulnerability</h3>
+      <p>
+        If an authorization library accepts <code>{"alg": "none"}</code> in the header, an attacker can modify claims (e.g., <code>role: "admin"</code>) and strip the signature entirely. Always hardcode explicit allowed algorithms in your verification options.
+      </p>
+
+      <h3>2. Algorithm Confusion Attack (RS256 to HS256)</h3>
+      <p>
+        If an API server expects RS256 but doesn't restrict algorithms, an attacker can obtain the server's public RSA key (which is public knowledge) and use it as a symmetric HMAC key to sign forged tokens using HS256!
+      </p>
+
+      <h2>5. OAuth 2.0 Framework & PKCE (Proof Key for Code Exchange)</h2>
+      <p>
+        OAuth 2.0 is an authorization framework allowing third-party applications to access HTTP resources on behalf of a resource owner.
+      </p>
+
+      <h3>Why PKCE (RFC 7636) is Mandatory for SPAs & Mobile Apps</h3>
+      <p>
+        Public clients (React/Vue SPAs, iOS/Android apps) cannot securely hide client secrets. **PKCE** eliminates authorization code theft by dynamically generating a cryptographic <code>code_verifier</code> (random secret) and <code>code_challenge</code> (SHA256 hash of verifier) for every authorization request:
+      </p>
+      <ol>
+        <li>Client generates <code>code_verifier</code> and computes <code>code_challenge = Base64(SHA256(code_verifier))</code>.</li>
+        <li>Client sends <code>code_challenge</code> to Auth Server during initial redirect.</li>
+        <li>Auth Server responds with Authorization Code.</li>
+        <li>Client exchanges code for tokens by sending the original <code>code_verifier</code>. Auth Server hashes it and verifies match!</li>
+      </ol>
+
+      <h2>6. Refresh Token Rotation & Token Storage Debate</h2>
+
+      <div class="callout">
+        <div class="callout-title">🛡️ Recommended Token Storage Architecture:</div>
+        <ul>
+          <li><strong>Access Tokens:</strong> Short-lived (5-15 mins). Kept in memory (JS variable / Web Worker) or HttpOnly SameSite Cookie.</li>
+          <li><strong>Refresh Tokens:</strong> Long-lived (7-30 days). Stored strictly in <code>HttpOnly</code>, <code>Secure</code>, <code>SameSite=Strict</code> cookies.</li>
+          <li><strong>Automatic Rotation:</strong> Whenever a Refresh Token is used, invalidate it and issue a new pair. If a revoked Refresh Token is presented, immediately revoke all tokens belonging to that family (Reuse Detection).</li>
+        </ul>
+      </div>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h3>💬 Community Discussion</h3>
+      <p>
+        Where does your team store access tokens in modern SPA architectures? Let's discuss on <a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank">LinkedIn</a>!
+      </p>
+
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Gyaan Ki Baat by Harshit Joshi. Built with static HTML/CSS on GitHub Pages.</p>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>
