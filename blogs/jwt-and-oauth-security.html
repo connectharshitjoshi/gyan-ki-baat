@@ -50,6 +50,11 @@
         JSON Web Tokens (JWT) and OAuth 2.0 form the foundation of modern stateless authentication across microservices, mobile applications, and single-page apps (SPAs). However, improper signature verification, key reuse, or flawed token storage can instantly compromise your application security boundary.
       </p>
 
+      <div class="article-image-wrapper">
+        <img src="../assets/images/jwt_anatomy.jpg" alt="JWT Structure Diagram" class="article-img">
+        <p class="image-caption">Figure 1: Anatomy of a JSON Web Token (Header, Payload, Signature).</p>
+      </div>
+
       <h2>1. Anatomy & Structure of a JWT</h2>
       <p>
         A JWT (RFC 7519) is a compact, URL-safe string composed of three distinct Base64Url-encoded sections joined by periods (<code>.</code>):
@@ -142,6 +147,12 @@ try {
       </p>
 
       <h2>5. OAuth 2.0 Framework & PKCE (Proof Key for Code Exchange)</h2>
+      
+      <div class="article-image-wrapper">
+        <img src="../assets/images/oauth_pkce_flow.jpg" alt="OAuth 2.0 PKCE Flow Diagram" class="article-img">
+        <p class="image-caption">Figure 2: OAuth 2.0 PKCE verifier and challenge security exchange.</p>
+      </div>
+
       <p>
         OAuth 2.0 is an authorization framework allowing third-party applications to access HTTP resources on behalf of a resource owner.
       </p>

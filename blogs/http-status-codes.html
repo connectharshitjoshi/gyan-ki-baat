@@ -50,6 +50,11 @@
         HTTP status codes are the standardized communication language between clients, reverse proxies, API gateways, and microservices. Yet, subtle misinterpretations—such as returning a <code>401 Unauthorized</code> when a user lacks permission, or confusing a <code>502 Bad Gateway</code> with a <code>504 Gateway Timeout</code>—lead to broken API contracts, failing frontend error boundaries, and frustrating debugging sessions.
       </p>
 
+      <div class="article-image-wrapper">
+        <img src="../assets/images/http_status_codes_hero.jpg" alt="5 HTTP Status Code Categories" class="article-img">
+        <p class="image-caption">Figure 1: The 5 core HTTP status code response families.</p>
+      </div>
+
       <h2>1. The 5 Status Code Families Overview</h2>
       <p>
         HTTP status codes are 3-digit integers defined under RFC 7231 / RFC 9110 and managed by IANA (Internet Assigned Numbers Authority). They are divided into 5 distinct families based on the first digit:
@@ -63,6 +68,12 @@
       </ul>
 
       <h2>2. Authentication vs. Authorization: 401 Unauthorized vs. 403 Forbidden</h2>
+      
+      <div class="article-image-wrapper">
+        <img src="../assets/images/auth_401_vs_403.jpg" alt="401 Unauthorized vs 403 Forbidden Architecture Diagram" class="article-img">
+        <p class="image-caption">Figure 2: 401 Identity Verification vs. 403 Role Authorization boundaries.</p>
+      </div>
+
       <p>
         Despite its historical name, <strong>401 Unauthorized</strong> is strictly about <em>Authentication</em> (Identity Verification), whereas <strong>403 Forbidden</strong> is about <em>Authorization</em> (Permissions & Role Scopes).
       </p>
@@ -91,6 +102,12 @@ Content-Type: application/problem+json
       </div>
 
       <h2>3. Gateway Failures: 502 Bad Gateway vs. 504 Gateway Timeout</h2>
+      
+      <div class="article-image-wrapper">
+        <img src="../assets/images/gateway_502_vs_504.jpg" alt="502 Bad Gateway vs 504 Gateway Timeout Microservice Diagram" class="article-img">
+        <p class="image-caption">Figure 3: Upstream process crash (502) vs Upstream response timeout (504).</p>
+      </div>
+
       <p>
         In modern cloud architecture involving reverse proxies (Nginx, HAProxy, AWS ALB, Cloudflare), distinguishing 502 from 504 is essential for infrastructure debugging:
       </p>

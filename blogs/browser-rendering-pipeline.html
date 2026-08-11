@@ -50,6 +50,11 @@
         Ever wondered what actually happens inside Chrome's Blink or Firefox's Gecko rendering engine between receiving an HTML byte stream over TCP and rendering pixels at 60 FPS (or 120 FPS)? Understanding the Critical Rendering Path (CRP) is the master key to optimizing Core Web Vitals and eliminating jank.
       </p>
 
+      <div class="article-image-wrapper">
+        <img src="../assets/images/critical_rendering_path.jpg" alt="Critical Rendering Path Flowchart" class="article-img">
+        <p class="image-caption">Figure 1: The 5 stages of the Browser Critical Rendering Path.</p>
+      </div>
+
       <h2>1. The 5 Stages of the Critical Rendering Path</h2>
 
       <h3>Stage 1: DOM Tree Construction</h3>
@@ -79,6 +84,11 @@
       </p>
 
       <h2>2. Reflow vs. Repaint vs. Compositing Trigger Matrix</h2>
+      
+      <div class="article-image-wrapper">
+        <img src="../assets/images/reflow_vs_repaint.jpg" alt="Reflow vs Repaint vs Compositing Diagram" class="article-img">
+        <p class="image-caption">Figure 2: Layout Reflow vs. Repaint vs. GPU Layer Compositing hardware execution.</p>
+      </div>
 
       <div class="table-wrapper">
         <table>

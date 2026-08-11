@@ -1,0 +1,129 @@
+# ☕ Gyaan Ki Baat (ज्ञान की बात)
+
+> **Bite-Sized & Deep-Dive Technical Engineering Insights for Developers, Engineers, and Tech Enthusiasts.**
+
+[![GitHub Pages Deployment](https://img.shields.io/badge/Hosted%20On-GitHub%20Pages-blue?logo=github)](https://connectharshitjoshi.github.io/gyan-ki-baat/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![LinkedIn](https://img.shields.io/badge/Connect-LinkedIn-0A66C2?logo=linkedin)](https://www.linkedin.com/in/harshit-joshi-140aa0217/)
+
+---
+
+## 📌 About Gyaan Ki Baat
+
+**Gyaan Ki Baat** is a modern, high-performance static technical blog platform built from scratch without heavy frameworks. Created by **Harshit Joshi**, it breaks down complex computer science and web engineering topics—ranging from HTTP protocols and security architectures to browser rendering pipelines and system design caching patterns.
+
+---
+
+## ✨ Features
+
+- ⚡ **Blazing Fast Performance:** 100% static HTML5, vanilla CSS3, and JavaScript with zero external runtime dependencies.
+- 🎨 **Modern Glassmorphic Dark UI:** Premium aesthetic featuring custom HSL color tokens, glowing gradients, Google Fonts (`Outfit` & `Inter`), and custom technical diagrams.
+- 🔍 **Real-Time Client-Side Search:** Instant title, excerpt, and tag filtering with zero page reloads.
+- 📱 **100% Mobile Responsive:** Adaptive layout with responsive navigation containers across desktop, tablet, and mobile devices.
+- 📋 **One-Click Code Snippets:** Built-in copy-to-clipboard functionality for code blocks (Node.js, Playwright, Redis, HTTP headers).
+- 🏷️ **LinkedIn Content Playbook:** Accompanied by polished short-form LinkedIn posts (`firstpost.txt` to `sixthpost.txt`) for content creators.
+
+---
+
+## 📚 Published Articles
+
+| # | Article Title | Category | Est. Read Time |
+| :--- | :--- | :--- | :--- |
+| **#1** | [The "Degree vs. Skills" Reality Check](blogs/degree-vs-skills.html) | Career & Growth | 5 min read |
+| **#2** | [Cookies, Web Storage, SSL/TLS & HTTPS — The Masterclass Guide](blogs/cookies-vs-session-storage.html) | Web Security | 12 min read |
+| **#3** | [HTTP Status Codes Masterclass: 401 vs. 403, 502 vs. 504 & Method Idempotency](blogs/http-status-codes.html) | HTTP Protocols | 14 min read |
+| **#4** | [JWT & OAuth 2.0 Security Architecture: Tokens, Payloads & Attacks](blogs/jwt-and-oauth-security.html) | Security & Auth | 15 min read |
+| **#5** | [Under the Hood: The Browser Rendering Pipeline (DOM, CSSOM, Layout)](blogs/browser-rendering-pipeline.html) | Web Performance | 13 min read |
+| **#6** | [System Design Essentials: Caching Strategies, Eviction & Thundering Herds](blogs/system-design-caching-strategies.html) | System Design | 15 min read |
+
+---
+
+## 📁 Repository Structure
+
+```text
+gyan-ki-baat/
+├── index.html                           # Homepage with article grid, search & category filters
+├── README.md                             # Repository documentation
+├── firstpost.txt                        # LinkedIn Post #1 (Degree vs. Skills)
+├── secondpost.txt                       # LinkedIn Post #2 (Cookies & Storage)
+├── thirdpost.txt                        # LinkedIn Post #3 (HTTP Status Codes)
+├── fourthpost.txt                       # LinkedIn Post #4 (JWT & OAuth 2.0)
+├── fifthpost.txt                        # LinkedIn Post #5 (Browser Rendering Pipeline)
+├── sixthpost.txt                        # LinkedIn Post #6 (System Design Caching)
+│
+├── blogs/                               # Deep-dive long-form technical articles
+│   ├── degree-vs-skills.html
+│   ├── cookies-vs-session-storage.html
+│   ├── http-status-codes.html
+│   ├── jwt-and-oauth-security.html
+│   ├── browser-rendering-pipeline.html
+│   └── system-design-caching-strategies.html
+│
+├── css/
+│   └── style.css                        # Modern CSS design system & media queries
+│
+├── js/
+│   └── main.js                          # Search filtering, card clicks & copy code logic
+│
+└── assets/
+    └── images/                          # Visual diagrams, hero banners & author photo
+        ├── harshit.jpg
+        ├── degree_vs_skills.jpg
+        ├── gyan_ki_baat_hero.jpg
+        ├── http_status_codes_hero.jpg
+        ├── jwt_anatomy.jpg
+        ├── critical_rendering_path.jpg
+        ├── caching_patterns.jpg
+        └── ...
+```
+
+---
+
+## 🛠️ Local Setup & Running
+
+No build steps, node_modules, or compilation required!
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/connectharshitjoshi/gyan-ki-baat.git
+   cd gyan-ki-baat
+   ```
+
+2. **Serve locally using Python:**
+   ```bash
+   python -m http.server 8000
+   ```
+   *Then open `http://localhost:8000` in your web browser.*
+
+3. **Or serve using Node `npx serve`:**
+   ```bash
+   npx serve .
+   ```
+
+---
+
+## 🚀 Deploying to GitHub Pages
+
+To host this blog for free under `https://yourusername.github.io/gyan-ki-baat/`:
+
+1. Push code to your `main` branch on GitHub:
+   ```bash
+   git add .
+   git commit -m "Publish Gyaan Ki Baat technical blog platform"
+   git push origin main
+   ```
+2. Go to **Repository Settings** → **Pages**.
+3. Under **Source**, select **Deploy from a branch** (`main` / `/ (root)`).
+4. Save, and your blog will be live in seconds!
+
+---
+
+## 👤 Author & Connect
+
+**Harshit Joshi**
+- 🌐 **LinkedIn:** [harshit-joshi-140aa0217](https://www.linkedin.com/in/harshit-joshi-140aa0217/)
+- 💻 **GitHub:** [@connectharshitjoshi](https://github.com/connectharshitjoshi)
+
+---
+
+*⭐ If you find these technical breakdowns helpful, give this repository a star on GitHub!*

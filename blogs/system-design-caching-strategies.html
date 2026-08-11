@@ -50,6 +50,11 @@
         Caching is the single most effective architectural technique to achieve sub-millisecond API latencies and scale web platforms to handle millions of concurrent requests. However, implementing caching without clear pattern boundaries introduces data corruption, stale reads, and catastrophic database thundering herd crashes.
       </p>
 
+      <div class="article-image-wrapper">
+        <img src="../assets/images/caching_patterns.jpg" alt="System Design Caching Patterns Diagram" class="article-img">
+        <p class="image-caption">Figure 1: Server caching patterns (Cache-Aside, Write-Through, Write-Back).</p>
+      </div>
+
       <h2>1. The 4 Fundamental Caching Patterns</h2>
 
       <h3>1. Cache-Aside (Lazy Loading)</h3>
@@ -142,6 +147,11 @@ async function getUserProfile(userId) {
       </div>
 
       <h2>3. 3 Classic Caching Pitfalls & Solutions</h2>
+      
+      <div class="article-image-wrapper">
+        <img src="../assets/images/cache_stampede_mutex.jpg" alt="Cache Stampede Thundering Herd Mutex Lock Diagram" class="article-img">
+        <p class="image-caption">Figure 2: Thundering Herd database collapse vs. Redis SET NX Mutex lock protection.</p>
+      </div>
 
       <h3>1. Cache Stampede (Thundering Herd Problem)</h3>
       <p>
