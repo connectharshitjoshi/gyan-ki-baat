@@ -1,0 +1,41 @@
+☕ Gyaan Ki Baat #9 — What Happens When You Pay via Credit Card on Amazon or Zomato? 💳🍔
+
+You enter your CVV, submit an OTP, and within 3 seconds your order is confirmed. 
+What actually happens under the hood across Visa, Mastercard, Razorpay, and Bank servers? 🏦👇
+
+Here is the 2-minute fintech breakdown every engineer should know:
+
+---
+
+1️⃣ Why Merchants Never Store Your 16-Digit Card Number 🛡️
+• Under RBI & PCI-DSS rules, Zomato/Amazon cannot save your card PAN or CVV.
+• Instead, they use Card Tokenization: The card network generates a unique encrypted device Token. If the merchant DB is hacked, tokens are useless to attackers!
+
+2️⃣ 3D Secure 2.0 (The Anti-Fraud Engine) 🧠
+• 3DS2 scores transaction risk in real-time.
+• Low risk (small order on home WiFi) ➔ Frictionless flow (instant approval).
+• High risk (large amount from unknown device) ➔ Challenge flow (OTP required).
+
+3️⃣ Webhook Idempotency (Why You Aren't Double-Charged) 🔄
+• If your internet drops right after submitting OTP, the app retries.
+• The server sends a unique `Idempotency-Key`. The Payment Gateway recognizes the retry and returns the existing receipt instead of billing you twice!
+
+4️⃣ Authorization vs. Settlement ($T+1$/$T+2$) ⏳
+• Authorization (Instant): Bank holds your credit limit and issues an Auth Code.
+• Settlement (24-48 hrs): At night, batched funds clear across Visa/Mastercard into the merchant's bank account.
+
+---
+
+💡 Gyaan Ki Baat:
+In distributed payments, network drops are a guarantee. Always design your payment APIs to be idempotent using unique transaction UUIDs! ⚡
+
+---
+
+💬 What’s the most frustrating checkout failure you’ve experienced online?
+
+Drop your thoughts below! 👇
+
+📌 Read the full deep-dive fintech breakdown on my blog:
+https://connectharshitjoshi.github.io/gyan-ki-baat/blogs/credit-card-payment-gateway-lifecycle.html 🔗
+
+#GyaanKiBaat #Fintech #SoftwareEngineering #PaymentGateway #Stripe #Razorpay #Banking #Security #Backend #SystemDesign

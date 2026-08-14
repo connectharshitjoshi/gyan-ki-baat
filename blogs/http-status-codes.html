@@ -166,6 +166,34 @@ Content-Type: application/json
 </code></pre>
 
       <h2>6. HTTP Method Safety & Idempotency</h2>
+
+      <div class="article-image-wrapper">
+        <svg viewBox="0 0 800 240" width="100%" height="auto" style="background:#0b111e; border-radius:12px; border:1px solid rgba(255,255,255,0.1); padding:20px;">
+          <text x="400" y="30" text-anchor="middle" fill="#38bdf8" font-family="Outfit, sans-serif" font-size="17" font-weight="700">HTTP Methods: Safety vs. Idempotency Matrix</text>
+          
+          <rect x="60" y="60" width="150" height="130" rx="8" fill="#121a2d" stroke="#10b981" stroke-width="1.5"/>
+          <text x="135" y="95" text-anchor="middle" fill="#34d399" font-family="Outfit, sans-serif" font-size="16" font-weight="700">GET / HEAD</text>
+          <text x="135" y="125" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="13">Safe: ✅ YES</text>
+          <text x="135" y="150" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="13">Idempotent: ✅ YES</text>
+
+          <rect x="230" y="60" width="150" height="130" rx="8" fill="#121a2d" stroke="#6366f1" stroke-width="1.5"/>
+          <text x="305" y="95" text-anchor="middle" fill="#818cf8" font-family="Outfit, sans-serif" font-size="16" font-weight="700">PUT</text>
+          <text x="305" y="125" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="13">Safe: ❌ NO</text>
+          <text x="305" y="150" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="13">Idempotent: ✅ YES</text>
+
+          <rect x="400" y="60" width="150" height="130" rx="8" fill="#121a2d" stroke="#8b5cf6" stroke-width="1.5"/>
+          <text x="475" y="95" text-anchor="middle" fill="#c084fc" font-family="Outfit, sans-serif" font-size="16" font-weight="700">DELETE</text>
+          <text x="475" y="125" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="13">Safe: ❌ NO</text>
+          <text x="475" y="150" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="13">Idempotent: ✅ YES</text>
+
+          <rect x="570" y="60" width="170" height="130" rx="8" fill="#121a2d" stroke="#ef4444" stroke-width="1.5"/>
+          <text x="655" y="95" text-anchor="middle" fill="#f87171" font-family="Outfit, sans-serif" font-size="16" font-weight="700">POST / PATCH</text>
+          <text x="655" y="125" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="13">Safe: ❌ NO</text>
+          <text x="655" y="150" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="13">Idempotent: ❌ NO</text>
+        </svg>
+        <p class="image-caption">Figure 4: Safety & Idempotency classification for core REST API methods.</p>
+      </div>
+
       <p>
         An HTTP method is <strong>Safe</strong> if it does not modify server state. An HTTP method is <strong>Idempotent</strong> if executing the request multiple times produces the exact same server side state as executing it once.
       </p>

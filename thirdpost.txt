@@ -29,6 +29,7 @@ Correct HTTP status codes aren't just cosmetic — they determine how frontend c
 
 Drop your thoughts below! 👇
 
-📌 Read the full in-depth 12-minute breakdown on my blog (Link in comments)! 🔗
+📌 Read the full in-depth 14-minute breakdown on my blog:
+https://connectharshitjoshi.github.io/gyan-ki-baat/blogs/http-status-codes.html 🔗
 
-#GyaanKiBaat #SoftwareEngineering #WebDevelopment #APIDesign #SystemDesign #Backend
+#GyaanKiBaat #APIDesign #WebDevelopment #SoftwareEngineering #Backend #SystemDesign

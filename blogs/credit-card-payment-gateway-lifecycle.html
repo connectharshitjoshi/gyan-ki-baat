@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What Happens When You Pay via Credit Card on Amazon or Zomato | Gyaan Ki Baat #9</title>
+  <meta name="description" content="Exhaustive fintech guide on what happens during online credit card checkout on Zomato or Amazon. Learn Payment Gateways vs Aggregators, Tokenization, 3D Secure 2.0, Webhook Idempotency, and T+1 Settlements.">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="logo" id="nav-logo">
+        ☕ Gyaan Ki Baat <span class="logo-badge">#9 Tech Guide</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="../index.html" id="nav-link-home">← Back to Articles</a></li>
+        <li><a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank" class="nav-btn" id="nav-btn-linkedin">Share on LinkedIn</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Article Header -->
+  <header class="article-header">
+    <div class="container">
+      <div class="article-breadcrumb">
+        <a href="../index.html">Articles</a> / <span>Fintech & Payment Systems</span>
+      </div>
+      <h1 class="article-title">
+        What Actually Happens When You Pay via Credit Card on Amazon or Zomato?
+      </h1>
+      <div class="article-author-bar">
+        <img src="../assets/images/harshit.jpg" alt="Harshit Joshi" class="author-avatar">
+        <div class="author-info">
+          <h4>Harshit Joshi</h4>
+          <p>Gyaan Ki Baat #9 • 14 min read • Updated Aug 2026</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Article Body -->
+  <main class="container">
+    <article class="article-content">
+
+      <p class="lead">
+        You order food on Zomato, enter your 3-digit CVV, enter an OTP, and within 3 seconds, your order is placed. But under the hood, your transaction travels through a complex global web involving Merchant Aggregators, Payment Gateways, Card Networks (Visa/Mastercard), Tokenization Vaults, and Acquiring vs. Issuing Banks.
+      </p>
+
+      <!-- SVG Sequence Diagram -->
+      <div class="article-image-wrapper">
+        <svg viewBox="0 0 880 440" width="100%" height="auto" style="background:#0b111e; border-radius:14px; border:1px solid rgba(255,255,255,0.1); padding:24px 16px;">
+          <text x="440" y="30" text-anchor="middle" fill="#38bdf8" font-family="Outfit, sans-serif" font-size="18" font-weight="700">The Online Card Checkout Lifecycle</text>
+          
+          <!-- Box 1: Customer & App -->
+          <rect x="20" y="70" width="150" height="110" rx="8" fill="#121824" stroke="#6366f1" stroke-width="1.8"/>
+          <text x="95" y="100" text-anchor="middle" fill="#818cf8" font-family="Outfit, sans-serif" font-size="14" font-weight="700">1. Customer</text>
+          <text x="95" y="125" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="11">Amazon / Zomato</text>
+          <text x="95" y="145" text-anchor="middle" fill="#06b6d4" font-family="Fira Code, monospace" font-size="10">Token + CVV</text>
+
+          <!-- Box 2: Payment Gateway / Aggregator -->
+          <rect x="230" y="70" width="180" height="110" rx="8" fill="#121824" stroke="#06b6d4" stroke-width="1.8"/>
+          <text x="320" y="100" text-anchor="middle" fill="#38bdf8" font-family="Outfit, sans-serif" font-size="14" font-weight="700">2. Gateway / Aggregator</text>
+          <text x="320" y="125" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="11">Stripe / Razorpay</text>
+          <text x="320" y="145" text-anchor="middle" fill="#38bdf8" font-family="Inter, sans-serif" font-size="10">PCI-DSS Vault</text>
+
+          <!-- Box 3: Card Network -->
+          <rect x="470" y="70" width="180" height="110" rx="8" fill="#121824" stroke="#ec4899" stroke-width="1.8"/>
+          <text x="560" y="100" text-anchor="middle" fill="#f472b6" font-family="Outfit, sans-serif" font-size="14" font-weight="700">3. Card Network</text>
+          <text x="560" y="125" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="11">Visa / Mastercard / RuPay</text>
+          <text x="560" y="145" text-anchor="middle" fill="#f472b6" font-family="Inter, sans-serif" font-size="10">3D Secure 2.0 Directory</text>
+
+          <!-- Box 4: Issuing Bank (Customer's Bank) -->
+          <rect x="710" y="70" width="150" height="110" rx="8" fill="#121824" stroke="#10b981" stroke-width="1.8"/>
+          <text x="785" y="100" text-anchor="middle" fill="#34d399" font-family="Outfit, sans-serif" font-size="14" font-weight="700">4. Issuing Bank</text>
+          <text x="785" y="125" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="11">Customer's Card Bank</text>
+          <text x="785" y="145" text-anchor="middle" fill="#10b981" font-family="Inter, sans-serif" font-size="10">OTP Auth & Credit Limit</text>
+
+          <!-- Connecting Flow Lines -->
+          <line x1="170" y1="125" x2="230" y2="125" stroke="#6366f1" stroke-width="2"/>
+          <line x1="410" y1="125" x2="470" y2="125" stroke="#06b6d4" stroke-width="2"/>
+          <line x1="650" y1="125" x2="710" y2="125" stroke="#ec4899" stroke-width="2"/>
+
+          <!-- Step Explanations Bottom Area -->
+          <rect x="40" y="220" width="800" height="180" rx="10" fill="#1e1b4b" stroke="rgba(255,255,255,0.1)"/>
+          <text x="440" y="250" text-anchor="middle" fill="#fbbf24" font-family="Outfit, sans-serif" font-size="15" font-weight="700">The 4 Core Phases of Card Processing</text>
+          
+          <text x="70" y="285" fill="#c7d2fe" font-family="Inter, sans-serif" font-size="12">🔹 <strong>Phase 1: Tokenization</strong> — Merchant replaces raw card numbers with encrypted Network Tokens (RBI Mandate).</text>
+          <text x="70" y="315" fill="#c7d2fe" font-family="Inter, sans-serif" font-size="12">🔹 <strong>Phase 2: Authentication (3DS2)</strong> — Issuing bank issues OTP or biometric challenge to verify identity.</text>
+          <text x="70" y="345" fill="#c7d2fe" font-family="Inter, sans-serif" font-size="12">🔹 <strong>Phase 3: Authorization</strong> — Issuing bank places a hold on credit limit and returns an Auth Code.</text>
+          <text x="70" y="375" fill="#c7d2fe" font-family="Inter, sans-serif" font-size="12">🔹 <strong>Phase 4: Clearing & Settlement</strong> — Funds are batched and transferred to Merchant Account on T+1 or T+2 days.</text>
+        </svg>
+        <p class="image-caption">Figure 1: Architectural steps during an online card transaction.</p>
+      </div>
+
+      <h2>1. The Key Actors in Card Processing</h2>
+      <p>
+        When you purchase something online using a card, five distinct entities communicate in real time:
+      </p>
+      <ul>
+        <li><strong>Cardholder (You):</strong> The buyer presenting the card credentials.</li>
+        <li><strong>Merchant (Zomato/Amazon):</strong> The store selling the product or service.</li>
+        <li><strong>Payment Gateway & Aggregator (Razorpay / Stripe):</strong> The secure PCI-DSS certified pipeline that encrypts card data and orchestrates payment flows.</li>
+        <li><strong>Card Networks (Visa / Mastercard / RuPay / Amex):</strong> The high-speed switching networks routing requests between banks.</li>
+        <li><strong>Issuing Bank (e.g. HDFC / Chase):</strong> The bank that issued your card, provides your credit line, and authenticates OTP.</li>
+        <li><strong>Acquiring Bank (Merchant's Bank):</strong> The bank that receives money on behalf of Zomato/Amazon.</li>
+      </ul>
+
+      <h2>2. What is Card Tokenization? (Why Merchants Don't Store Card Numbers)</h2>
+      <p>
+        Under modern security regulations (like the RBI Tokenization Mandate and PCI-DSS Level 1), <strong>merchants are strictly prohibited from saving your 16-digit card number (PAN) or CVV</strong> on their servers.
+      </p>
+      <p>
+        Instead, when you save a card on Zomato:
+      </p>
+      <ol>
+        <li>Zomato requests a <strong>Token</strong> from the Card Network (Visa/Mastercard) for your specific device.</li>
+        <li>Visa generates an encrypted surrogate string (Token: e.g. <code>tok_9f81a7b6c5d4</code>).</li>
+        <li>Zomato only stores this Token and the last 4 digits (e.g. <code>**** **** **** 1234</code>). If Zomato's database ever gets breached, hackers get useless tokens that cannot be used anywhere else!</li>
+      </ol>
+
+      <h2>3. 3D Secure 2.0 (3DS2): The Anti-Fraud Engine</h2>
+      <p>
+        <strong>3DS 2.0</strong> is the protocol that triggers the familiar OTP popup screen or silent biometric approval:
+      </p>
+      <ul>
+        <li><strong>Frictionless Flow:</strong> If you are ordering groceries from your usual phone on your home WiFi for ₹200, the bank's AI risk engine scores it as low-risk and approves it <em>instantly without an OTP</em>!</li>
+        <li><strong>Challenge Flow:</strong> If a sudden ₹50,000 transaction happens from a new foreign IP address, the bank enforces a 2FA OTP challenge.</li>
+      </ul>
+
+      <h2>4. The Danger of Double Debits: Webhook Idempotency</h2>
+      <p>
+        What happens if your WiFi disconnects right when you enter your OTP? Your bank debits ₹500, but Zomato's app shows "Loading..." and fails. Why doesn't the system charge you again when you retry?
+      </p>
+
+<pre><code>// Example of an Idempotent Charge Request with Stripe / Razorpay
+const chargeResponse = await paymentGateway.charges.create(
+  {
+    amount: 50000, // ₹500.00 in paise
+    currency: "INR",
+    customer_token: "tok_9f81a7b6c5d4",
+    description: "Zomato Order #ZOM-98124"
+  },
+  {
+    idempotencyKey: "ORDER_UUID_98124_ATTEMPT_1" // Unique Idempotency Key
+  }
+);
+</code></pre>
+
+      <div class="callout">
+        <div class="callout-title">🛡️ How Idempotency Keys Protect You</div>
+        <p>
+          The merchant attaches a unique <code>idempotencyKey</code> to the transaction. If the app retries the exact same request 5 times due to poor network, the payment gateway detects the key and returns the original successful receipt instead of charging your card 5 times!
+        </p>
+      </div>
+
+      <h2>5. Authorization vs. Settlement ($T+1$/$T+2$)</h2>
+      <p>
+        A card transaction happens in two distinct temporal stages:
+      </p>
+      <ol>
+        <li><strong>Authorization (Instant):</strong> The bank locks ₹500 from your available credit limit and returns an <em>Auth Code</em>. No actual money moves yet!</li>
+        <li><strong>Settlement (24-48 hours later):</strong> At midnight, all authorized transactions are batched, cleared through Visa/Mastercard, and wired to the merchant’s bank account on a $T+1$ or $T+2$ business day schedule.</li>
+      </ol>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h2>6. Summary & Key Takeaways</h2>
+      <ul>
+        <li><strong>Tokenization:</strong> Merchants store network tokens, never raw card numbers or CVVs.</li>
+        <li><strong>3DS 2.0:</strong> Risk-based 2FA authentication separating frictionless vs challenged flows.</li>
+        <li><strong>Idempotency:</strong> Guarantees that network retries never double-charge the user.</li>
+        <li><strong>Two-Step Execution:</strong> Instant real-time authorization followed by batch settlement in $T+1$ days.</li>
+      </ul>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h3>💬 Join the Discussion</h3>
+      <p>
+        Have you ever had a transaction fail where money got debited but the merchant didn't receive it? Let's discuss payment reconciliation on <a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank">LinkedIn</a>!
+      </p>
+
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Gyaan Ki Baat by Harshit Joshi. Built with static HTML/CSS on GitHub Pages.</p>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

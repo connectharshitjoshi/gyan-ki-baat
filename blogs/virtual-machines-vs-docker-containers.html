@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Virtual Machines vs Docker Containers Under the Hood | Gyaan Ki Baat #11</title>
+  <meta name="description" content="Under the hood comparison: Virtual Machines vs Docker Containers. Learn how Hypervisors, Linux Namespaces, Control Groups (cgroups), and OverlayFS work.">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="logo" id="nav-logo">
+        ☕ Gyaan Ki Baat <span class="logo-badge">#11 Tech Guide</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="../index.html" id="nav-link-home">← Back to Articles</a></li>
+        <li><a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank" class="nav-btn" id="nav-btn-linkedin">Share on LinkedIn</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Article Header -->
+  <header class="article-header">
+    <div class="container">
+      <div class="article-breadcrumb">
+        <a href="../index.html">Articles</a> / <span>DevOps & Operating Systems</span>
+      </div>
+      <h1 class="article-title">
+        Virtual Machines vs. Docker Containers Under the Hood: Why Containers Boot in 200ms
+      </h1>
+      <div class="article-author-bar">
+        <img src="../assets/images/harshit.jpg" alt="Harshit Joshi" class="author-avatar">
+        <div class="author-info">
+          <h4>Harshit Joshi</h4>
+          <p>Gyaan Ki Baat #11 • 14 min read • Updated Aug 2026</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Article Body -->
+  <main class="container">
+    <article class="article-content">
+
+      <p class="lead">
+        Why does launching a new Virtual Machine take 45 seconds and eat up 4GB of RAM, while a Docker container spins up in 200 milliseconds and uses barely 20MB? The secret lies in a fundamental realization: <strong>Containers are NOT mini virtual machines—they are just isolated Linux processes sharing the host kernel.</strong>
+      </p>
+
+      <!-- Comparison Architectural SVG Diagram -->
+      <div class="article-image-wrapper">
+        <svg viewBox="0 0 880 430" width="100%" height="auto" style="background:#0b111e; border-radius:14px; border:1px solid rgba(255,255,255,0.1); padding:24px 16px;">
+          <text x="440" y="30" text-anchor="middle" fill="#38bdf8" font-family="Outfit, sans-serif" font-size="18" font-weight="700">Virtual Machines vs. Docker Containers Architecture</text>
+          
+          <!-- LEFT SIDE: Virtual Machines -->
+          <rect x="30" y="65" width="385" height="330" rx="10" fill="#121824" stroke="#f59e0b" stroke-width="1.8"/>
+          <text x="222" y="95" text-anchor="middle" fill="#fbbf24" font-family="Outfit, sans-serif" font-size="16" font-weight="700">Virtual Machine (Hardware Virtualization)</text>
+
+          <!-- VM App Blocks -->
+          <rect x="50" y="115" width="165" height="40" rx="6" fill="#1e1b4b" stroke="#6366f1"/>
+          <text x="132" y="140" text-anchor="middle" fill="#c7d2fe" font-size="12">App A + Libs</text>
+
+          <rect x="230" y="115" width="165" height="40" rx="6" fill="#1e1b4b" stroke="#6366f1"/>
+          <text x="312" y="140" text-anchor="middle" fill="#c7d2fe" font-size="12">App B + Libs</text>
+
+          <!-- Guest OS Blocks -->
+          <rect x="50" y="165" width="165" height="45" rx="6" fill="#7f1d1d"/>
+          <text x="132" y="193" text-anchor="middle" fill="#fca5a5" font-size="12" font-weight="600">Heavy Guest OS (Ubuntu)</text>
+
+          <rect x="230" y="165" width="165" height="45" rx="6" fill="#7f1d1d"/>
+          <text x="312" y="193" text-anchor="middle" fill="#fca5a5" font-size="12" font-weight="600">Heavy Guest OS (Debian)</text>
+
+          <!-- Hypervisor -->
+          <rect x="50" y="220" width="345" height="50" rx="6" fill="#854d0e"/>
+          <text x="222" y="250" text-anchor="middle" fill="#fef08a" font-size="14" font-weight="700">Hypervisor (KVM / VMware / ESXi)</text>
+
+          <!-- Host OS & Hardware -->
+          <rect x="50" y="280" width="345" height="45" rx="6" fill="#1f2937"/>
+          <text x="222" y="308" text-anchor="middle" fill="#e5e7eb" font-size="13">Host Operating System</text>
+
+          <rect x="50" y="335" width="345" height="45" rx="6" fill="#0f172a" stroke="rgba(255,255,255,0.2)"/>
+          <text x="222" y="363" text-anchor="middle" fill="#9ca3af" font-size="13">Physical Hardware (CPU / RAM / Disk)</text>
+
+          <!-- RIGHT SIDE: Docker Containers -->
+          <rect x="465" y="65" width="385" height="330" rx="10" fill="#121824" stroke="#06b6d4" stroke-width="1.8"/>
+          <text x="657" y="95" text-anchor="middle" fill="#38bdf8" font-family="Outfit, sans-serif" font-size="16" font-weight="700">Docker Container (OS-Level Isolation)</text>
+
+          <!-- Container App Blocks -->
+          <rect x="485" y="115" width="165" height="95" rx="6" fill="#064e3b" stroke="#10b981"/>
+          <text x="567" y="150" text-anchor="middle" fill="#a7f3d0" font-size="13" font-weight="700">Container A (App)</text>
+          <text x="567" y="175" text-anchor="middle" fill="#6ee7b7" font-size="11">Isolated Namespaces</text>
+
+          <rect x="665" y="115" width="165" height="95" rx="6" fill="#064e3b" stroke="#10b981"/>
+          <text x="747" y="150" text-anchor="middle" fill="#a7f3d0" font-size="13" font-weight="700">Container B (App)</text>
+          <text x="747" y="175" text-anchor="middle" fill="#6ee7b7" font-size="11">Isolated Namespaces</text>
+
+          <!-- Docker Engine -->
+          <rect x="485" y="220" width="345" height="50" rx="6" fill="#0e7490"/>
+          <text x="657" y="250" text-anchor="middle" fill="#cffafe" font-size="14" font-weight="700">Docker Engine / containerd</text>
+
+          <!-- Shared Host Kernel -->
+          <rect x="485" y="280" width="345" height="45" rx="6" fill="#1f2937"/>
+          <text x="657" y="308" text-anchor="middle" fill="#34d399" font-size="13" font-weight="600">Shared Host Linux Kernel (cgroups)</text>
+
+          <rect x="485" y="335" width="345" height="45" rx="6" fill="#0f172a" stroke="rgba(255,255,255,0.2)"/>
+          <text x="657" y="363" text-anchor="middle" fill="#9ca3af" font-size="13">Physical Hardware (CPU / RAM / Disk)</text>
+        </svg>
+        <p class="image-caption">Figure 1: Architectural comparison between Hardware Virtualization (VMs) and Containerization.</p>
+      </div>
+
+      <h2>1. The Virtual Machine Model: Hardware Virtualization</h2>
+      <p>
+        A Virtual Machine relies on a <strong>Hypervisor</strong> (e.g. VMware ESXi, KVM, VirtualBox) to simulate physical hardware: virtual CPUs, virtual memory controllers, and virtual network interface cards (NICs).
+      </p>
+      <p>
+        Because the hypervisor emulates real hardware, every single VM must boot its own complete <strong>Guest Operating System</strong> kernel, system drivers, systemd daemon, and package manager.
+      </p>
+      <ul>
+        <li><strong>Memory Bloat:</strong> Running 10 VMs means loading 10 separate OS kernels into RAM (costing 10GB+ before your app even runs).</li>
+        <li><strong>Slow Startup:</strong> Booting a full OS kernel and system services takes 30 to 60 seconds.</li>
+      </ul>
+
+      <h2>2. The Docker Secret: The Three Linux Pillars</h2>
+      <p>
+        Docker does not emulate hardware. All containers on a host run directly on the <strong>single host Linux Kernel</strong>. Isolation is achieved using three built-in Linux kernel primitives:
+      </p>
+
+      <h3>1. Linux Namespaces (What a Container Can See)</h3>
+      <p>
+        Namespaces give each container its own private illusion of an isolated computer:
+      </p>
+      <ul>
+        <li><code>pid</code> (Process ID): Process #1 inside the container is your app, isolated from the host process table.</li>
+        <li><code>net</code> (Network): Each container gets its own virtual network card, IP address, and port bindings.</li>
+        <li><code>mnt</code> (Mount): Container sees only its own root file system.</li>
+        <li><code>ipc</code> / <code>uts</code>: Isolated inter-process communication and hostnames.</li>
+      </ul>
+
+      <h3>2. Control Groups / cgroups (What a Container Can Use)</h3>
+      <p>
+        <strong>cgroups</strong> enforce strict resource limits so a single buggy container cannot crash the entire machine:
+      </p>
+
+<pre><code># Limit container to exactly 512MB RAM and 1 CPU Core
+docker run -d --memory="512m" --cpus="1.0" my-node-app
+</code></pre>
+
+      <h3>3. OverlayFS (Copy-on-Write Storage Layers)</h3>
+      <p>
+        Docker images are built from immutable layers. If you run 50 containers from the same <code>node:18-alpine</code> base image, Docker stores the base image <strong>only once on disk</strong>. Each running container gets a tiny, lightweight writable layer on top!
+      </p>
+
+      <h2>3. Comparison Table: VMs vs. Containers</h2>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Virtual Machines (VMs)</th>
+              <th>Docker Containers</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Virtualization Level</strong></td>
+              <td>Hardware Level (Hypervisor)</td>
+              <td>OS / Kernel Level</td>
+            </tr>
+            <tr>
+              <td><strong>Operating System</strong></td>
+              <td>Full Guest OS per VM (Heavy)</td>
+              <td>Shares Host Linux Kernel (Light)</td>
+            </tr>
+            <tr>
+              <td><strong>Boot Time</strong></td>
+              <td>30 seconds to 2 minutes</td>
+              <td>50ms to 500ms</td>
+            </tr>
+            <tr>
+              <td><strong>Memory Overhead</strong></td>
+              <td>Gigabytes (GBs)</td>
+              <td>Megabytes (MBs)</td>
+            </tr>
+            <tr>
+              <td><strong>Isolation Boundary</strong></td>
+              <td>Hardware hypervisor boundary (Very High)</td>
+              <td>Linux namespace boundary (High)</td>
+            </tr>
+            <tr>
+              <td><strong>Best Use Case</strong></td>
+              <td>Running different OSes (Windows on Linux), multi-tenant cloud security</td>
+              <td>Microservices, CI/CD, rapid horizontal auto-scaling</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h2>4. Summary & Key Takeaways</h2>
+      <ul>
+        <li><strong>VMs virtualize hardware:</strong> Great for running completely different operating systems with strong hardware security isolation.</li>
+        <li><strong>Containers virtualize the OS:</strong> Lightweight Linux processes isolated via <strong>Namespaces</strong>, constrained by <strong>cgroups</strong>, and layered with <strong>OverlayFS</strong>.</li>
+        <li><strong>The 200ms advantage:</strong> Starting a container is simply executing a fork/exec process call on the host kernel—no OS boot sequence required!</li>
+      </ul>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h3>💬 Join the Discussion</h3>
+      <p>
+        Do you run containers on bare metal or inside cloud VMs (like AWS EC2 / EKS)? Let's discuss on <a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank">LinkedIn</a>!
+      </p>
+
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Gyaan Ki Baat by Harshit Joshi. Built with static HTML/CSS on GitHub Pages.</p>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>
