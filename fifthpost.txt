@@ -31,6 +31,7 @@ Layout Thrashing happens when JS reads geometric props (like `offsetHeight`) ins
 
 Drop your thoughts below! 👇
 
-📌 Read the full 10-minute performance guide on my blog (Link in comments)! 🔗
+📌 Read the full 13-minute performance guide on my blog:
+https://connectharshitjoshi.github.io/gyan-ki-baat/blogs/browser-rendering-pipeline.html 🔗
 
-#GyaanKiBaat #WebDevelopment #Frontend #JavaScript #WebPerformance #SoftwareEngineering
+#GyaanKiBaat #WebPerformance #Frontend #JavaScript #WebDevelopment #SoftwareEngineering

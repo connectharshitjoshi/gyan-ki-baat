@@ -1,0 +1,41 @@
+☕ Gyaan Ki Baat #7 — How UPI Works Under the Hood (And UPI vs. UPI Apps) 💳⚡
+
+When you scan a QR code at a chai tapri and enter your PIN, where does your money actually travel in under 2 seconds? 📱👇
+
+Here is a 2-minute engineering breakdown of the UPI 4-party ecosystem:
+
+---
+
+1️⃣ The Big Myth: PhonePe & Paytm are NOT the UPI Network ❌
+• Google Pay, PhonePe, Paytm, CRED, and Supermoney are TPAPs (Third-Party Application Providers).
+• They are frontend UI apps with zero banking license.
+• They partner with Sponsor PSP Banks (e.g. HDFC, Axis, YES Bank — notice handles like @okhdfcbank, @ybl, @superyes) to talk to the central rail.
+
+2️⃣ The Central Brain: NPCI Switch 🧠
+• Built by NPCI on top of the IMPS backbone.
+• When you send ₹500 to "priya@okhdfcbank", NPCI's Central Mapper translates the VPA into Priya’s actual Bank Account Number + IFSC in milliseconds.
+
+3️⃣ 2-Factor Cryptographic Security 🔒
+• Factor 1 (Device Binding): Silent SIM SMS ties your app instance to your phone's unique hardware fingerprint.
+• Factor 2 (MPIN): Entered inside a sandboxed NPCI Common Library (CL). The app itself NEVER sees your keystrokes or raw PIN!
+• Your MPIN is encrypted with your bank's public key (PKI) and verified exclusively inside Bank Hardware Security Modules (HSM).
+
+4️⃣ Direct Bank-to-Bank Settlement (Zero Stored Wallets) 🏦
+• Remitter Bank (Sender's Core Banking System) debits ₹500 ➔ NPCI sends instant credit instruction ➔ Beneficiary Bank (Receiver) credits ₹500.
+• No middleman holding your money!
+
+---
+
+💡 Gyaan Ki Baat:
+UPI is not just a payment app—it’s an open, interoperable financial protocol. That’s why you can scan a Paytm QR code using Google Pay and pay from your SBI account into an ICICI account seamlessly! 🚀
+
+---
+
+💬 Which UPI innovation has had the biggest impact: UPI Lite, QR Interoperability, or Credit Cards on UPI?
+
+Drop your thoughts below! 👇
+
+📌 Read the full deep-dive architectural breakdown on my blog:
+https://connectharshitjoshi.github.io/gyan-ki-baat/blogs/how-upi-works.html 🔗
+
+#GyaanKiBaat #UPI #Fintech #SystemDesign #SoftwareEngineering #Architecture #NPCI #Banking #Backend #Technology

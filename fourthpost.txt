@@ -31,6 +31,7 @@ Security isn't about using JWTs — it's about how you sign, store, and validate
 
 Drop your thoughts below! 👇
 
-📌 Read the full in-depth security guide on my blog (Link in comments)! 🔗
+📌 Read the full in-depth security guide on my blog:
+https://connectharshitjoshi.github.io/gyan-ki-baat/blogs/jwt-and-oauth-security.html 🔗
 
-#GyaanKiBaat #SoftwareEngineering #CyberSecurity #OAuth #JWT #WebSecurity #Backend
+#GyaanKiBaat #CyberSecurity #OAuth #JWT #WebSecurity #SoftwareEngineering

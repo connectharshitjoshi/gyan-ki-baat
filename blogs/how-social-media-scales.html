@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How Instagram Scales to Millions of Concurrent Users | Gyaan Ki Baat #8</title>
+  <meta name="description" content="System design deep dive: How Instagram and Meta handle 100M+ concurrent users without crashing. Explore Load Balancers, Fan-out on Write vs Read, DB Sharding, and Redis Caching.">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="logo" id="nav-logo">
+        ☕ Gyaan Ki Baat <span class="logo-badge">#8 Tech Guide</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="../index.html" id="nav-link-home">← Back to Articles</a></li>
+        <li><a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank" class="nav-btn" id="nav-btn-linkedin">Share on LinkedIn</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Article Header -->
+  <header class="article-header">
+    <div class="container">
+      <div class="article-breadcrumb">
+        <a href="../index.html">Articles</a> / <span>System Design & Scalability</span>
+      </div>
+      <h1 class="article-title">
+        How Instagram & Social Media Apps Scale to 100M+ Concurrent Users Without Crashing
+      </h1>
+      <div class="article-author-bar">
+        <img src="../assets/images/harshit.jpg" alt="Harshit Joshi" class="author-avatar">
+        <div class="author-info">
+          <h4>Harshit Joshi</h4>
+          <p>Gyaan Ki Baat #8 • 15 min read • Updated Aug 2026</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Article Body -->
+  <main class="container">
+    <article class="article-content">
+
+      <p class="lead">
+        When a celebrity with 600 million followers posts a photo on Instagram, or when 50 million fans open the app simultaneously during the World Cup, how does the platform deliver reels, likes, and feed updates in under 200 milliseconds without melting its servers?
+      </p>
+
+      <!-- Architecture Image -->
+      <div class="article-image-wrapper">
+        <img src="../assets/images/social_scaling_hero.jpg" alt="High-Scale Social Media Architecture Diagram" class="article-img">
+        <p class="image-caption">Figure 1: End-to-end distributed system architecture for handling massive concurrency across Edge CDNs, Load Balancers, Redis, and Sharded DBs.</p>
+      </div>
+
+      <h2>1. The Core Challenge: The Math of Concurrency</h2>
+      <p>
+        If 50 million users refresh their feed at once:
+      </p>
+      <ul>
+        <li>A single server can handle roughly <strong>5,000 to 10,000 concurrent socket connections</strong> before running out of file descriptors and RAM.</li>
+        <li>A single monolithic SQL database maxes out at a few thousand concurrent queries before locking tables and crashing.</li>
+      </ul>
+      <p>
+        To solve this, modern platforms use a <strong>stateless horizontal scaling architecture</strong> with aggressive caching and asynchronous background pipelines.
+      </p>
+
+      <h2>2. The Secret Behind Instant Feeds: Fan-Out on Write vs. Fan-Out on Read</h2>
+
+      <div class="article-image-wrapper">
+        <img src="../assets/images/fanout_write_read.jpg" alt="Fan-out on Write vs Fan-out on Read Architecture Diagram" class="article-img">
+        <p class="image-caption">Figure 2: Push-based Feed (Fan-out on Write) vs Pull-based Feed (Fan-out on Read for 600M+ celebrity accounts).</p>
+      </div>
+
+      <p>
+        When you open Instagram, the app does NOT run a massive SQL query joining tables across all your friends in real-time. That would take 10 seconds! Instead, feeds are pre-computed using two distinct patterns:
+      </p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Strategy</th>
+              <th>How It Works</th>
+              <th>Pros</th>
+              <th>Cons / Pitfall</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Fan-Out on Write (Push)</strong></td>
+              <td>When User A posts a photo, a background worker pushes that post ID directly into the Redis inbox of all followers immediately.</td>
+              <td><strong>Instant Feed Read:</strong> Loading feed is $O(1)$ from Redis cache.</td>
+              <td><strong>The Celebrity Problem:</strong> If Ronaldo posts to 600M followers, the system must perform 600M database write operations at once!</td>
+            </tr>
+            <tr>
+              <td><strong>Fan-Out on Read (Pull)</strong></td>
+              <td>When a user opens the app, the feed is generated on-the-fly by fetching recent posts from followed accounts and sorting them.</td>
+              <td>Zero write amplification when celebrities post.</td>
+              <td>Slower read latency on feed reload.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>The Hybrid Solution: How Meta Solves It</h3>
+      <p>
+        Meta uses a <strong>Hybrid Fan-out Model</strong>:
+      </p>
+      <ol>
+        <li>Regular users (less than 20,000 followers) use <strong>Fan-out on Write</strong>: Posts are pushed into followers' Redis timeline caches.</li>
+        <li>Celebrities / Influencers (millions of followers) use <strong>Fan-out on Read</strong>: Their posts are fetched and merged into the user's timeline on-demand when the user opens the app.</li>
+      </ol>
+
+      <h2>3. Database Sharding: Splitting Data Across Thousands of Servers</h2>
+
+      <div class="article-image-wrapper">
+        <img src="../assets/images/database_sharding.jpg" alt="Database Sharding Architecture Diagram" class="article-img">
+        <p class="image-caption">Figure 3: Consistent Hashing and User-ID based Partitioning across Database Master-Replica Shards.</p>
+      </div>
+
+      <p>
+        You cannot store 100 billion photos, likes, and comments on a single database disk. Instead, Instagram shards data across thousands of PostgreSQL / Cassandra database nodes using a <strong>Consistent Shard Key</strong> (such as <code>user_id</code>):
+      </p>
+
+<pre><code>// Conceptual Shard Routing Formula
+const shardNumber = MurmurHash3(userId) % TOTAL_SHARD_COUNT;
+const targetDatabase = shardMap[shardNumber];
+
+// Now query ONLY that specific database shard!
+const userPosts = await targetDatabase.query(
+  "SELECT * FROM posts WHERE user_id = $1 ORDER BY created_at DESC LIMIT 20",
+  [userId]
+);
+</code></pre>
+
+      <div class="callout">
+        <div class="callout-title">💡 Why Sharding by User ID is Genius</div>
+        <p>
+          By partitioning on <code>user_id</code>, all data for a single user (their profile, posts, photos) lives on the exact same database shard. This avoids expensive distributed cross-shard joins!
+        </p>
+      </div>
+
+      <h2>4. Edge CDNs: Offloading 95% of Bandwidth</h2>
+      <p>
+        Videos and high-res photos consume massive bandwidth. When a reel goes viral, Instagram does not fetch it from the origin database in Oregon or Virginia. 
+      </p>
+      <ul>
+        <li>Static images and video chunks are cached on <strong>Point of Presence (POP) Edge CDN servers</strong> located in Mumbai, London, Tokyo, etc.</li>
+        <li>Your phone downloads the video from an edge cache located 5 miles away from your house, saving origin servers from burning out.</li>
+      </ul>
+
+      <h2>5. Graceful Degradation & Circuit Breakers</h2>
+      <p>
+        What happens if the comment system gets overloaded during a viral live event?
+      </p>
+      <ul>
+        <li><strong>Circuit Breakers:</strong> If the Comment Microservice starts failing, the system temporarily disables comments or serves cached comments rather than crashing the entire app.</li>
+        <li><strong>Core Priority:</strong> Viewing photos and reels continues working flawlessly even if secondary features (like follower count counters or view metrics) update asynchronously with a 30-second delay.</li>
+      </ul>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h2>6. Summary & Key Takeaways</h2>
+      <ul>
+        <li><strong>Stateless Compute:</strong> App servers do not hold user session state; any server can handle any request behind NGINX/Envoy load balancers.</li>
+        <li><strong>Hybrid Fan-out:</strong> Push model for regular users, Pull model for celebrities with millions of followers.</li>
+        <li><strong>Consistent DB Sharding:</strong> Partition data by <code>user_id</code> to distribute read/write load evenly across thousands of DB nodes.</li>
+        <li><strong>Redis Caching + Global CDNs:</strong> Serve 90%+ of read requests directly from RAM and edge caches with sub-10ms response times.</li>
+      </ul>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h3>💬 Join the Discussion</h3>
+      <p>
+        How would you design the feed algorithm for a platform with 1 billion users? Share your thoughts on <a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank">LinkedIn</a>!
+      </p>
+
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Gyaan Ki Baat by Harshit Joshi. Built with static HTML/CSS on GitHub Pages.</p>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

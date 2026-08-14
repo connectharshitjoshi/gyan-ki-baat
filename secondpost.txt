@@ -57,6 +57,9 @@ Remember: Web development isn't just about UI — it's about understanding clien
 💬 What topic should we break down in Gyaan Ki Baat #3?
 Drop your suggestions below! 👇
 
+📌 Read the full in-depth 12-minute breakdown on my blog:
+https://connectharshitjoshi.github.io/gyan-ki-baat/blogs/cookies-vs-session-storage.html 🔗
+
 📌 Found this helpful? Repost ♻️ & Save 🔖 for reference!
 
-#GyaanKiBaat #SoftwareEngineering #WebDevelopment #CyberSecurity #Coding #Programming
+#GyaanKiBaat #SoftwareEngineering #WebDevelopment #CyberSecurity #WebArchitecture #Coding

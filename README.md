@@ -35,6 +35,11 @@
 | **#4** | [JWT & OAuth 2.0 Security Architecture: Tokens, Payloads & Attacks](blogs/jwt-and-oauth-security.html) | Security & Auth | 15 min read |
 | **#5** | [Under the Hood: The Browser Rendering Pipeline (DOM, CSSOM, Layout)](blogs/browser-rendering-pipeline.html) | Web Performance | 13 min read |
 | **#6** | [System Design Essentials: Caching Strategies, Eviction & Thundering Herds](blogs/system-design-caching-strategies.html) | System Design | 15 min read |
+| **#7** | [How UPI Works Under the Hood: Architecture, NPCI Switch & UPI vs. UPI Apps](blogs/how-upi-works.html) | Fintech & Systems | 14 min read |
+| **#8** | [How Instagram & Social Media Apps Scale to 100M+ Concurrent Users](blogs/how-social-media-scales.html) | System Design | 15 min read |
+| **#9** | [What Actually Happens When You Pay via Credit Card on Amazon or Zomato?](blogs/credit-card-payment-gateway-lifecycle.html) | Fintech & Payments | 14 min read |
+| **#10** | [Real-Time Communication Explained Simply: WebSockets vs. SSE vs. gRPC](blogs/realtime-protocols-websockets-sse-grpc.html) | Web Protocols | 13 min read |
+| **#11** | [Virtual Machines vs. Docker Containers Under the Hood](blogs/virtual-machines-vs-docker-containers.html) | DevOps & Linux | 14 min read |
 
 ---
 
@@ -50,6 +55,11 @@ gyan-ki-baat/
 ├── fourthpost.txt                       # LinkedIn Post #4 (JWT & OAuth 2.0)
 ├── fifthpost.txt                        # LinkedIn Post #5 (Browser Rendering Pipeline)
 ├── sixthpost.txt                        # LinkedIn Post #6 (System Design Caching)
+├── seventhpost.txt                      # LinkedIn Post #7 (How UPI Works & UPI vs UPI Apps)
+├── eighthpost.txt                       # LinkedIn Post #8 (How Social Media Apps Scale)
+├── ninthpost.txt                        # LinkedIn Post #9 (Credit Card Checkout Lifecycle)
+├── tenthpost.txt                        # LinkedIn Post #10 (WebSockets vs SSE vs gRPC)
+├── eleventhpost.txt                     # LinkedIn Post #11 (VMs vs Docker Containers)
 │
 ├── blogs/                               # Deep-dive long-form technical articles
 │   ├── degree-vs-skills.html
@@ -57,7 +67,12 @@ gyan-ki-baat/
 │   ├── http-status-codes.html
 │   ├── jwt-and-oauth-security.html
 │   ├── browser-rendering-pipeline.html
-│   └── system-design-caching-strategies.html
+│   ├── system-design-caching-strategies.html
+│   ├── how-upi-works.html
+│   ├── how-social-media-scales.html
+│   ├── credit-card-payment-gateway-lifecycle.html
+│   ├── realtime-protocols-websockets-sse-grpc.html
+│   └── virtual-machines-vs-docker-containers.html
 │
 ├── css/
 │   └── style.css                        # Modern CSS design system & media queries
