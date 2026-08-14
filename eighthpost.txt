@@ -1,0 +1,39 @@
+☕ Gyaan Ki Baat #8 — How Instagram Handles 100M+ Concurrent Users Without Crashing 🚀📱
+
+When Cristiano Ronaldo posts a photo to 600M followers, or when 50 million people open Instagram during the World Cup, why doesn't the database melt down? 🤯👇
+
+Here is the 2-minute System Design breakdown behind scaling social media apps:
+
+---
+
+1️⃣ The "Celebrity Problem" (Fan-out on Write vs. Read) 🌟
+• Fan-out on Write (Push): When a regular user posts, background workers push the post ID into all followers' Redis inboxes. (Instant feed loading $O(1)$).
+• The Flaw: If a celebrity with 600M followers posts, you can't run 600 million database writes simultaneously!
+• The Fix (Hybrid Model): Celebrities use Fan-out on Read (Pull). Their posts are fetched and merged into your timeline only when you open the app.
+
+2️⃣ Database Sharding by User ID 🗄️
+• You can't store 100 billion posts on a single SQL server.
+• Instagram shards data across thousands of PostgreSQL/Cassandra nodes using `MurmurHash(userId) % TotalShards`.
+• All posts, likes, and profile data for a single user live on the same shard, eliminating expensive cross-server joins!
+
+3️⃣ Global CDN Edge Caching ⚡
+• 95% of video and high-res image bandwidth is offloaded to Point-of-Presence (POP) edge servers located close to your city.
+
+4️⃣ Circuit Breakers & Graceful Degradation 🛡️
+• If the comments or view-count microservice gets overwhelmed, the system temporarily serves cached metrics rather than crashing your feed.
+
+---
+
+💡 Gyaan Ki Baat:
+At scale, you don't query the database to build a user's feed. You serve pre-computed feeds straight out of Redis RAM in sub-5ms! 🧠
+
+---
+
+💬 What’s the hardest scaling bottleneck you’ve encountered: DB locks, memory leaks, or network I/O?
+
+Drop your thoughts below! 👇
+
+📌 Read the full System Design architectural breakdown on my blog:
+https://connectharshitjoshi.github.io/gyan-ki-baat/blogs/how-social-media-scales.html 🔗
+
+#GyaanKiBaat #SystemDesign #Backend #SoftwareEngineering #Instagram #Architecture #Scalability #Database #Redis #CloudComputing

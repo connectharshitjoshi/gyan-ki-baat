@@ -170,6 +170,25 @@ try {
 
       <h2>6. Refresh Token Rotation & Token Storage Debate</h2>
 
+      <div class="article-image-wrapper">
+        <svg viewBox="0 0 800 240" width="100%" height="auto" style="background:#0b111e; border-radius:12px; border:1px solid rgba(255,255,255,0.1); padding:20px;">
+          <text x="400" y="30" text-anchor="middle" fill="#c084fc" font-family="Outfit, sans-serif" font-size="17" font-weight="700">Token Storage & Rotation Architecture</text>
+          
+          <!-- Access Token Box -->
+          <rect x="80" y="65" width="300" height="130" rx="8" fill="#121a2d" stroke="#06b6d4" stroke-width="1.5"/>
+          <text x="230" y="98" text-anchor="middle" fill="#38bdf8" font-family="Outfit, sans-serif" font-size="15" font-weight="700">Short-Lived Access Token (15 mins)</text>
+          <text x="230" y="130" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="13">Stored in JS In-Memory / Web Worker</text>
+          <text x="230" y="155" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="13">Sent in Authorization: Bearer Header</text>
+
+          <!-- Refresh Token Box -->
+          <rect x="420" y="65" width="300" height="130" rx="8" fill="#121a2d" stroke="#10b981" stroke-width="1.5"/>
+          <text x="570" y="98" text-anchor="middle" fill="#34d399" font-family="Outfit, sans-serif" font-size="15" font-weight="700">Long-Lived Refresh Token (7 Days)</text>
+          <text x="570" y="130" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="13">Stored in HttpOnly SameSite Cookie</text>
+          <text x="570" y="155" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="13">Rotated Automatically On Every Reuse</text>
+        </svg>
+        <p class="image-caption">Figure 3: Secure token partitioning and automatic refresh rotation flow.</p>
+      </div>
+
       <div class="callout">
         <div class="callout-title">🛡️ Recommended Token Storage Architecture:</div>
         <ul>

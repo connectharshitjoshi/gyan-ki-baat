@@ -120,6 +120,26 @@
       </div>
 
       <h2>3. Layout Thrashing: The Performance Antipattern</h2>
+
+      <div class="article-image-wrapper">
+        <svg viewBox="0 0 800 240" width="100%" height="auto" style="background:#0b111e; border-radius:12px; border:1px solid rgba(255,255,255,0.1); padding:20px;">
+          <text x="400" y="30" text-anchor="middle" fill="#f43f5e" font-family="Outfit, sans-serif" font-size="17" font-weight="700">Layout Thrashing vs. Batched Execution</text>
+          
+          <!-- Bad Pattern -->
+          <rect x="50" y="65" width="330" height="130" rx="8" fill="#121a2d" stroke="#ef4444" stroke-width="1.5"/>
+          <text x="215" y="98" text-anchor="middle" fill="#f87171" font-family="Outfit, sans-serif" font-size="15" font-weight="700">❌ Layout Thrashing (Read/Write Loop)</text>
+          <text x="215" y="130" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="13">Interleaved JS Reads & DOM Writes</text>
+          <text x="215" y="155" text-anchor="middle" fill="#fca5a5" font-family="Inter, sans-serif" font-size="13">Forces N Synchronous Reflow Flushes (Jank!)</text>
+
+          <!-- Good Pattern -->
+          <rect x="420" y="65" width="330" height="130" rx="8" fill="#121a2d" stroke="#10b981" stroke-width="1.5"/>
+          <text x="585" y="98" text-anchor="middle" fill="#34d399" font-family="Outfit, sans-serif" font-size="15" font-weight="700">✅ Batched Execution (Fast 60 FPS)</text>
+          <text x="585" y="130" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="13">Batch Reads First → Batch Writes Last</text>
+          <text x="585" y="155" text-anchor="middle" fill="#6ee7b7" font-family="Inter, sans-serif" font-size="13">Single Layout Calculation per Frame</text>
+        </svg>
+        <p class="image-caption">Figure 3: Interleaved Read/Write layout thrashing vs batched frame execution.</p>
+      </div>
+
       <p>
         Layout thrashing occurs when JavaScript repeatedly reads geometric properties (forcing the browser to perform a synchronous layout calculation) and immediately writes style changes in a single loop execution:
       </p>

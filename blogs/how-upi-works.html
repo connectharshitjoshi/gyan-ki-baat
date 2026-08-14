@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How UPI Works Under the Hood: Architecture, TPAPs vs Banks & Transaction Lifecycle | Gyaan Ki Baat #7</title>
+  <meta name="description" content="An exhaustive technical deep dive into Unified Payments Interface (UPI) architecture, how UPI apps like PhonePe, Paytm, and Supermoney work, NPCI switch routing, 2FA MPIN security, and the 8-step transaction lifecycle.">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="logo" id="nav-logo">
+        ☕ Gyaan Ki Baat <span class="logo-badge">#7 Tech Guide</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="../index.html" id="nav-link-home">← Back to Articles</a></li>
+        <li><a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank" class="nav-btn" id="nav-btn-linkedin">Share on LinkedIn</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Article Header -->
+  <header class="article-header">
+    <div class="container">
+      <div class="article-breadcrumb">
+        <a href="../index.html">Articles</a> / <span>Fintech & Distributed Systems</span>
+      </div>
+      <h1 class="article-title">
+        How UPI Works Under the Hood: Architecture, NPCI Switch & UPI vs. UPI Apps (PhonePe, Paytm, Supermoney)
+      </h1>
+      <div class="article-author-bar">
+        <img src="../assets/images/harshit.jpg" alt="Harshit Joshi" class="author-avatar">
+        <div class="author-info">
+          <h4>Harshit Joshi</h4>
+          <p>Gyaan Ki Baat #7 • 14 min read • Updated Aug 2026</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Article Body -->
+  <main class="container">
+    <article class="article-content">
+
+      <p class="lead">
+        In India, over <strong>15 billion real-time transactions</strong> happen every month with a simple QR scan or phone tap taking less than 2 seconds. But behind that smooth checkout screen lies one of the most sophisticated distributed financial architectures ever built. Where does your money actually go, how is your PIN encrypted, and what is the real difference between the UPI protocol and apps like Google Pay, PhonePe, Paytm, and Supermoney?
+      </p>
+
+      <!-- Architecture SVG Diagram -->
+      <div class="article-image-wrapper">
+        <svg viewBox="0 0 880 440" width="100%" height="auto" style="background:#0b111e; border-radius:14px; border:1px solid rgba(255,255,255,0.1); padding:24px 16px;">
+          <!-- Title -->
+          <text x="440" y="30" text-anchor="middle" fill="#38bdf8" font-family="Outfit, sans-serif" font-size="18" font-weight="700">UPI 4-Party Interoperable Architecture</text>
+          
+          <!-- Payer App (TPAP) -->
+          <rect x="30" y="70" width="220" height="120" rx="10" fill="#121824" stroke="#6366f1" stroke-width="2"/>
+          <text x="140" y="102" text-anchor="middle" fill="#818cf8" font-family="Outfit, sans-serif" font-size="15" font-weight="700">1. Payer App (TPAP)</text>
+          <text x="140" y="130" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="12">PhonePe / GPay / Paytm / Supermoney</text>
+          <text x="140" y="152" text-anchor="middle" fill="#06b6d4" font-family="Fira Code, monospace" font-size="11">UPI Common Library (CL)</text>
+
+          <!-- Remitter PSP Bank -->
+          <rect x="30" y="250" width="220" height="120" rx="10" fill="#121824" stroke="#8b5cf6" stroke-width="2"/>
+          <text x="140" y="282" text-anchor="middle" fill="#c084fc" font-family="Outfit, sans-serif" font-size="15" font-weight="700">2. Remitter PSP Bank</text>
+          <text x="140" y="310" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="12">Sponsor Bank Gateway</text>
+          <text x="140" y="332" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="12">(HDFC, ICICI, Axis, YES)</text>
+
+          <!-- NPCI Central Switch (Center) -->
+          <rect x="330" y="140" width="220" height="160" rx="12" fill="#1e1b4b" stroke="#38bdf8" stroke-width="2.5"/>
+          <text x="440" y="175" text-anchor="middle" fill="#38bdf8" font-family="Outfit, sans-serif" font-size="16" font-weight="700">NPCI Central Switch</text>
+          <text x="440" y="202" text-anchor="middle" fill="#f3f4f6" font-family="Inter, sans-serif" font-size="12" font-weight="600">UPI Central Switch & Mapper</text>
+          <text x="440" y="225" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="11">VPA Resolution Engine</text>
+          <text x="440" y="248" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="11">Cryptographic Key Exchange</text>
+          <text x="440" y="270" text-anchor="middle" fill="#34d399" font-family="Fira Code, monospace" font-size="11">IMPS Clearing Rails</text>
+
+          <!-- Remitter Bank (Sender CBS) -->
+          <rect x="630" y="70" width="220" height="120" rx="10" fill="#121824" stroke="#f59e0b" stroke-width="2"/>
+          <text x="740" y="102" text-anchor="middle" fill="#fbbf24" font-family="Outfit, sans-serif" font-size="15" font-weight="700">3. Remitter Bank (CBS)</text>
+          <text x="740" y="130" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="12">Sender's Core Banking System</text>
+          <text x="740" y="152" text-anchor="middle" fill="#f87171" font-family="Inter, sans-serif" font-size="12">HSM / Decrypts MPIN / Debits</text>
+
+          <!-- Beneficiary Bank (Receiver CBS) -->
+          <rect x="630" y="250" width="220" height="120" rx="10" fill="#121824" stroke="#10b981" stroke-width="2"/>
+          <text x="740" y="282" text-anchor="middle" fill="#34d399" font-family="Outfit, sans-serif" font-size="15" font-weight="700">4. Beneficiary Bank (CBS)</text>
+          <text x="740" y="310" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="12">Receiver's Core Banking System</text>
+          <text x="740" y="332" text-anchor="middle" fill="#34d399" font-family="Inter, sans-serif" font-size="12">Credits Recipient Account</text>
+
+          <!-- Connecting Arrows -->
+          <!-- TPAP to PSP -->
+          <line x1="140" y1="190" x2="140" y2="245" stroke="#6366f1" stroke-width="2" stroke-dasharray="4"/>
+          <text x="155" y="222" fill="#818cf8" font-size="11">SDK</text>
+
+          <!-- PSP to NPCI -->
+          <path d="M250 310 L330 250" stroke="#8b5cf6" stroke-width="2"/>
+          
+          <!-- TPAP / PSP to NPCI (Direct or via PSP) -->
+          <line x1="250" y1="130" x2="330" y2="180" stroke="#6366f1" stroke-width="2"/>
+
+          <!-- NPCI to Remitter Bank -->
+          <line x1="550" y1="180" x2="630" y2="130" stroke="#fbbf24" stroke-width="2"/>
+          
+          <!-- NPCI to Beneficiary Bank -->
+          <line x1="550" y1="250" x2="630" y2="310" stroke="#34d399" stroke-width="2"/>
+
+          <!-- Bottom Summary -->
+          <text x="440" y="420" text-anchor="middle" fill="#6b7280" font-family="Inter, sans-serif" font-size="12">Zero Stored Wallet Funds • Bank-to-Bank Instant Real-Time Settlement • Single VPA Identity</text>
+        </svg>
+        <p class="image-caption">Figure 1: High-level architectural topology of the UPI 4-party ecosystem.</p>
+      </div>
+
+      <h2>1. What Exactly is UPI?</h2>
+      <p>
+        <strong>UPI (Unified Payments Interface)</strong> is an instant, real-time payment protocol developed by the <strong>National Payments Corporation of India (NPCI)</strong> and regulated by the Reserve Bank of India (RBI).
+      </p>
+      <p>
+        Unlike digital wallets (like the old Paytm Wallet or PayPal) which require you to pre-load cash into a digital balance, UPI facilitates <strong>direct, instantaneous inter-bank fund transfers (Account A ➔ Account B)</strong> 24/7/365 using the underlying <strong>IMPS (Immediate Payment Service)</strong> messaging rails.
+      </p>
+
+      <div class="callout">
+        <div class="callout-title">💡 Core Superpowers of UPI</div>
+        <ul>
+          <li><strong>Interoperability:</strong> A PhonePe user can send money to a Google Pay user, who in turn pays a merchant on Paytm or Supermoney without any friction.</li>
+          <li><strong>Zero Sensitive Data Sharing:</strong> Senders and receivers never exchange account numbers, debit card details, or IFSC codes. They only share a <strong>VPA (Virtual Payment Address)</strong>.</li>
+          <li><strong>Two-Factor Authentication (2FA) Built-In:</strong> Combines device fingerprinting (SIM binding) with a 4 or 6-digit cryptographic MPIN.</li>
+        </ul>
+      </div>
+
+      <h2>2. The Big Misconception: UPI vs. UPI Apps</h2>
+      <p>
+        Many people ask: <em>"Is Supermoney a new payment network? Is PhonePe a bank?"</em><br>
+        The answer is <strong>No</strong>. To understand the ecosystem, we must dissect the 4 key players:
+      </p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Entity</th>
+              <th>Role</th>
+              <th>Examples</th>
+              <th>What They Actually Do</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1. TPAP (Third-Party App Provider)</strong></td>
+              <td>Frontend Client / App Layer</td>
+              <td>Google Pay, PhonePe, Paytm, CRED, Supermoney, Navi</td>
+              <td>Provides UI/UX, contact search, QR scanner, bill payments, and invokes the secure UPI library. <em>They do not hold banking licenses and do not touch your money.</em></td>
+            </tr>
+            <tr>
+              <td><strong>2. PSP Bank (Payment Service Provider)</strong></td>
+              <td>Banking Gateway Sponsor</td>
+              <td>HDFC Bank, ICICI Bank, Axis Bank, State Bank of India, YES Bank</td>
+              <td>Acquiring banks that provide direct API integration channels to the NPCI UPI switch for TPAPs (e.g. <code>@okhdfcbank</code>, <code>@ybl</code>, <code>@superyes</code>).</td>
+            </tr>
+            <tr>
+              <td><strong>3. NPCI (Central Switch)</strong></td>
+              <td>Central Clearing Switch & Mapper</td>
+              <td>NPCI Central Infrastructure</td>
+              <td>Resolves VPAs to bank account numbers, routes encrypted payloads, performs central clearing, and orchestrates IMPS settlements.</td>
+            </tr>
+            <tr>
+              <td><strong>4. Issuer / Remitter / Beneficiary Banks</strong></td>
+              <td>Core Banking Systems (CBS)</td>
+              <td>SBI, PNB, Kotak, HDFC, Bank of Baroda</td>
+              <td>Holds the actual customer bank accounts and ledgers. Performs balance checks, validates MPIN via HSM, and executes the actual debit/credit.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Why Are New Apps like Supermoney & CRED Launching UPI?</h3>
+      <p>
+        Apps like <strong>Supermoney (by Flipkart)</strong> or <strong>CRED</strong> do not build a new banking network. They partner with sponsor banks (like YES Bank, Axis, or ICICI) under NPCI’s <strong>multi-bank model</strong> as certified TPAPs. They leverage UPI's open interoperability to offer rewards, specialized cashback, or credit features while routing transactions through the exact same NPCI switch!
+      </p>
+
+      <h2>3. Under the Hood: The 8-Step Transaction Lifecycle</h2>
+      <p>
+        Let's trace what happens when <strong>Alex</strong> pays <strong>₹500</strong> to <strong>Priya</strong> (VPA: <code>priya@okhdfcbank</code>) via an app:
+      </p>
+
+      <div class="article-image-wrapper">
+        <svg viewBox="0 0 840 500" width="100%" height="auto" style="background:#0b111e; border-radius:12px; border:1px solid rgba(255,255,255,0.1); padding:20px;">
+          <text x="420" y="28" text-anchor="middle" fill="#38bdf8" font-family="Outfit, sans-serif" font-size="16" font-weight="700">UPI Transaction Sequence Flow</text>
+
+          <!-- Lifelines -->
+          <line x1="80" y1="60" x2="80" y2="470" stroke="rgba(255,255,255,0.15)" stroke-dasharray="4"/>
+          <line x1="230" y1="60" x2="230" y2="470" stroke="rgba(255,255,255,0.15)" stroke-dasharray="4"/>
+          <line x1="420" y1="60" x2="420" y2="470" stroke="rgba(255,255,255,0.15)" stroke-dasharray="4"/>
+          <line x1="610" y1="60" x2="610" y2="470" stroke="rgba(255,255,255,0.15)" stroke-dasharray="4"/>
+          <line x1="760" y1="60" x2="760" y2="470" stroke="rgba(255,255,255,0.15)" stroke-dasharray="4"/>
+
+          <!-- Headers -->
+          <rect x="20" y="45" width="120" height="32" rx="6" fill="#1f2937"/>
+          <text x="80" y="66" text-anchor="middle" fill="#f3f4f6" font-size="12" font-weight="600">Payer App (CL)</text>
+
+          <rect x="170" y="45" width="120" height="32" rx="6" fill="#1f2937"/>
+          <text x="230" y="66" text-anchor="middle" fill="#818cf8" font-size="12" font-weight="600">Payer PSP</text>
+
+          <rect x="360" y="45" width="120" height="32" rx="6" fill="#1e1b4b" stroke="#38bdf8"/>
+          <text x="420" y="66" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="700">NPCI Switch</text>
+
+          <rect x="550" y="45" width="120" height="32" rx="6" fill="#1f2937"/>
+          <text x="610" y="66" text-anchor="middle" fill="#fbbf24" font-size="12" font-weight="600">Remitter Bank</text>
+
+          <rect x="700" y="45" width="120" height="32" rx="6" fill="#1f2937"/>
+          <text x="760" y="66" text-anchor="middle" fill="#34d399" font-size="12" font-weight="600">Beneficiary Bank</text>
+
+          <!-- Step 1: Initiates -->
+          <line x1="80" y1="105" x2="230" y2="105" stroke="#6366f1" stroke-width="1.8" marker-end="url(#arrow)"/>
+          <text x="155" y="98" text-anchor="middle" fill="#c7d2fe" font-size="11">1. Encrypted Pay Req (MPIN)</text>
+
+          <!-- Step 2: Forward to NPCI -->
+          <line x1="230" y1="145" x2="420" y2="145" stroke="#818cf8" stroke-width="1.8"/>
+          <text x="325" y="138" text-anchor="middle" fill="#c7d2fe" font-size="11">2. Route to NPCI Switch</text>
+
+          <!-- Step 3: NPCI Resolves VPA & Debit Req -->
+          <line x1="420" y1="190" x2="610" y2="190" stroke="#fbbf24" stroke-width="1.8"/>
+          <text x="515" y="183" text-anchor="middle" fill="#fde68a" font-size="11">3. Debit Auth Request</text>
+
+          <!-- Step 4: Remitter Bank Debits & Validates HSM -->
+          <path d="M610 215 C640 215, 640 235, 610 235" stroke="#fbbf24" stroke-width="1.5" fill="none"/>
+          <text x="660" y="228" fill="#fde68a" font-size="10">4. HSM Verifies MPIN & Debits</text>
+
+          <!-- Step 5: Remitter Bank Confirms to NPCI -->
+          <line x1="610" y1="265" x2="420" y2="265" stroke="#fbbf24" stroke-width="1.8"/>
+          <text x="515" y="258" text-anchor="middle" fill="#fde68a" font-size="11">5. Debit Success ACK</text>
+
+          <!-- Step 6: NPCI Credit Req to Beneficiary -->
+          <line x1="420" y1="310" x2="760" y2="310" stroke="#34d399" stroke-width="1.8"/>
+          <text x="590" y="303" text-anchor="middle" fill="#a7f3d0" font-size="11">6. Credit Instruction (IMPS)</text>
+
+          <!-- Step 7: Beneficiary Credits & Responds -->
+          <line x1="760" y1="355" x2="420" y2="355" stroke="#34d399" stroke-width="1.8"/>
+          <text x="590" y="348" text-anchor="middle" fill="#a7f3d0" font-size="11">7. Credit Success ACK</text>
+
+          <!-- Step 8: Success to Payer -->
+          <line x1="420" y1="400" x2="230" y2="400" stroke="#38bdf8" stroke-width="1.8"/>
+          <line x1="230" y1="425" x2="80" y2="425" stroke="#38bdf8" stroke-width="1.8"/>
+          <text x="325" y="393" text-anchor="middle" fill="#bae6fd" font-size="11">8. Final TXN Confirmed (RRN)</text>
+          <text x="155" y="420" text-anchor="middle" fill="#bae6fd" font-size="11">"Payment Successful 🎉"</text>
+        </svg>
+        <p class="image-caption">Figure 2: Chronological sequence of a real-time UPI transaction.</p>
+      </div>
+
+      <h3>Step-by-Step Breakdown:</h3>
+      <ol>
+        <li>
+          <strong>Scan & Input:</strong> Alex scans Priya's QR code or enters <code>priya@okhdfcbank</code> and types ₹500.
+        </li>
+        <li>
+          <strong>Secure MPIN Entry (CL Library):</strong> The app opens the <strong>NPCI Common Library (CL)</strong> popup. The TPAP app itself <em>never gets access to your keystrokes or MPIN</em>.
+        </li>
+        <li>
+          <strong>Asymmetric PKI Encryption:</strong> The CL encrypts the MPIN with the public key of Alex’s bank (Remitter Bank) inside an encrypted credential block (XML/JSON payload).
+        </li>
+        <li>
+          <strong>PSP Forwarding:</strong> The payload is signed and sent through Alex’s PSP Bank gateway to the <strong>NPCI Central Switch</strong>.
+        </li>
+        <li>
+          <strong>VPA Mapper Resolution:</strong> NPCI looks up <code>priya@okhdfcbank</code> in its central mapper database, finding Priya’s actual Account Number + IFSC code at HDFC Bank.
+        </li>
+        <li>
+          <strong>Debit Execution:</strong> NPCI forwards the debit request to Alex's Bank (e.g. SBI). SBI’s <strong>Hardware Security Module (HSM)</strong> decrypts and verifies the MPIN, checks for sufficient balance, and debits ₹500.
+        </li>
+        <li>
+          <strong>Credit Execution:</strong> Upon receiving the debit success signal, NPCI instructs Priya’s bank (HDFC) to credit ₹500 to her ledger.
+        </li>
+        <li>
+          <strong>RRN & Success Notification:</strong> NPCI generates a unique 12-digit <strong>RRN (Retrieval Reference Number)</strong> and pushes success webhooks to both banks and apps simultaneously.
+        </li>
+      </ol>
+
+      <h2>4. Security Architecture: Why You Can't "Hack" a UPI PIN in Transit</h2>
+      <p>
+        UPI's rock-solid security is powered by a multi-layered cryptographic pipeline:
+      </p>
+
+      <h3>1. Device Binding (Factor 1 - What You Have)</h3>
+      <p>
+        When you install any UPI app, it sends a silent, cryptographically signed SMS from your SIM card to the bank. The bank links your app instance with:
+      </p>
+      <ul>
+        <li>SIM IMSI & phone number</li>
+        <li>Device Hardware Fingerprint (IMEI / UUID)</li>
+        <li>Client public/private keypair</li>
+      </ul>
+      <p>
+        If an attacker clones your app or runs it on an emulator without that exact physical SIM, the bank immediately drops the connection.
+      </p>
+
+      <h3>2. Hardware Security Modules & PKI (Factor 2 - What You Know)</h3>
+      <p>
+        Your 4/6-digit MPIN is never transmitted in plain text, nor is it stored in your phone's memory.
+      </p>
+
+<pre><code>// Conceptual Structure of an Encrypted UPI Payload
+{
+  "txnId": "UPI202608149812401924",
+  "payerVpa": "alex@ybl",
+  "payeeVpa": "priya@okhdfcbank",
+  "amount": "500.00",
+  "currency": "INR",
+  "credBlock": {
+    "type": "MPIN",
+    "encryptedValue": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAz42k...",
+    "keyVersion": "SBI_PKI_V3"
+  },
+  "deviceFingerprint": "a9f81d4b2e67c801e0a293"
+}
+</code></pre>
+
+      <div class="callout">
+        <div class="callout-title">🔒 Why TPAP Apps Cannot Steal Your PIN</div>
+        <p>
+          The NPCI Common Library (CL) is a sandboxed SDK distributed by NPCI with strict Android/iOS screen-recording protections (<code>FLAG_SECURE</code>). When you type your MPIN, the app's JavaScript/Native layer cannot inspect or log the touch events.
+        </p>
+      </div>
+
+      <h2>5. Advanced Capabilities: UPI Lite, AutoPay & RuPay Credit</h2>
+
+      <h3>1. UPI Lite (On-Device Micro-Ledger)</h3>
+      <p>
+        High volumes of small payments (like buying a ₹10 chai) used to choke core banking servers. <strong>UPI Lite</strong> solves this by creating an on-device reserved balance (up to ₹2,000):
+      </p>
+      <ul>
+        <li>Transactions up to ₹500 execute instantly with <strong>zero MPIN prompt</strong>.</li>
+        <li>Offloads 40%+ of read/write transactions from bank Core Banking Systems (CBS).</li>
+      </ul>
+
+      <h3>2. UPI AutoPay (Recurring Mandates)</h3>
+      <p>
+        Allows programmatic, scheduled debits for SaaS subscriptions, SIP investments, and utility bills (e.g. Netflix, Spotify, Zerodha) with automated pre-debit push notifications 24 hours in advance.
+      </p>
+
+      <h3>3. RuPay Credit Card on UPI</h3>
+      <p>
+        Enables users to link their credit card accounts directly to their UPI VPA. When scanning merchant QR codes, users can choose between their savings account balance or their revolving credit line seamlessly.
+      </p>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h2>6. Summary & Key Takeaways</h2>
+      <ul>
+        <li><strong>UPI is a Protocol, not an app:</strong> PhonePe, GPay, Paytm, and Supermoney are front-end TPAPs that route payments through sponsor PSP banks to the central NPCI switch.</li>
+        <li><strong>Zero Middleman Wallet Storage:</strong> All settlements happen instantly directly between Remitter and Beneficiary bank accounts via IMPS rails.</li>
+        <li><strong>Military-Grade 2FA:</strong> Device SIM binding + Asymmetric Public-Key encrypted MPIN validated exclusively inside Bank HSMs.</li>
+      </ul>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h3>💬 Join the Conversation</h3>
+      <p>
+        Which UPI feature do you think was the biggest game changer: UPI Lite, QR interoperability, or Credit Cards on UPI? Share your perspective with the community on <a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank">LinkedIn</a>!
+      </p>
+
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Gyaan Ki Baat by Harshit Joshi. Built with static HTML/CSS on GitHub Pages.</p>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>
