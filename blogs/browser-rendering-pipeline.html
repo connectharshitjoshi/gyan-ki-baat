@@ -122,22 +122,47 @@
       <h2>3. Layout Thrashing: The Performance Antipattern</h2>
 
       <div class="article-image-wrapper">
-        <svg viewBox="0 0 800 240" width="100%" height="auto" style="background:#0b111e; border-radius:12px; border:1px solid rgba(255,255,255,0.1); padding:20px;">
-          <text x="400" y="30" text-anchor="middle" fill="#f43f5e" font-family="Outfit, sans-serif" font-size="17" font-weight="700">Layout Thrashing vs. Batched Execution</text>
+        <svg viewBox="0 0 880 340" width="100%" height="auto" style="background:#0b111e; border-radius:14px; border:1px solid rgba(255,255,255,0.1); padding:20px;">
+          <text x="440" y="28" text-anchor="middle" fill="#38bdf8" font-family="Outfit, sans-serif" font-size="16" font-weight="700">Real-World Performance: Chrome DevTools 60 FPS Frame Budget Profiler</text>
           
-          <!-- Bad Pattern -->
-          <rect x="50" y="65" width="330" height="130" rx="8" fill="#121a2d" stroke="#ef4444" stroke-width="1.5"/>
-          <text x="215" y="98" text-anchor="middle" fill="#f87171" font-family="Outfit, sans-serif" font-size="15" font-weight="700">❌ Layout Thrashing (Read/Write Loop)</text>
-          <text x="215" y="130" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="13">Interleaved JS Reads & DOM Writes</text>
-          <text x="215" y="155" text-anchor="middle" fill="#fca5a5" font-family="Inter, sans-serif" font-size="13">Forces N Synchronous Reflow Flushes (Jank!)</text>
+          <!-- DevTools Shell -->
+          <rect x="25" y="50" width="830" height="260" rx="10" fill="#181a1f" stroke="#30363d" stroke-width="1.5"/>
+          <!-- DevTools Top Bar -->
+          <rect x="25" y="50" width="830" height="35" rx="10" fill="#21252b"/>
+          <text x="50" y="72" fill="#9ca3af" font-family="Inter, sans-serif" font-size="12">Elements</text>
+          <text x="120" y="72" fill="#9ca3af" font-family="Inter, sans-serif" font-size="12">Console</text>
+          <rect x="180" y="50" width="120" height="35" fill="#181a1f"/>
+          <text x="240" y="72" text-anchor="middle" fill="#38bdf8" font-family="Inter, sans-serif" font-size="12" font-weight="700">Performance (60 FPS)</text>
+          <text x="325" y="72" fill="#9ca3af" font-family="Inter, sans-serif" font-size="12">Memory</text>
+          
+          <!-- Frame Budget Timeline -->
+          <rect x="40" y="95" width="795" height="40" rx="6" fill="#121417"/>
+          <text x="55" y="120" fill="#9ca3af" font-family="Fira Code, monospace" font-size="11">Frames (16.6ms Budget):</text>
+          <rect x="230" y="103" width="70" height="24" rx="4" fill="#064e3b" stroke="#10b981"/>
+          <text x="265" y="119" text-anchor="middle" fill="#34d399" font-family="Inter, sans-serif" font-size="10" font-weight="700">12.1ms (60 FPS ✓)</text>
 
-          <!-- Good Pattern -->
-          <rect x="420" y="65" width="330" height="130" rx="8" fill="#121a2d" stroke="#10b981" stroke-width="1.5"/>
-          <text x="585" y="98" text-anchor="middle" fill="#34d399" font-family="Outfit, sans-serif" font-size="15" font-weight="700">✅ Batched Execution (Fast 60 FPS)</text>
-          <text x="585" y="130" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="13">Batch Reads First → Batch Writes Last</text>
-          <text x="585" y="155" text-anchor="middle" fill="#6ee7b7" font-family="Inter, sans-serif" font-size="13">Single Layout Calculation per Frame</text>
+          <rect x="310" y="103" width="160" height="24" rx="4" fill="#7f1d1d" stroke="#ef4444"/>
+          <text x="390" y="119" text-anchor="middle" fill="#fca5a5" font-family="Inter, sans-serif" font-size="10" font-weight="700">⚠️ 48.6ms (Jank / Dropped Frame)</text>
+
+          <rect x="480" y="103" width="70" height="24" rx="4" fill="#064e3b" stroke="#10b981"/>
+          <text x="515" y="119" text-anchor="middle" fill="#34d399" font-family="Inter, sans-serif" font-size="10" font-weight="700">11.4ms (60 FPS ✓)</text>
+
+          <!-- Main Thread Flame Chart -->
+          <rect x="40" y="145" width="795" height="110" rx="6" fill="#161b22"/>
+          <text x="55" y="170" fill="#c9d1d9" font-family="Fira Code, monospace" font-size="11">Main Thread: [Recalculate Style] ➔ [Layout (Forced Reflow)] ➔ [Paint] ➔ [Composite]</text>
+          
+          <rect x="55" y="185" width="180" height="28" rx="4" fill="#854d0e"/>
+          <text x="145" y="203" text-anchor="middle" fill="#fef08a" font-size="10">JS: read .offsetHeight</text>
+
+          <rect x="245" y="185" width="260" height="28" rx="4" fill="#991b1b"/>
+          <text x="375" y="203" text-anchor="middle" fill="#fecaca" font-size="10" font-weight="700">Layout Thrashing (Forced Synchronous Layout)</text>
+
+          <rect x="515" y="185" width="140" height="28" rx="4" fill="#065f46"/>
+          <text x="585" y="203" text-anchor="middle" fill="#a7f3d0" font-size="10">GPU Composite (Offloaded)</text>
+
+          <text x="440" y="285" text-anchor="middle" fill="#38bdf8" font-family="Inter, sans-serif" font-size="11">💡 Optimization: Batch geometric reads first, then write style changes inside requestAnimationFrame()</text>
         </svg>
-        <p class="image-caption">Figure 3: Interleaved Read/Write layout thrashing vs batched frame execution.</p>
+        <p class="image-caption">Figure 3: Real Chrome DevTools timeline: identifying dropped frames and layout thrashing within the 16.6ms frame budget.</p>
       </div>
 
       <p>
