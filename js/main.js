@@ -22,19 +22,28 @@ function initCardClickHandlers() {
   });
 }
 
-// Search & Tag Filtering Logic
+// Search, Tag Filtering & "View All Articles" Logic
 function initSearchAndFilter() {
   const searchInput = document.getElementById('search-input');
   const tagPills = document.querySelectorAll('.tag-pill');
   const postCards = document.querySelectorAll('.post-card');
+  const loadMoreContainer = document.getElementById('load-more-container');
+  const loadMoreBtn = document.getElementById('load-more-btn');
+  const loadMoreText = document.getElementById('load-more-text');
 
   if (!postCards.length) return;
 
+  const INITIAL_LIMIT = 6;
+  const totalPosts = postCards.length;
+  let isExpanded = false;
   let activeTag = 'all';
   let searchQuery = '';
 
   function filterPosts() {
-    postCards.forEach(card => {
+    let matchingIndex = 0;
+    const isFiltered = activeTag !== 'all' || searchQuery !== '';
+
+    postCards.forEach((card) => {
       const title = card.querySelector('.post-title').textContent.toLowerCase();
       const excerpt = card.querySelector('.post-excerpt').textContent.toLowerCase();
       const category = card.dataset.category ? card.dataset.category.toLowerCase() : '';
@@ -44,13 +53,53 @@ function initSearchAndFilter() {
       const matchesTag = activeTag === 'all' || category === activeTag || tags.includes(activeTag);
 
       if (matchesSearch && matchesTag) {
-        card.style.display = 'flex';
+        // If user is searching or filtering by category, show all matches.
+        // If viewing default "All Posts", respect the 6-post initial limit unless expanded.
+        if (isFiltered || isExpanded || matchingIndex < INITIAL_LIMIT) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+        matchingIndex++;
       } else {
         card.style.display = 'none';
       }
     });
+
+    // Update Load More Button visibility and text
+    if (loadMoreContainer && loadMoreBtn) {
+      if (isFiltered || matchingIndex <= INITIAL_LIMIT) {
+        loadMoreContainer.style.display = 'none';
+      } else {
+        loadMoreContainer.style.display = 'flex';
+        if (isExpanded) {
+          loadMoreBtn.classList.add('expanded');
+          if (loadMoreText) loadMoreText.textContent = 'Show Less';
+        } else {
+          loadMoreBtn.classList.remove('expanded');
+          if (loadMoreText) loadMoreText.textContent = `View All Articles (${totalPosts})`;
+        }
+      }
+    }
   }
 
+  // Handle Load More / View All click
+  if (loadMoreBtn) {
+    loadMoreBtn.addEventListener('click', () => {
+      isExpanded = !isExpanded;
+      filterPosts();
+
+      // Smooth scroll if collapsing back to top of articles
+      if (!isExpanded) {
+        const articlesSection = document.getElementById('articles');
+        if (articlesSection) {
+          articlesSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    });
+  }
+
+  // Handle live search
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
       searchQuery = e.target.value.toLowerCase().trim();
@@ -58,6 +107,7 @@ function initSearchAndFilter() {
     });
   }
 
+  // Handle category tags
   tagPills.forEach(pill => {
     pill.addEventListener('click', () => {
       tagPills.forEach(p => p.classList.remove('active'));
@@ -66,6 +116,9 @@ function initSearchAndFilter() {
       filterPosts();
     });
   });
+
+  // Initial render: show first 6 posts
+  filterPosts();
 }
 
 // Copy Code Snippets

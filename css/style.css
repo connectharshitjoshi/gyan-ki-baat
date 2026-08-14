@@ -275,7 +275,49 @@ a:hover {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 2rem;
-  margin-bottom: 4rem;
+  margin-bottom: 2.5rem;
+}
+
+/* Load More / View All Button */
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1.5rem 0 4rem;
+}
+
+.load-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: var(--bg-card);
+  background-image: var(--gradient-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 0.85rem 2rem;
+  border-radius: 50px;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.load-more-btn:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.25);
+  color: #fff;
+}
+
+.load-more-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.load-more-btn.expanded svg {
+  transform: rotate(180deg);
 }
 
 .post-card {

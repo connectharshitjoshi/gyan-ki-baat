@@ -50,74 +50,11 @@
         When a celebrity with 600 million followers posts a photo on Instagram, or when 50 million fans open the app simultaneously during the World Cup, how does the platform deliver reels, likes, and feed updates in under 200 milliseconds without melting its servers?
       </p>
 
-<<<<<<< HEAD
       <!-- Architecture Image -->
       <div class="article-image-wrapper">
         <img src="../assets/images/social_scaling_hero.jpg" alt="High-Scale Social Media Architecture Diagram" class="article-img">
         <p class="image-caption">Figure 1: End-to-end distributed system architecture for handling massive concurrency across Edge CDNs, Load Balancers, Redis, and Sharded DBs.</p>
-=======
-      <!-- Architecture SVG Diagram -->
-      <div class="article-image-wrapper">
-        <svg viewBox="0 0 880 420" width="100%" height="auto" style="background:#0b111e; border-radius:14px; border:1px solid rgba(255,255,255,0.1); padding:24px 16px;">
-          <text x="440" y="30" text-anchor="middle" fill="#38bdf8" font-family="Outfit, sans-serif" font-size="18" font-weight="700">Instagram High-Concurrency Scaling Architecture</text>
-          
-          <!-- Layer 1: Clients & DNS -->
-          <rect x="30" y="60" width="160" height="90" rx="8" fill="#121824" stroke="#6366f1" stroke-width="1.8"/>
-          <text x="110" y="95" text-anchor="middle" fill="#818cf8" font-family="Outfit, sans-serif" font-size="14" font-weight="700">100M+ Users</text>
-          <text x="110" y="122" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="12">Mobile Apps & Web</text>
 
-          <text x="215" y="110" text-anchor="middle" fill="#fff" font-size="20">➔</text>
-
-          <!-- Layer 2: Anycast DNS & Global CDN -->
-          <rect x="240" y="60" width="180" height="90" rx="8" fill="#121824" stroke="#06b6d4" stroke-width="1.8"/>
-          <text x="330" y="95" text-anchor="middle" fill="#38bdf8" font-family="Outfit, sans-serif" font-size="14" font-weight="700">Global Edge CDNs</text>
-          <text x="330" y="122" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="12">Media / Video Caching</text>
-
-          <text x="445" y="110" text-anchor="middle" fill="#fff" font-size="20">➔</text>
-
-          <!-- Layer 3: Layer 7 Load Balancer -->
-          <rect x="470" y="60" width="180" height="90" rx="8" fill="#121824" stroke="#ec4899" stroke-width="1.8"/>
-          <text x="560" y="95" text-anchor="middle" fill="#f472b6" font-family="Outfit, sans-serif" font-size="14" font-weight="700">L7 Load Balancers</text>
-          <text x="560" y="122" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="12">NGINX / Envoy / ALB</text>
-
-          <text x="675" y="110" text-anchor="middle" fill="#fff" font-size="20">➔</text>
-
-          <!-- Layer 4: Stateless App Servers -->
-          <rect x="700" y="60" width="150" height="90" rx="8" fill="#121824" stroke="#10b981" stroke-width="1.8"/>
-          <text x="775" y="95" text-anchor="middle" fill="#34d399" font-family="Outfit, sans-serif" font-size="14" font-weight="700">App Clusters</text>
-          <text x="775" y="122" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="12">Auto-Scaling Nodes</text>
-
-          <!-- Down Arrow to Backend Services -->
-          <line x1="775" y1="150" x2="775" y2="210" stroke="#10b981" stroke-width="2" stroke-dasharray="4"/>
-
-          <!-- Layer 5: Backend Subsystems -->
-          <!-- Redis Cluster (Feed Cache) -->
-          <rect x="60" y="220" width="220" height="130" rx="10" fill="#1e1b4b" stroke="#8b5cf6" stroke-width="1.8"/>
-          <text x="170" y="255" text-anchor="middle" fill="#c084fc" font-family="Outfit, sans-serif" font-size="14" font-weight="700">Redis In-Memory Feeds</text>
-          <text x="170" y="285" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="12">Pre-computed user timelines</text>
-          <text x="170" y="310" text-anchor="middle" fill="#38bdf8" font-family="Fira Code, monospace" font-size="11">Sub-5ms Feed Reads</text>
-
-          <!-- Async Message Queues (Kafka) -->
-          <rect x="330" y="220" width="220" height="130" rx="10" fill="#1e1b4b" stroke="#f59e0b" stroke-width="1.8"/>
-          <text x="440" y="255" text-anchor="middle" fill="#fbbf24" font-family="Outfit, sans-serif" font-size="14" font-weight="700">Apache Kafka Queues</text>
-          <text x="440" y="285" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="12">Async Fan-out workers</text>
-          <text x="440" y="310" text-anchor="middle" fill="#f59e0b" font-family="Fira Code, monospace" font-size="11">Millions msg / sec</text>
-
-          <!-- Sharded PostgreSQL / Cassandra DB -->
-          <rect x="600" y="220" width="250" height="130" rx="10" fill="#1e1b4b" stroke="#10b981" stroke-width="1.8"/>
-          <text x="725" y="255" text-anchor="middle" fill="#34d399" font-family="Outfit, sans-serif" font-size="14" font-weight="700">Sharded DB Cluster</text>
-          <text x="725" y="285" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="12">PostgreSQL + Cassandra</text>
-          <text x="725" y="310" text-anchor="middle" fill="#10b981" font-family="Fira Code, monospace" font-size="11">Partitioned by User ID</text>
-
-          <!-- Connecting Arrows from App cluster -->
-          <line x1="700" y1="230" x2="550" y2="250" stroke="#fbbf24" stroke-width="1.5"/>
-          <line x1="700" y1="285" x2="600" y2="285" stroke="#10b981" stroke-width="1.5"/>
-          <line x1="330" y1="285" x2="280" y2="285" stroke="#8b5cf6" stroke-width="1.5"/>
-
-          <text x="440" y="390" text-anchor="middle" fill="#6b7280" font-family="Inter, sans-serif" font-size="12">Anycast DNS ➔ Edge CDN ➔ L7 Load Balancer ➔ Stateless App Fleet ➔ Redis + Sharded DB</text>
-        </svg>
-        <p class="image-caption">Figure 1: End-to-end distributed system architecture for handling massive concurrency.</p>
->>>>>>> 39112ecb1c5c3d4b2c43a73b557325e5a6f88fe0
       </div>
 
       <h2>1. The Core Challenge: The Math of Concurrency</h2>
@@ -133,15 +70,13 @@
       </p>
 
       <h2>2. The Secret Behind Instant Feeds: Fan-Out on Write vs. Fan-Out on Read</h2>
-<<<<<<< HEAD
 
       <div class="article-image-wrapper">
         <img src="../assets/images/fanout_write_read.jpg" alt="Fan-out on Write vs Fan-out on Read Architecture Diagram" class="article-img">
         <p class="image-caption">Figure 2: Push-based Feed (Fan-out on Write) vs Pull-based Feed (Fan-out on Read for 600M+ celebrity accounts).</p>
       </div>
 
-=======
->>>>>>> 39112ecb1c5c3d4b2c43a73b557325e5a6f88fe0
+
       <p>
         When you open Instagram, the app does NOT run a massive SQL query joining tables across all your friends in real-time. That would take 10 seconds! Instead, feeds are pre-computed using two distinct patterns:
       </p>
@@ -183,15 +118,13 @@
       </ol>
 
       <h2>3. Database Sharding: Splitting Data Across Thousands of Servers</h2>
-<<<<<<< HEAD
 
       <div class="article-image-wrapper">
         <img src="../assets/images/database_sharding.jpg" alt="Database Sharding Architecture Diagram" class="article-img">
         <p class="image-caption">Figure 3: Consistent Hashing and User-ID based Partitioning across Database Master-Replica Shards.</p>
       </div>
 
-=======
->>>>>>> 39112ecb1c5c3d4b2c43a73b557325e5a6f88fe0
+
       <p>
         You cannot store 100 billion photos, likes, and comments on a single database disk. Instead, Instagram shards data across thousands of PostgreSQL / Cassandra database nodes using a <strong>Consistent Shard Key</strong> (such as <code>user_id</code>):
       </p>

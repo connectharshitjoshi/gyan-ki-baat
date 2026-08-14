@@ -50,72 +50,11 @@
         In India, over <strong>15 billion real-time transactions</strong> happen every month with a simple QR scan or phone tap taking less than 2 seconds. But behind that smooth checkout screen lies one of the most sophisticated distributed financial architectures ever built. Where does your money actually go, how is your PIN encrypted, and what is the real difference between the UPI protocol and apps like Google Pay, PhonePe, Paytm, and Supermoney?
       </p>
 
-<<<<<<< HEAD
       <!-- Architecture Image -->
       <div class="article-image-wrapper">
         <img src="../assets/images/upi_ecosystem_hero.jpg" alt="How UPI Works 4-Party Ecosystem Architecture" class="article-img">
         <p class="image-caption">Figure 1: High-level architectural topology of the UPI 4-party ecosystem (TPAPs, PSP Sponsor Banks, NPCI Switch, and Core Banking Systems).</p>
-=======
-      <!-- Architecture SVG Diagram -->
-      <div class="article-image-wrapper">
-        <svg viewBox="0 0 880 440" width="100%" height="auto" style="background:#0b111e; border-radius:14px; border:1px solid rgba(255,255,255,0.1); padding:24px 16px;">
-          <!-- Title -->
-          <text x="440" y="30" text-anchor="middle" fill="#38bdf8" font-family="Outfit, sans-serif" font-size="18" font-weight="700">UPI 4-Party Interoperable Architecture</text>
-          
-          <!-- Payer App (TPAP) -->
-          <rect x="30" y="70" width="220" height="120" rx="10" fill="#121824" stroke="#6366f1" stroke-width="2"/>
-          <text x="140" y="102" text-anchor="middle" fill="#818cf8" font-family="Outfit, sans-serif" font-size="15" font-weight="700">1. Payer App (TPAP)</text>
-          <text x="140" y="130" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="12">PhonePe / GPay / Paytm / Supermoney</text>
-          <text x="140" y="152" text-anchor="middle" fill="#06b6d4" font-family="Fira Code, monospace" font-size="11">UPI Common Library (CL)</text>
 
-          <!-- Remitter PSP Bank -->
-          <rect x="30" y="250" width="220" height="120" rx="10" fill="#121824" stroke="#8b5cf6" stroke-width="2"/>
-          <text x="140" y="282" text-anchor="middle" fill="#c084fc" font-family="Outfit, sans-serif" font-size="15" font-weight="700">2. Remitter PSP Bank</text>
-          <text x="140" y="310" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="12">Sponsor Bank Gateway</text>
-          <text x="140" y="332" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="12">(HDFC, ICICI, Axis, YES)</text>
-
-          <!-- NPCI Central Switch (Center) -->
-          <rect x="330" y="140" width="220" height="160" rx="12" fill="#1e1b4b" stroke="#38bdf8" stroke-width="2.5"/>
-          <text x="440" y="175" text-anchor="middle" fill="#38bdf8" font-family="Outfit, sans-serif" font-size="16" font-weight="700">NPCI Central Switch</text>
-          <text x="440" y="202" text-anchor="middle" fill="#f3f4f6" font-family="Inter, sans-serif" font-size="12" font-weight="600">UPI Central Switch & Mapper</text>
-          <text x="440" y="225" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="11">VPA Resolution Engine</text>
-          <text x="440" y="248" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="11">Cryptographic Key Exchange</text>
-          <text x="440" y="270" text-anchor="middle" fill="#34d399" font-family="Fira Code, monospace" font-size="11">IMPS Clearing Rails</text>
-
-          <!-- Remitter Bank (Sender CBS) -->
-          <rect x="630" y="70" width="220" height="120" rx="10" fill="#121824" stroke="#f59e0b" stroke-width="2"/>
-          <text x="740" y="102" text-anchor="middle" fill="#fbbf24" font-family="Outfit, sans-serif" font-size="15" font-weight="700">3. Remitter Bank (CBS)</text>
-          <text x="740" y="130" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="12">Sender's Core Banking System</text>
-          <text x="740" y="152" text-anchor="middle" fill="#f87171" font-family="Inter, sans-serif" font-size="12">HSM / Decrypts MPIN / Debits</text>
-
-          <!-- Beneficiary Bank (Receiver CBS) -->
-          <rect x="630" y="250" width="220" height="120" rx="10" fill="#121824" stroke="#10b981" stroke-width="2"/>
-          <text x="740" y="282" text-anchor="middle" fill="#34d399" font-family="Outfit, sans-serif" font-size="15" font-weight="700">4. Beneficiary Bank (CBS)</text>
-          <text x="740" y="310" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="12">Receiver's Core Banking System</text>
-          <text x="740" y="332" text-anchor="middle" fill="#34d399" font-family="Inter, sans-serif" font-size="12">Credits Recipient Account</text>
-
-          <!-- Connecting Arrows -->
-          <!-- TPAP to PSP -->
-          <line x1="140" y1="190" x2="140" y2="245" stroke="#6366f1" stroke-width="2" stroke-dasharray="4"/>
-          <text x="155" y="222" fill="#818cf8" font-size="11">SDK</text>
-
-          <!-- PSP to NPCI -->
-          <path d="M250 310 L330 250" stroke="#8b5cf6" stroke-width="2"/>
-          
-          <!-- TPAP / PSP to NPCI (Direct or via PSP) -->
-          <line x1="250" y1="130" x2="330" y2="180" stroke="#6366f1" stroke-width="2"/>
-
-          <!-- NPCI to Remitter Bank -->
-          <line x1="550" y1="180" x2="630" y2="130" stroke="#fbbf24" stroke-width="2"/>
-          
-          <!-- NPCI to Beneficiary Bank -->
-          <line x1="550" y1="250" x2="630" y2="310" stroke="#34d399" stroke-width="2"/>
-
-          <!-- Bottom Summary -->
-          <text x="440" y="420" text-anchor="middle" fill="#6b7280" font-family="Inter, sans-serif" font-size="12">Zero Stored Wallet Funds • Bank-to-Bank Instant Real-Time Settlement • Single VPA Identity</text>
-        </svg>
-        <p class="image-caption">Figure 1: High-level architectural topology of the UPI 4-party ecosystem.</p>
->>>>>>> 39112ecb1c5c3d4b2c43a73b557325e5a6f88fe0
       </div>
 
       <h2>1. What Exactly is UPI?</h2>
@@ -283,15 +222,13 @@
       </ol>
 
       <h2>4. Security Architecture: Why You Can't "Hack" a UPI PIN in Transit</h2>
-<<<<<<< HEAD
 
       <div class="article-image-wrapper">
         <img src="../assets/images/upi_security_mpin.jpg" alt="UPI 2-Factor Authentication and Security Architecture" class="article-img">
         <p class="image-caption">Figure 3: Device Binding (SIM IMSI), Sandboxed Common Library (CL), PKI Encryption, and Bank HSM Security.</p>
       </div>
 
-=======
->>>>>>> 39112ecb1c5c3d4b2c43a73b557325e5a6f88fe0
+
       <p>
         UPI's rock-solid security is powered by a multi-layered cryptographic pipeline:
       </p>
