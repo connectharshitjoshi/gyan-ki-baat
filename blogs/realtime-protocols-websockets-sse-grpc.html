@@ -50,10 +50,67 @@
         In standard HTTP requests, the browser asks for data and the server replies. But how does a server send instant live data—like a new WhatsApp message, a ChatGPT token word-by-word, or a live stock price ticker—without the user constantly refreshing the page?
       </p>
 
+<<<<<<< HEAD
       <!-- Architecture Image -->
       <div class="article-image-wrapper">
         <img src="../assets/images/realtime_proto_hero.jpg" alt="Real-Time Protocols Matrix Technical Comparison" class="article-img">
         <p class="image-caption">Figure 1: Comprehensive comparison of modern real-time protocols (Long Polling, Server-Sent Events, WebSockets, and gRPC).</p>
+=======
+      <!-- Protocol Comparison Matrix SVG -->
+      <div class="article-image-wrapper">
+        <svg viewBox="0 0 880 380" width="100%" height="auto" style="background:#0b111e; border-radius:14px; border:1px solid rgba(255,255,255,0.1); padding:24px 16px;">
+          <text x="440" y="30" text-anchor="middle" fill="#38bdf8" font-family="Outfit, sans-serif" font-size="18" font-weight="700">Real-Time Communication Protocols at a Glance</text>
+          
+          <!-- Card 1: Long Polling -->
+          <rect x="20" y="65" width="195" height="280" rx="10" fill="#121824" stroke="#6b7280" stroke-width="1.5"/>
+          <text x="117" y="95" text-anchor="middle" fill="#9ca3af" font-family="Outfit, sans-serif" font-size="15" font-weight="700">1. Long Polling</text>
+          <text x="117" y="120" text-anchor="middle" fill="#fbbf24" font-size="11">"Are we there yet?"</text>
+          <text x="117" y="155" text-anchor="middle" fill="#e5e7eb" font-size="12">🔄 Direction: Request/Resp</text>
+          <text x="117" y="185" text-anchor="middle" fill="#e5e7eb" font-size="12">⚡ Overhead: High (HTTP)</text>
+          <text x="117" y="215" text-anchor="middle" fill="#e5e7eb" font-size="12">⏳ Latency: 500ms - 2s</text>
+          <rect x="35" y="250" width="165" height="75" rx="6" fill="#1f2937"/>
+          <text x="117" y="275" text-anchor="middle" fill="#9ca3af" font-size="11">Best For:</text>
+          <text x="117" y="295" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Legacy Systems /</text>
+          <text x="117" y="315" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Simple Notifications</text>
+
+          <!-- Card 2: Server-Sent Events (SSE) -->
+          <rect x="235" y="65" width="195" height="280" rx="10" fill="#121824" stroke="#06b6d4" stroke-width="1.8"/>
+          <text x="332" y="95" text-anchor="middle" fill="#38bdf8" font-family="Outfit, sans-serif" font-size="15" font-weight="700">2. SSE (Server-Sent)</text>
+          <text x="332" y="120" text-anchor="middle" fill="#06b6d4" font-size="11">"Live Radio Broadcast"</text>
+          <text x="332" y="155" text-anchor="middle" fill="#e5e7eb" font-size="12">➔ Direction: Server ➔ Client</text>
+          <text x="332" y="185" text-anchor="middle" fill="#e5e7eb" font-size="12">⚡ Overhead: Ultra Low</text>
+          <text x="332" y="215" text-anchor="middle" fill="#e5e7eb" font-size="12">⏳ Latency: &lt; 50ms</text>
+          <rect x="250" y="250" width="165" height="75" rx="6" fill="#1e293b"/>
+          <text x="332" y="275" text-anchor="middle" fill="#38bdf8" font-size="11">Best For:</text>
+          <text x="332" y="295" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">ChatGPT Token Stream</text>
+          <text x="332" y="315" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Live Stock Tickers</text>
+
+          <!-- Card 3: WebSockets -->
+          <rect x="450" y="65" width="195" height="280" rx="10" fill="#121824" stroke="#10b981" stroke-width="1.8"/>
+          <text x="547" y="95" text-anchor="middle" fill="#34d399" font-family="Outfit, sans-serif" font-size="15" font-weight="700">3. WebSockets</text>
+          <text x="547" y="120" text-anchor="middle" fill="#10b981" font-size="11">"Two-Way Phone Call"</text>
+          <text x="547" y="155" text-anchor="middle" fill="#e5e7eb" font-size="12">⇄ Direction: Bidirectional</text>
+          <text x="547" y="185" text-anchor="middle" fill="#e5e7eb" font-size="12">⚡ Overhead: Low (Framed)</text>
+          <text x="547" y="215" text-anchor="middle" fill="#e5e7eb" font-size="12">⏳ Latency: &lt; 20ms</text>
+          <rect x="465" y="250" width="165" height="75" rx="6" fill="#1e293b"/>
+          <text x="547" y="275" text-anchor="middle" fill="#34d399" font-size="11">Best For:</text>
+          <text x="547" y="295" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">WhatsApp / Discord</text>
+          <text x="547" y="315" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Multiplayer Gaming</text>
+
+          <!-- Card 4: gRPC -->
+          <rect x="665" y="65" width="195" height="280" rx="10" fill="#121824" stroke="#8b5cf6" stroke-width="1.8"/>
+          <text x="762" y="95" text-anchor="middle" fill="#c084fc" font-family="Outfit, sans-serif" font-size="15" font-weight="700">4. gRPC (HTTP/2)</text>
+          <text x="762" y="120" text-anchor="middle" fill="#8b5cf6" font-size="11">"Internal Super-Speedway"</text>
+          <text x="762" y="155" text-anchor="middle" fill="#e5e7eb" font-size="12">⚡ Format: Protobuf Binary</text>
+          <text x="762" y="185" text-anchor="middle" fill="#e5e7eb" font-size="12">⚡ Overhead: Minimal</text>
+          <text x="762" y="215" text-anchor="middle" fill="#e5e7eb" font-size="12">⏳ Latency: &lt; 5ms</text>
+          <rect x="680" y="250" width="165" height="75" rx="6" fill="#1e293b"/>
+          <text x="762" y="275" text-anchor="middle" fill="#c084fc" font-size="11">Best For:</text>
+          <text x="762" y="295" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Uber Microservices</text>
+          <text x="762" y="315" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">High-QPS Backend RPC</text>
+        </svg>
+        <p class="image-caption">Figure 1: Comprehensive comparison of modern real-time protocols.</p>
+>>>>>>> 39112ecb1c5c3d4b2c43a73b557325e5a6f88fe0
       </div>
 
       <h2>1. The Four Contenders in Simple Terms</h2>
@@ -86,12 +143,15 @@ eventSource.onmessage = (event) => {
 </code></pre>
 
       <h3>3. WebSockets: The 2-Way Phone Call 📞</h3>
+<<<<<<< HEAD
 
       <div class="article-image-wrapper">
         <img src="../assets/images/ws_vs_sse_flow.jpg" alt="Server-Sent Events vs WebSockets Flow Comparison" class="article-img">
         <p class="image-caption">Figure 2: 1-way streaming SSE (AI LLM Token Generation) vs 2-way persistent WebSockets (Live Chat).</p>
       </div>
 
+=======
+>>>>>>> 39112ecb1c5c3d4b2c43a73b557325e5a6f88fe0
       <p>
         WebSockets start with an HTTP handshake (<code>HTTP/1.1 101 Switching Protocols</code>) and immediately upgrade the connection into a persistent, full-duplex TCP socket.
       </p>
