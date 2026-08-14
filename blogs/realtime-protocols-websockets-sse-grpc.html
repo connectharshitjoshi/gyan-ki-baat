@@ -114,6 +114,56 @@ socket.onmessage = (event) => {
 };
 </code></pre>
 
+      <div class="article-image-wrapper">
+        <svg viewBox="0 0 880 340" width="100%" height="auto" style="background:#0b111e; border-radius:14px; border:1px solid rgba(255,255,255,0.1); padding:20px;">
+          <text x="440" y="28" text-anchor="middle" fill="#38bdf8" font-family="Outfit, sans-serif" font-size="16" font-weight="700">Real-World App UI: ChatGPT (SSE) vs. WhatsApp (WebSockets)</text>
+          
+          <!-- LEFT: ChatGPT SSE UI -->
+          <rect x="25" y="55" width="400" height="255" rx="10" fill="#171923" stroke="#10a37f" stroke-width="1.8"/>
+          <!-- App Header -->
+          <rect x="25" y="55" width="400" height="40" rx="10" fill="#202123"/>
+          <circle cx="45" cy="75" r="5" fill="#ef4444"/>
+          <circle cx="60" cy="75" r="5" fill="#f59e0b"/>
+          <circle cx="75" cy="75" r="5" fill="#10b981"/>
+          <text x="225" y="80" text-anchor="middle" fill="#10a37f" font-family="Inter, sans-serif" font-size="13" font-weight="700">🤖 ChatGPT (Server-Sent Events)</text>
+          
+          <!-- User Prompt Bubble -->
+          <rect x="45" y="110" width="360" height="45" rx="8" fill="#2d3748"/>
+          <text x="60" y="137" fill="#e2e8f0" font-family="Inter, sans-serif" font-size="12">User: "Explain WebSockets vs SSE simply."</text>
+          
+          <!-- AI Response Streaming -->
+          <rect x="45" y="168" width="360" height="90" rx="8" fill="#1a202c" stroke="rgba(16,163,127,0.4)"/>
+          <text x="60" y="195" fill="#38bdf8" font-family="Fira Code, monospace" font-size="11">SSE Stream: data: {"token": "WebSockets"}</text>
+          <text x="60" y="218" fill="#10b981" font-family="Inter, sans-serif" font-size="12" font-weight="600">ChatGPT: "WebSockets are a 2-way phone call,</text>
+          <text x="60" y="240" fill="#10b981" font-family="Inter, sans-serif" font-size="12" font-weight="600">while SSE is a 1-way live radio..." ▊</text>
+          <text x="225" y="295" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="11">⚡ 1 HTTP Connection • Token-by-Token Streaming</text>
+
+          <!-- RIGHT: WhatsApp WebSocket UI -->
+          <rect x="455" y="55" width="400" height="255" rx="10" fill="#0b141a" stroke="#25d366" stroke-width="1.8"/>
+          <!-- App Header -->
+          <rect x="455" y="55" width="400" height="40" rx="10" fill="#202c33"/>
+          <circle cx="475" cy="75" r="5" fill="#ef4444"/>
+          <circle cx="490" cy="75" r="5" fill="#f59e0b"/>
+          <circle cx="505" cy="75" r="5" fill="#10b981"/>
+          <text x="655" y="80" text-anchor="middle" fill="#25d366" font-family="Inter, sans-serif" font-size="13" font-weight="700">💬 WhatsApp Web (WebSockets)</text>
+          
+          <!-- Incoming Bubble -->
+          <rect x="475" y="110" width="280" height="42" rx="8" fill="#202c33"/>
+          <text x="490" y="136" fill="#e9edef" font-family="Inter, sans-serif" font-size="12">Alex: "Hey! Did you deploy the API?"</text>
+
+          <!-- Outgoing Bubble -->
+          <rect x="560" y="165" width="275" height="42" rx="8" fill="#005c4b"/>
+          <text x="575" y="191" fill="#e9edef" font-family="Inter, sans-serif" font-size="12">Harshit: "Yes, live on GitHub! 🚀 ✓✓"</text>
+
+          <!-- Live Typing -->
+          <rect x="475" y="220" width="220" height="35" rx="8" fill="#202c33" stroke="rgba(37,211,102,0.4)"/>
+          <text x="490" y="242" fill="#25d366" font-family="Inter, sans-serif" font-size="11">Alex is typing<tspan fill="#25d366"> ...</tspan></text>
+          
+          <text x="655" y="295" text-anchor="middle" fill="#9ca3af" font-family="Inter, sans-serif" font-size="11">⚡ Full-Duplex TCP Socket • Sub-20ms Bi-Directional</text>
+        </svg>
+        <p class="image-caption">Figure 3: Real-world UI behavior: ChatGPT token streaming via SSE vs. WhatsApp instant two-way chat via WebSockets.</p>
+      </div>
+
       <h3>4. gRPC: The Internal Microservice Rocket 🚀</h3>
       <p>
         While WebSockets and SSE are used between browsers and servers, <strong>gRPC (Google Remote Procedure Call)</strong> is built on top of <strong>HTTP/2</strong> for ultra-fast communication <em>between internal backend microservices</em>.

@@ -99,6 +99,47 @@
         <li><strong>Challenge Flow:</strong> If a sudden ₹50,000 transaction happens from a new foreign IP address, the bank enforces a 2FA OTP challenge.</li>
       </ul>
 
+      <div class="article-image-wrapper">
+        <svg viewBox="0 0 880 340" width="100%" height="auto" style="background:#0b111e; border-radius:14px; border:1px solid rgba(255,255,255,0.1); padding:20px;">
+          <text x="440" y="28" text-anchor="middle" fill="#38bdf8" font-family="Outfit, sans-serif" font-size="16" font-weight="700">Real-World Checkout: Zomato App & 3D Secure 2.0 OTP Authentication</text>
+          
+          <!-- LEFT PHONE: Zomato Cart -->
+          <rect x="120" y="55" width="280" height="255" rx="14" fill="#121824" stroke="#e23744" stroke-width="2"/>
+          <rect x="120" y="55" width="280" height="35" rx="14" fill="#e23744"/>
+          <text x="260" y="78" text-anchor="middle" fill="#fff" font-family="Outfit, sans-serif" font-size="14" font-weight="700">zomato • Cart Checkout</text>
+          
+          <text x="140" y="115" fill="#f3f4f6" font-family="Inter, sans-serif" font-size="12" font-weight="600">Order Summary: Butter Chicken + Naan</text>
+          <text x="140" y="135" fill="#9ca3af" font-family="Inter, sans-serif" font-size="11">Total to Pay: <tspan fill="#34d399" font-weight="700">₹500.00</tspan></text>
+
+          <rect x="135" y="150" width="250" height="40" rx="6" fill="#1f2937" stroke="rgba(255,255,255,0.1)"/>
+          <text x="150" y="175" fill="#fff" font-family="Fira Code, monospace" font-size="11">💳 HDFC Visa •••• 1234</text>
+
+          <rect x="135" y="200" width="250" height="38" rx="8" fill="#e23744"/>
+          <text x="260" y="224" text-anchor="middle" fill="#fff" font-family="Outfit, sans-serif" font-size="13" font-weight="700">Pay ₹500 ➔</text>
+          
+          <text x="260" y="270" text-anchor="middle" fill="#9ca3af" font-size="10">Device Token: tok_9f81a7b6 (Tokenized)</text>
+
+          <text x="440" y="185" text-anchor="middle" fill="#38bdf8" font-size="26">➔</text>
+
+          <!-- RIGHT PHONE: Bank 3DS2 OTP Challenge -->
+          <rect x="480" y="55" width="280" height="255" rx="14" fill="#0f172a" stroke="#3b82f6" stroke-width="2"/>
+          <rect x="480" y="55" width="280" height="35" rx="14" fill="#1e3a8a"/>
+          <text x="620" y="78" text-anchor="middle" fill="#fff" font-family="Outfit, sans-serif" font-size="13" font-weight="700">🔒 HDFC Bank • 3D Secure 2.0</text>
+          
+          <text x="500" y="115" fill="#9ca3af" font-family="Inter, sans-serif" font-size="11">Merchant: <tspan fill="#fff">ZOMATO INDIA PVT LTD</tspan></text>
+          <text x="500" y="135" fill="#9ca3af" font-family="Inter, sans-serif" font-size="11">Amount: <tspan fill="#fff" font-weight="700">₹500.00</tspan></text>
+
+          <rect x="495" y="150" width="250" height="38" rx="6" fill="#1e293b" stroke="#3b82f6"/>
+          <text x="620" y="174" text-anchor="middle" fill="#38bdf8" font-family="Fira Code, monospace" font-size="13" font-weight="700">OTP: • • • • • •</text>
+
+          <rect x="495" y="198" width="250" height="38" rx="8" fill="#10b981"/>
+          <text x="620" y="222" text-anchor="middle" fill="#fff" font-family="Outfit, sans-serif" font-size="13" font-weight="700">Submit OTP (01:45)</text>
+
+          <text x="620" y="270" text-anchor="middle" fill="#34d399" font-size="10">Verified by Visa Identity Check ✓</text>
+        </svg>
+        <p class="image-caption">Figure 3: Real checkout sequence: Zomato tokenized cart redirecting to Bank 3DS2 OTP access control server.</p>
+      </div>
+
       <h2>4. The Danger of Double Debits: Webhook Idempotency</h2>
       <p>
         What happens if your WiFi disconnects right when you enter your OTP? Your bank debits ₹500, but Zomato's app shows "Loading..." and fails. Why doesn't the system charge you again when you retry?
