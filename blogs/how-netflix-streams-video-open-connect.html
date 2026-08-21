@@ -53,16 +53,22 @@
         Yet, you almost never see a buffering wheel. How does Netflix push <strong>300+ Terabits per second</strong> across the globe without paying billions in cloud egress fees or choking the public internet? The answer is a masterclass in distributed engineering: <strong>Open Connect</strong> and <strong>Dynamic Adaptive Streaming over HTTP (DASH)</strong>.
       </p>
 
-      <!-- Hero Diagram -->
+      <!-- Real Hero Image -->
       <div class="article-image-wrapper">
-        <img src="../assets/images/netflix_open_connect_hero.svg" alt="Netflix Open Connect CDN and AWS Control Plane vs Data Plane Architecture" class="article-img">
-        <p class="image-caption">Figure 1: High-level separation between the AWS Control Plane (APIs, Auth, Transcoding) and the Open Connect Data Plane (Physical storage appliances inside local ISPs).</p>
+        <img src="../assets/images/netflix_open_connect_hero.jpg" alt="Netflix Open Connect High-Density Server Appliance Rack" class="article-img">
+        <p class="image-caption">Figure 1: Custom Netflix Open Connect Appliance (OCA) server rack deployed directly inside local ISP data centers around the world.</p>
       </div>
 
       <h2>1. The Big Lie: "Netflix Runs 100% on AWS"</h2>
       <p>
         For years, tech media repeated the headline that <em>"Netflix migrated entirely to Amazon Web Services."</em> While technically true for software logic, it misses the most critical architectural nuance in computer engineering: <strong>The separation of Control Plane and Data Plane.</strong>
       </p>
+
+      <!-- Architecture Flow Diagram -->
+      <div class="article-image-wrapper">
+        <img src="../assets/images/netflix_open_connect_hero.svg" alt="Netflix Open Connect CDN and AWS Control Plane vs Data Plane Architecture" class="article-img">
+        <p class="image-caption">Figure 2: Architecture of the AWS Control Plane (APIs, Auth, Transcoding) vs. Open Connect Data Plane (Direct 4K video stream from local ISP).</p>
+      </div>
       
       <div class="table-container">
         <table>
@@ -136,7 +142,7 @@
       <!-- Adaptive Bitrate Diagram -->
       <div class="article-image-wrapper">
         <img src="../assets/images/netflix_streaming_abr.svg" alt="Dynamic Adaptive Streaming over HTTP DASH and HLS Bitrate Ladder" class="article-img">
-        <p class="image-caption">Figure 2: Encoding Ladder and dynamic chunk switching during transient network fluctuations.</p>
+        <p class="image-caption">Figure 3: Encoding Ladder and dynamic chunk switching during transient network fluctuations.</p>
       </div>
 
       <p>
