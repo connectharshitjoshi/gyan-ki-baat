@@ -1,14 +1,34 @@
-☕ Gyaan Ki Baat: How Instagram Scales to 100M+ Users 🚀📱
-When you post a photo: Pushed to 300 friends in milliseconds.
-When Cristiano Ronaldo posts to 600M followers: Pushing 600M database writes would melt the servers! 🔥
+☕ Gyaan Ki Baat: How Instagram Scales to 100M+ Users Without Melting Its Database 🚀📱
 
-How do social media feeds handle this? The Hybrid Model:
-🔹 Regular Users (Push): Post is instantly written into followers' pre-computed Redis feeds ($O(1)$ fast reads).
-🔹 Celebrities (Pull): Posts aren't pushed, they're dynamically merged only when you open the app!
-🗄️ Database Sharding: User data is hashed across DB nodes via `MurmurHash(userId) % TotalShards` (zero cross-node joins).
+Ever wondered what actually happens behind the screen when you post a photo on Instagram?
 
-💡 TL;DR: At scale, you don't query a DB for feeds. You serve pre-computed timelines out of Redis RAM in <5ms! 🧠
-💬 What’s your biggest scaling headache: DB locks or memory leaks? 👇
-📌 Full Guide: https://connectharshitjoshi.github.io/gyan-ki-baat/blogs/how-social-media-scales.html
+If you have 300 followers, your photo gets pushed to their feeds in a fraction of a second.
+Simple, right?
 
-#GyaanKiBaat #SystemDesign #Scalability #Backend #Instagram #Redis #Database #DistributedSystems #SoftwareEngineering #Architecture
+Now imagine Cristiano Ronaldo posting to 600+ MILLION followers. 🤯
+If Instagram tried to write that single post into 600,000,000 user feeds simultaneously, the entire database cluster would crash in seconds. (The famous "Celebrity Fan-out Problem").
+
+So how does Instagram keep your feed loading in under 50 milliseconds?
+
+Here is the secret engineering architecture:
+
+1️⃣ The Hybrid Feed Model (Fan-out on Write vs. Read)
+• Regular Users (Push): When you post, a background job pushes the post ID directly into your friends' pre-computed Redis timelines. When they open the app, it's instant O(1) retrieval from RAM!
+• Celebrities (Pull): When a mega-influencer posts, Instagram DOES NOT push it to 600M inboxes. Instead, it gets pulled and merged into your timeline only at the exact moment you open the app.
+
+2️⃣ Database Sharding by User ID
+No single Postgres or MySQL instance can hold 2 billion users.
+Data is horizontally sharded across thousands of database nodes using consistent hashing: `ShardID = MurmurHash(UserId) % TotalShards`. All your posts, likes, and comments live on the same shard to avoid slow cross-node table joins.
+
+3️⃣ Multi-Layer Caching (Memcached & Redis)
+Instagram serves over 99% of feed reads directly out of in-memory caches. Disk databases are rarely touched during normal scrolling!
+
+💡 Key Takeaway for Developers:
+At scale, you NEVER query a relational database to build a dynamic social feed. You pre-compute timelines in memory and serve them straight from RAM.
+
+💬 What’s been your biggest architectural challenge when building high-concurrency apps: caching staleness or database locks? Drop your thoughts below! 👇
+
+📌 Read the full deep-dive system design breakdown:
+https://connectharshitjoshi.github.io/gyan-ki-baat/blogs/how-social-media-scales.html
+
+#GyaanKiBaat #SystemDesign #SoftwareEngineering #Scalability #BackendDevelopment #Instagram #Architecture #Redis #DistributedSystems #Database #CloudComputing #DevOps #Microservices #TechCommunity #Coding #Programming #TechInsights #WebDevelopment #SoftwareArchitecture #EngineeringLeadership
