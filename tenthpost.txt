@@ -1,39 +1,13 @@
-☕ Gyaan Ki Baat #10 — Real-Time Protocols: WebSockets vs. SSE vs. gRPC ⚡📡
+☕ Gyaan Ki Baat: WebSockets vs. SSE vs. gRPC in 60 Seconds ⚡📡
+Why did ChatGPT choose SSE, WhatsApp choose WebSockets, and Uber choose gRPC?
+Stop defaulting to WebSockets for everything! Here's the cheat sheet:
 
-Ever wondered why ChatGPT streams text word-by-word, WhatsApp sends instant replies, and Uber matches cabs in milliseconds? 🚗👇
+📻 Server-Sent Events (SSE): One-way pipe (Server ➔ Client). Perfect for ChatGPT token streaming, stock tickers, live scores. Native auto-reconnect via `EventSource`!
+📞 WebSockets: Full-duplex 2-way call (Client ⇄ Server). Perfect for WhatsApp chat, Figma multiplayer, live gaming.
+🚀 gRPC: Binary Protobuf over HTTP/2 for microservices. Up to 7x-10x faster serialization than JSON!
 
-They all use different real-time protocols tailored to their use case. Here is the simple 2-minute breakdown:
+💡 TL;DR: If data only flows one way (Server to Client), use SSE. It's 10x simpler and handles reconnects natively! 🧠
+💬 What’s your default for real-time: WebSockets or SSE? 👇
+📌 Full Guide: https://connectharshitjoshi.github.io/gyan-ki-baat/blogs/realtime-protocols-websockets-sse-grpc.html
 
----
-
-1️⃣ Long Polling (The Impatient Passenger) 🚗
-• Client: "New messages yet? No. New messages yet? No."
-• Repetitive HTTP headers on every loop. High latency, heavy overhead.
-
-2️⃣ Server-Sent Events (The Live Radio Broadcast) 📻
-• One-way continuous pipe from Server ➔ Client (`text/event-stream`).
-• Why ChatGPT uses SSE: You send ONE prompt, and the AI streams 150 words back token-by-token. No need for heavy 2-way WebSockets!
-
-3️⃣ WebSockets (The 2-Way Phone Call) 📞
-• Full-duplex bidirectional TCP socket. Both client and server can send data anytime.
-• Why WhatsApp & Figma use WebSockets: Ultra-low framing overhead (2-6 bytes) and sub-20ms live collaboration.
-
-4️⃣ gRPC (The Internal Rocket) 🚀
-• Used between backend microservices (like Uber & Netflix).
-• Uses binary Protocol Buffers (Protobuf) over HTTP/2 instead of heavy JSON text strings (7x-10x faster serialization!).
-
----
-
-💡 Gyaan Ki Baat:
-Don't default to WebSockets for everything! If your data flow is strictly Server ➔ Client (like AI streaming or stock tickers), SSE is 10x simpler and handles auto-reconnections natively out of the box! 🧠
-
----
-
-💬 Which protocol is your default for real-time features: WebSockets or SSE?
-
-Drop your thoughts below! 👇
-
-📌 Read the full guide with architecture comparisons on my blog:
-https://connectharshitjoshi.github.io/gyan-ki-baat/blogs/realtime-protocols-websockets-sse-grpc.html 🔗
-
-#GyaanKiBaat #WebSockets #ChatGPT #SoftwareEngineering #WebDevelopment #Backend #Protocols #gRPC #JavaScript #SystemDesign
+#GyaanKiBaat #WebSockets #ServerSentEvents #gRPC #ChatGPT #RealTime #Backend #Networking #SystemDesign #SoftwareEngineering #WebDev

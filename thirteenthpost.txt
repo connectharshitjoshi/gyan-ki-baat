@@ -1,0 +1,39 @@
+☕ Gyaan Ki Baat #13: How Netflix Streams 4K Video Globally Without Crashing the Internet 🍿⚡
+
+When you press "Play" on Netflix in 4K, you stream ~16 Megabits per second.
+Multiply that by 260M+ subscribers across 190 countries, and Netflix generates ~15% of ALL downstream internet traffic on Earth.
+
+Yet, you almost NEVER see a buffering wheel. 
+
+How does Netflix push 300+ Terabits/sec without paying billions in cloud egress or crashing the internet? 
+
+Here is the engineering breakdown of Control Plane vs. Data Plane:
+
+1️⃣ AWS is ONLY the "Brain" (Control Plane)
+Netflix does NOT stream video out of AWS S3 or EC2! 
+AWS handles user authentication, billing, AI recommendations, and master video transcoding pipelines. AWS serves JSON APIs — zero video bytes.
+
+2️⃣ Open Connect: Custom Hardware Inside Your ISP (Data Plane)
+Instead of renting standard CDNs (Akamai/Cloudflare), Netflix built its own CDN called Open Connect.
+They build custom physical 100Gbps+ FreeBSD + NGINX appliances (OCAs) and install them directly inside 1,000+ local ISPs (Comcast, Airtel, Jio, AT&T, Vodafone) for FREE.
+Your stream travels only 2–5 miles over local fiber with <3ms latency!
+
+3️⃣ The 3:00 AM Predictive Pre-Warming Algorithm
+Netflix doesn’t wait for you to click play. 
+At 3:00 AM local time, when fiber lines are idle, predictive ML algorithms pre-seed new releases (like Stranger Things) onto your local ISP's flash drives.
+Cache Hit Ratio: Over 95% to 98%!
+
+4️⃣ Dynamic Adaptive Streaming (DASH / HLS)
+A 2-hour movie is NEVER downloaded as a single 5GB .mp4 file.
+It is sliced into 2-second standalone chunks (.m4s) across 15+ resolution tiers (360p @ 300kbps to 4K @ 16Mbps).
+If your Wi-Fi fluctuates, the client player seamlessly requests the next 2-second chunk at 720p. The audio never skips and playback never halts.
+
+💡 Key Engineering Takeaway:
+Decoupling your Control Plane (Cloud compute/APIs) from your Data Plane (Edge storage/Egress) is the gold standard for global-scale media systems.
+
+💬 What’s your take: Should large streaming platforms build custom ISP hardware (like Netflix) or rely on Edge Cloudflare/Akamai Workers? Let's discuss below! 👇
+
+📌 Full Deep-Dive Architecture Guide + Interactive DevTools Flow:
+https://connectharshitjoshi.github.io/gyan-ki-baat/blogs/how-netflix-streams-video-open-connect.html
+
+#GyaanKiBaat #SystemDesign #SoftwareEngineering #CloudArchitecture #DistributedSystems #Netflix #DevOps #Backend #CDN #WebDev #Engineering

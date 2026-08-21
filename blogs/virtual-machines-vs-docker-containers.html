@@ -47,7 +47,7 @@
     <article class="article-content">
 
       <p class="lead">
-        Why does launching a new Virtual Machine take 45 seconds and eat up 4GB of RAM, while a Docker container spins up in 200 milliseconds and uses barely 20MB? The secret lies in a fundamental realization: <strong>Containers are NOT mini virtual machines—they are just isolated Linux processes sharing the host kernel.</strong>
+        Why does launching a new Virtual Machine take 45 seconds and eat up 4GB of RAM, while a Docker container spins up in 200 milliseconds and uses barely 20MB? The secret lies in a fundamental realization: <strong>Containers are NOT mini virtual machines: they are just isolated Linux processes sharing the host kernel.</strong>
       </p>
 
       <!-- Architecture Image -->
@@ -188,7 +188,7 @@ docker run -d --memory="512m" --cpus="1.0" my-node-app
       <ul>
         <li><strong>VMs virtualize hardware:</strong> Great for running completely different operating systems with strong hardware security isolation.</li>
         <li><strong>Containers virtualize the OS:</strong> Lightweight Linux processes isolated via <strong>Namespaces</strong>, constrained by <strong>cgroups</strong>, and layered with <strong>OverlayFS</strong>.</li>
-        <li><strong>The 200ms advantage:</strong> Starting a container is simply executing a fork/exec process call on the host kernel—no OS boot sequence required!</li>
+        <li><strong>The 200ms advantage:</strong> Starting a container is simply executing a fork/exec process call on the host kernel: no OS boot sequence required!</li>
       </ul>
 
       <hr style="border-color: var(--border-color); margin: 3rem 0;">

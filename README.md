@@ -10,7 +10,7 @@
 
 ## 📌 About Gyaan Ki Baat
 
-**Gyaan Ki Baat** is a modern, high-performance static technical blog platform built from scratch without heavy frameworks. Created by **Harshit Joshi**, it breaks down complex computer science and web engineering topics—ranging from HTTP protocols and security architectures to browser rendering pipelines and system design caching patterns.
+**Gyaan Ki Baat** is a modern, high-performance static technical blog platform built from scratch without heavy frameworks. Created by **Harshit Joshi**, it breaks down complex computer science and web engineering topics: ranging from HTTP protocols and security architectures to browser rendering pipelines and system design caching patterns.
 
 ---
 
@@ -21,7 +21,7 @@
 - 🔍 **Real-Time Client-Side Search:** Instant title, excerpt, and tag filtering with zero page reloads.
 - 📱 **100% Mobile Responsive:** Adaptive layout with responsive navigation containers across desktop, tablet, and mobile devices.
 - 📋 **One-Click Code Snippets:** Built-in copy-to-clipboard functionality for code blocks (Node.js, Playwright, Redis, HTTP headers).
-- 🏷️ **LinkedIn Content Playbook:** Accompanied by polished short-form LinkedIn posts (`firstpost.txt` to `sixthpost.txt`) for content creators.
+- 🏷️ **LinkedIn Content Playbook:** Accompanied by polished short-form LinkedIn posts for content creators.
 
 ---
 
@@ -30,7 +30,7 @@
 | # | Article Title | Category | Est. Read Time |
 | :--- | :--- | :--- | :--- |
 | **#1** | [The "Degree vs. Skills" Reality Check](blogs/degree-vs-skills.html) | Career & Growth | 5 min read |
-| **#2** | [Cookies, Web Storage, SSL/TLS & HTTPS — The Masterclass Guide](blogs/cookies-vs-session-storage.html) | Web Security | 12 min read |
+| **#2** | [Cookies, Web Storage, SSL/TLS & HTTPS: The Masterclass Guide](blogs/cookies-vs-session-storage.html) | Web Security | 12 min read |
 | **#3** | [HTTP Status Codes Masterclass: 401 vs. 403, 502 vs. 504 & Method Idempotency](blogs/http-status-codes.html) | HTTP Protocols | 14 min read |
 | **#4** | [JWT & OAuth 2.0 Security Architecture: Tokens, Payloads & Attacks](blogs/jwt-and-oauth-security.html) | Security & Auth | 15 min read |
 | **#5** | [Under the Hood: The Browser Rendering Pipeline (DOM, CSSOM, Layout)](blogs/browser-rendering-pipeline.html) | Web Performance | 13 min read |
@@ -40,6 +40,8 @@
 | **#9** | [What Actually Happens When You Pay via Credit Card on Amazon or Zomato?](blogs/credit-card-payment-gateway-lifecycle.html) | Fintech & Payments | 14 min read |
 | **#10** | [Real-Time Communication Explained Simply: WebSockets vs. SSE vs. gRPC](blogs/realtime-protocols-websockets-sse-grpc.html) | Web Protocols | 13 min read |
 | **#11** | [Virtual Machines vs. Docker Containers Under the Hood](blogs/virtual-machines-vs-docker-containers.html) | DevOps & Linux | 14 min read |
+| **#12** | [What If VS Code Was Built by the Indian Government? 🇮🇳](blogs/what-if-vscode-was-built-in-india.html) | Special Edition & Web Tech | 12 min read |
+| **#13** | [How Netflix Streams 4K Video Globally Without Crashing the Internet](blogs/how-netflix-streams-video-open-connect.html) | Distributed Systems & Media | 15 min read |
 
 ---
 
@@ -49,17 +51,11 @@
 gyan-ki-baat/
 ├── index.html                           # Homepage with article grid, search & category filters
 ├── README.md                             # Repository documentation
-├── firstpost.txt                        # LinkedIn Post #1 (Degree vs. Skills)
-├── secondpost.txt                       # LinkedIn Post #2 (Cookies & Storage)
-├── thirdpost.txt                        # LinkedIn Post #3 (HTTP Status Codes)
-├── fourthpost.txt                       # LinkedIn Post #4 (JWT & OAuth 2.0)
-├── fifthpost.txt                        # LinkedIn Post #5 (Browser Rendering Pipeline)
-├── sixthpost.txt                        # LinkedIn Post #6 (System Design Caching)
-├── seventhpost.txt                      # LinkedIn Post #7 (How UPI Works & UPI vs UPI Apps)
-├── eighthpost.txt                       # LinkedIn Post #8 (How Social Media Apps Scale)
-├── ninthpost.txt                        # LinkedIn Post #9 (Credit Card Checkout Lifecycle)
-├── tenthpost.txt                        # LinkedIn Post #10 (WebSockets vs SSE vs gRPC)
-├── eleventhpost.txt                     # LinkedIn Post #11 (VMs vs Docker Containers)
+├── eighthpost.txt                        # LinkedIn Post #8 (How Social Media Apps Scale)
+├── ninthpost.txt                         # LinkedIn Post #9 (Credit Card Checkout Lifecycle)
+├── tenthpost.txt                         # LinkedIn Post #10 (WebSockets vs SSE vs gRPC)
+├── eleventhpost.txt                      # LinkedIn Post #11 (VMs vs Docker Containers)
+├── thirteenthpost.txt                    # LinkedIn Post #13 (How Netflix Streams 4K Video)
 │
 ├── blogs/                               # Deep-dive long-form technical articles
 │   ├── degree-vs-skills.html
@@ -72,7 +68,9 @@ gyan-ki-baat/
 │   ├── how-social-media-scales.html
 │   ├── credit-card-payment-gateway-lifecycle.html
 │   ├── realtime-protocols-websockets-sse-grpc.html
-│   └── virtual-machines-vs-docker-containers.html
+│   ├── virtual-machines-vs-docker-containers.html
+│   ├── what-if-vscode-was-built-in-india.html
+│   └── how-netflix-streams-video-open-connect.html
 │
 ├── css/
 │   └── style.css                        # Modern CSS design system & media queries

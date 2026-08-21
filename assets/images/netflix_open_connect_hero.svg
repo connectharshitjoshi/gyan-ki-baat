@@ -1,0 +1,183 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="100%" height="auto">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090d16"/>
+      <stop offset="50%" stop-color="#0e1526"/>
+      <stop offset="100%" stop-color="#060911"/>
+    </linearGradient>
+    
+    <linearGradient id="netflixRed" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E50914"/>
+      <stop offset="100%" stop-color="#B20710"/>
+    </linearGradient>
+
+    <linearGradient id="awsOrange" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF9900"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+
+    <linearGradient id="ispCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+
+    <linearGradient id="cardBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.95"/>
+    </linearGradient>
+
+    <filter id="glowRed" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <filter id="glowCyan" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="540" fill="url(#bgGrad)"/>
+  
+  <!-- Subtle Grid Pattern -->
+  <g opacity="0.07" stroke="#ffffff" stroke-width="1">
+    <line x1="0" y1="90" x2="960" y2="90"/>
+    <line x1="0" y1="180" x2="960" y2="180"/>
+    <line x1="0" y1="270" x2="960" y2="270"/>
+    <line x1="0" y1="360" x2="960" y2="360"/>
+    <line x1="0" y1="450" x2="960" y2="450"/>
+    <line x1="160" y1="0" x2="160" y2="540"/>
+    <line x1="320" y1="0" x2="320" y2="540"/>
+    <line x1="480" y1="0" x2="480" y2="540"/>
+    <line x1="640" y1="0" x2="640" y2="540"/>
+    <line x1="800" y1="0" x2="800" y2="540"/>
+  </g>
+
+  <!-- Header Section -->
+  <rect x="40" y="24" width="880" height="60" rx="10" fill="#131b2e" stroke="#334155" stroke-width="1"/>
+  <rect x="55" y="38" width="32" height="32" rx="6" fill="url(#netflixRed)"/>
+  <text x="71" y="60" fill="#ffffff" font-family="'Outfit', sans-serif" font-weight="900" font-size="20" text-anchor="middle">N</text>
+  <text x="100" y="60" fill="#ffffff" font-family="'Outfit', sans-serif" font-weight="800" font-size="18">NETFLIX OPEN CONNECT ARCHITECTURE</text>
+  <text x="900" y="60" fill="#38bdf8" font-family="'Inter', sans-serif" font-weight="600" font-size="13" text-anchor="end">AWS Control Plane vs. Open Connect Data Plane</text>
+
+  <!-- Zone 1: User & Client App (Left) -->
+  <g transform="translate(40, 110)">
+    <rect width="230" height="380" rx="14" fill="url(#cardBg)" stroke="#38bdf8" stroke-width="1.5" stroke-opacity="0.6"/>
+    <rect x="15" y="15" width="200" height="34" rx="8" fill="#1e293b"/>
+    <text x="115" y="38" fill="#38bdf8" font-family="'Outfit', sans-serif" font-weight="700" font-size="14" text-anchor="middle">📱 1. Client Smart TV / App</text>
+    
+    <!-- User Steps -->
+    <rect x="15" y="65" width="200" height="85" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+    <text x="25" y="85" fill="#f8fafc" font-family="'Inter', sans-serif" font-weight="600" font-size="12">Step 1: Browse &amp; Click Play</text>
+    <text x="25" y="105" fill="#94a3b8" font-family="'Inter', sans-serif" font-size="11">App requests metadata &amp;</text>
+    <text x="25" y="122" fill="#94a3b8" font-family="'Inter', sans-serif" font-size="11">manifest file from AWS</text>
+    <text x="25" y="139" fill="#38bdf8" font-family="'Inter', sans-serif" font-size="10" font-weight="600">GET /play/manifest.mpd</text>
+
+    <!-- Step 2 Box -->
+    <rect x="15" y="165" width="200" height="95" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+    <text x="25" y="185" fill="#f8fafc" font-family="'Inter', sans-serif" font-weight="600" font-size="12">Step 2: Adaptive Bitrate Engine</text>
+    <text x="25" y="205" fill="#94a3b8" font-family="'Inter', sans-serif" font-size="11">Measures bandwidth buffer</text>
+    <text x="25" y="222" fill="#34d399" font-family="'Inter', sans-serif" font-size="11" font-weight="600">4K (16 Mbps) ➔ 1080p (4 Mbps)</text>
+    <text x="25" y="242" fill="#94a3b8" font-family="'Inter', sans-serif" font-size="10">Requests 2-sec chunks via HTTP</text>
+
+    <!-- Client Status Box -->
+    <rect x="15" y="275" width="200" height="85" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+    <text x="25" y="295" fill="#f8fafc" font-family="'Inter', sans-serif" font-weight="600" font-size="12">Step 3: Direct Streaming</text>
+    <text x="25" y="315" fill="#94a3b8" font-family="'Inter', sans-serif" font-size="11">Fetches video chunks directly</text>
+    <text x="25" y="332" fill="#f87171" font-family="'Inter', sans-serif" font-size="11" font-weight="600">from local ISP appliance!</text>
+    <text x="25" y="349" fill="#a855f7" font-family="'Inter', sans-serif" font-size="10">Zero long-haul internet lag</text>
+  </g>
+
+  <!-- Zone 2: AWS Control Plane (Top Right) -->
+  <g transform="translate(320, 110)">
+    <rect width="600" height="175" rx="14" fill="url(#cardBg)" stroke="#f59e0b" stroke-width="1.5" stroke-opacity="0.7"/>
+    <rect x="15" y="15" width="570" height="32" rx="8" fill="#1e293b"/>
+    <text x="30" y="37" fill="#fbbf24" font-family="'Outfit', sans-serif" font-weight="700" font-size="14">☁️ AWS Cloud: The Control Plane (Zero Video Streaming)</text>
+    
+    <!-- Microservices inside AWS -->
+    <g transform="translate(15, 60)">
+      <rect width="130" height="95" rx="8" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+      <text x="65" y="28" fill="#ffffff" font-family="'Inter', sans-serif" font-weight="600" font-size="12" text-anchor="middle">User Auth</text>
+      <text x="65" y="50" fill="#94a3b8" font-family="'Inter', sans-serif" font-size="10" text-anchor="middle">&amp; Billing</text>
+      <text x="65" y="75" fill="#38bdf8" font-family="'Inter', sans-serif" font-size="10" font-weight="600" text-anchor="middle">Zuul Gateway</text>
+    </g>
+
+    <g transform="translate(160, 60)">
+      <rect width="130" height="95" rx="8" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+      <text x="65" y="28" fill="#ffffff" font-family="'Inter', sans-serif" font-weight="600" font-size="12" text-anchor="middle">Recommendation</text>
+      <text x="65" y="50" fill="#94a3b8" font-family="'Inter', sans-serif" font-size="10" text-anchor="middle">Engine (AI/ML)</text>
+      <text x="65" y="75" fill="#a855f7" font-family="'Inter', sans-serif" font-size="10" font-weight="600" text-anchor="middle">Personalized UI</text>
+    </g>
+
+    <g transform="translate(305, 60)">
+      <rect width="130" height="95" rx="8" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+      <text x="65" y="28" fill="#ffffff" font-family="'Inter', sans-serif" font-weight="600" font-size="12" text-anchor="middle">Transcoding</text>
+      <text x="65" y="50" fill="#94a3b8" font-family="'Inter', sans-serif" font-size="10" text-anchor="middle">Pipeline (S3 + EC2)</text>
+      <text x="65" y="75" fill="#34d399" font-family="'Inter', sans-serif" font-size="10" font-weight="600" text-anchor="middle">Chunk Encoding</text>
+    </g>
+
+    <g transform="translate(450, 60)">
+      <rect width="135" height="95" rx="8" fill="#0f172a" stroke="#ef4444" stroke-width="1.2"/>
+      <text x="67" y="28" fill="#f87171" font-family="'Inter', sans-serif" font-weight="700" font-size="12" text-anchor="middle">OCA Steering</text>
+      <text x="67" y="50" fill="#94a3b8" font-family="'Inter', sans-serif" font-size="10" text-anchor="middle">DNS / Proximity</text>
+      <text x="67" y="75" fill="#fbbf24" font-family="'Inter', sans-serif" font-size="10" font-weight="700" text-anchor="middle">Picks Nearest ISP</text>
+    </g>
+  </g>
+
+  <!-- Zone 3: Open Connect Appliances (OCA) in Local ISPs (Bottom Right) -->
+  <g transform="translate(320, 305)">
+    <rect width="600" height="185" rx="14" fill="url(#cardBg)" stroke="#ef4444" stroke-width="1.5" stroke-opacity="0.8"/>
+    <rect x="15" y="15" width="570" height="32" rx="8" fill="#1e293b"/>
+    <text x="30" y="37" fill="#ef4444" font-family="'Outfit', sans-serif" font-weight="800" font-size="14">🔥 Open Connect (OCA): The Data Plane (Inside Local ISP Networks)</text>
+    
+    <!-- OCA Appliance 1 -->
+    <g transform="translate(15, 60)">
+      <rect width="175" height="105" rx="8" fill="#090d16" stroke="#e11d48" stroke-width="1.2"/>
+      <text x="15" y="25" fill="#fda4af" font-family="'Inter', sans-serif" font-weight="700" font-size="12">🖥️ Local ISP Box (OCA)</text>
+      <text x="15" y="45" fill="#94a3b8" font-family="'Inter', sans-serif" font-size="10">Custom FreeBSD + NGINX</text>
+      <text x="15" y="65" fill="#facc15" font-family="'Inter', sans-serif" font-size="10" font-weight="600">Flash NVMe (100+ Gbps)</text>
+      <rect x="15" y="78" width="145" height="18" rx="4" fill="#1e293b"/>
+      <text x="87" y="91" fill="#34d399" font-family="'Inter', sans-serif" font-size="9" font-weight="600" text-anchor="middle">⚡ Latency: 2ms to User</text>
+    </g>
+
+    <!-- OCA Overnight Pre-Warming -->
+    <g transform="translate(205, 60)">
+      <rect width="180" height="105" rx="8" fill="#090d16" stroke="#3b82f6" stroke-width="1.2"/>
+      <text x="15" y="25" fill="#93c5fd" font-family="'Inter', sans-serif" font-weight="700" font-size="12">🌙 3 AM Cache Push</text>
+      <text x="15" y="45" fill="#94a3b8" font-family="'Inter', sans-serif" font-size="10">New releases pre-seeded</text>
+      <text x="15" y="65" fill="#94a3b8" font-family="'Inter', sans-serif" font-size="10">during idle fiber hours</text>
+      <rect x="15" y="78" width="150" height="18" rx="4" fill="#1e293b"/>
+      <text x="90" y="91" fill="#60a5fa" font-family="'Inter', sans-serif" font-size="9" font-weight="600" text-anchor="middle">Zero Daytime ISP Congestion</text>
+    </g>
+
+    <!-- Streaming Video Bits -->
+    <g transform="translate(400, 60)">
+      <rect width="185" height="105" rx="8" fill="#090d16" stroke="#10b981" stroke-width="1.2"/>
+      <text x="15" y="25" fill="#6ee7b7" font-family="'Inter', sans-serif" font-weight="700" font-size="12">📦 4K Video Chunks</text>
+      <text x="15" y="45" fill="#94a3b8" font-family="'Inter', sans-serif" font-size="10">H.264 / HEVC / AV1</text>
+      <text x="15" y="65" fill="#94a3b8" font-family="'Inter', sans-serif" font-size="10">Byte-range Partial Content</text>
+      <rect x="15" y="78" width="155" height="18" rx="4" fill="#1e293b"/>
+      <text x="92" y="91" fill="#34d399" font-family="'Inter', sans-serif" font-size="9" font-weight="700" text-anchor="middle">HTTP/2 TLS Zero-Copy sendfile</text>
+    </g>
+  </g>
+
+  <!-- Connective Arrows -->
+  <!-- User to AWS (Metadata) -->
+  <path d="M 270 200 L 320 200" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="5,5"/>
+  <polygon points="320,200 312,195 312,205" fill="#f59e0b"/>
+  <text x="295" y="190" fill="#fbbf24" font-family="'Inter', sans-serif" font-size="9" font-weight="700" text-anchor="middle">1. API Auth</text>
+
+  <!-- AWS to OCA Steering -->
+  <path d="M 770 285 L 770 305" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+  <polygon points="770,305 765,297 775,297" fill="#ef4444"/>
+
+  <!-- OCA to User (Direct High-Speed Video Stream) -->
+  <path d="M 320 400 L 270 400" fill="none" stroke="#10b981" stroke-width="3"/>
+  <polygon points="270,400 278,395 278,405" fill="#10b981"/>
+  <text x="295" y="390" fill="#34d399" font-family="'Inter', sans-serif" font-size="10" font-weight="700" text-anchor="middle">3. 4K Chunks (2ms)</text>
+
+  <!-- Bottom Badge / Watermark -->
+  <text x="480" y="522" fill="#64748b" font-family="'Inter', sans-serif" font-size="11" text-anchor="middle">Gyaan Ki Baat #13 • By Harshit Joshi • Scalable Distributed Media Architecture</text>
+</svg>

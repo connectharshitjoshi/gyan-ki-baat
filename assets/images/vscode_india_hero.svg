@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 340" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b1120" />
+      <stop offset="50%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e1b4b" />
+    </linearGradient>
+    <linearGradient id="flagGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ff9933" />
+      <stop offset="50%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#138808" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="600" height="340" fill="url(#bgGrad)" />
+
+  <!-- Tricolor Bar at Top -->
+  <rect x="0" y="0" width="600" height="8" fill="url(#flagGrad)" />
+
+  <!-- Ambient Glow -->
+  <circle cx="300" cy="170" r="140" fill="#f97316" opacity="0.08" />
+  <circle cx="480" cy="90" r="100" fill="#38bdf8" opacity="0.06" />
+
+  <!-- IDE Window Shell -->
+  <rect x="40" y="35" width="520" height="265" rx="10" fill="#131b2e" stroke="#f97316" stroke-width="1.5" />
+  
+  <!-- Window Header -->
+  <rect x="40" y="35" width="520" height="34" rx="10" fill="#0f172a" />
+  <circle cx="60" cy="52" r="5" fill="#ef4444" />
+  <circle cx="75" cy="52" r="5" fill="#f59e0b" />
+  <circle cx="90" cy="52" r="5" fill="#10b981" />
+  
+  <text x="300" y="57" text-anchor="middle" fill="#fb923c" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700">🏛️ VS CODE INDIA : राष्ट्रीय कोड संपादक (MeitY/NIC)</text>
+
+  <!-- Notification Ticker -->
+  <rect x="40" y="69" width="520" height="22" fill="#7f1d1d" />
+  <text x="300" y="84" text-anchor="middle" fill="#fecaca" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="600">🚨 आवश्यक सूचना: आधार लिंक अनिवार्य • सर्वर लंच ब्रेक (1:00 - 2:00 PM) ☕</text>
+
+  <!-- Left Sidebar -->
+  <rect x="40" y="91" width="130" height="175" fill="#090d16" />
+  <text x="55" y="115" fill="#94a3b8" font-family="monospace" font-size="10" font-weight="bold">📁 कार्यस्थान (VFS)</text>
+  <text x="65" y="138" fill="#38bdf8" font-family="monospace" font-size="10">🐍 mukhya.py</text>
+  <text x="65" y="160" fill="#94a3b8" font-family="monospace" font-size="10">📄 niti.json</text>
+  <text x="65" y="182" fill="#94a3b8" font-family="monospace" font-size="10">📜 praman.txt</text>
+
+  <!-- Code Editor Body -->
+  <rect x="170" y="91" width="390" height="175" fill="#131b2e" />
+  
+  <!-- Editor Tab -->
+  <rect x="170" y="91" width="120" height="24" fill="#1e293b" />
+  <text x="230" y="107" text-anchor="middle" fill="#38bdf8" font-family="monospace" font-size="10">mukhya.py 🇮🇳</text>
+
+  <!-- Code Text -->
+  <text x="185" y="135" fill="#f43f5e" font-family="monospace" font-size="11" font-weight="bold">karya</text>
+  <text x="225" y="135" fill="#38bdf8" font-family="monospace" font-size="11">namaste_bharat():</text>
+  
+  <text x="205" y="160" fill="#fb923c" font-family="monospace" font-size="11" font-weight="bold">agar</text>
+  <text x="240" y="160" fill="#e2e8f0" font-family="monospace" font-size="11">desh == "Bharat":</text>
+
+  <text x="225" y="185" fill="#4ade80" font-family="monospace" font-size="11" font-weight="bold">likho</text>
+  <text x="265" y="185" fill="#fef08a" font-family="monospace" font-size="11">("15 August Swatantrata Divas! 🇮🇳")</text>
+
+  <!-- Stamp Box -->
+  <rect x="375" y="175" width="170" height="55" rx="6" fill="rgba(15, 23, 42, 0.9)" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="3,3" />
+  <text x="460" y="193" text-anchor="middle" fill="#22c55e" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" font-weight="bold">✓ 100% SWADESHI CERTIFIED</text>
+  <text x="460" y="208" text-anchor="middle" fill="#94a3b8" font-family="'Segoe UI', Roboto, sans-serif" font-size="8">NIC MeghRaj Cloud • Tier-4</text>
+  <text x="460" y="222" text-anchor="middle" fill="#f59e0b" font-family="'Segoe UI', Roboto, sans-serif" font-size="8">डिजिटल मुहर (Digital Seal)</text>
+
+  <!-- Status Bar -->
+  <rect x="40" y="266" width="520" height="34" rx="4" fill="#065f46" />
+  <text x="55" y="287" fill="#ffffff" font-family="'Segoe UI', Roboto, sans-serif" font-size="10">⚡ Pyodide Wasm Ready • 1024x768 संकल्पना • हिंदी पायथन मोड</text>
+  <text x="510" y="287" fill="#a7f3d0" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="bold">🇮🇳 स्वदेशी</text>
+</svg>
