@@ -1,0 +1,71 @@
+
+1. "How Discord Handles 15 Million+ Concurrent Voice Users: The Elixir to Rust Migration"
+   • The Hook: "Why Go's Garbage Collector paused millions of voice chats, and how Rust + Elixir solved it."
+   • Real-World Case: Discord Voice Architecture.
+   • Under the Hood: WebRTC SFU (Selective Forwarding Unit), UDP packet streams, Elixir GenServer actor model, Consistent Hashing ring for routing voice channels across global servers.
+   • Virality Score: 🔥🔥🔥🔥🔥 (Dev community loves the Go vs Rust debate).
+
+2. "How Uber Calculates Real-Time Driver Match & Surge Pricing in 500ms"
+   • The Hook: "What happens when 50,000 riders open the app simultaneously at 2 AM on New Year's Eve?"
+   • Real-World Case: Uber Marketplace & Location Dispatch.
+   • Under the Hood: Uber's H3 Spatial Hexagonal Hierarchical Indexing, Ringpop distributed gossip protocol, Geospatial queries in Redis/RAM, Dijkstra vs A* dispatch routing.
+   • Virality Score: 🔥🔥🔥🔥🔥
+
+3. "How YouTube Processes and Stores 500+ Hours of Video Uploaded Every Single Minute"
+   • The Hook: "Why your 10-minute video is instantly available in 8 different resolutions across 200 countries."
+   • Real-World Case: YouTube Video Processing Pipeline & Vitess (MySQL at scale).
+   • Under the Hood: Asynchronous chunk-based distributed video transcoding, Vitess database clustering, Resumable chunked multipart uploads, Video deduplication & fingerprinting.
+   • Virality Score: 🔥🔥🔥🔥
+
+4. "How Spotify Streams 100M+ Songs Without Stuttering: Peer-to-Peer Legacy to Edge CDN"
+   • The Hook: "Why Spotify abandoned P2P desktop clients and built an ultra-low latency audio caching engine."
+   • Real-World Case: Spotify Audio Infrastructure.
+   • Under the Hood: Vorbis/AAC chunk streaming, Cassandra metadata clusters, Dynamic audio pre-buffering (fetching the next song before the current one finishes), Global anycast edge caching.
+   • Virality Score: 🔥🔥🔥🔥
+
+
+----------------------------------------------------------------------------------------------------
+⚡ CATEGORY 2: DATABASE INTERNALS & STORAGE ENGINES (SENIOR BACKEND FAVORITES)
+----------------------------------------------------------------------------------------------------
+
+
+7. "Database Sharding vs Partitioning vs Replication: How to Scale Relational Databases to Terabytes"
+   • The Hook: "What to do when your single PostgreSQL server is running out of disk and RAM."
+   • Real-World Case: Slack, Notion, and Shopify database scaling journeys.
+   • Under the Hood: Master-Replica read scaling with WAL logs, Horizontal Range vs Hash vs Directory sharding, Handling cross-shard distributed transactions (Two-Phase Commit vs Saga pattern).
+   • Virality Score: 🔥🔥🔥🔥
+
+
+----------------------------------------------------------------------------------------------------
+🛡️ CATEGORY 3: DISTRIBUTED INFRASTRUCTURE, RATE LIMITING & SECURITY
+----------------------------------------------------------------------------------------------------
+
+8. "How Cloudflare & GitHub Build API Rate Limiters at 10 Million RPS"
+   • The Hook: "Token Bucket vs Leaky Bucket vs Sliding Window: Which rate-limiting algorithm should you use in production?"
+   • Real-World Case: Cloudflare Edge, GitHub API, Stripe API.
+   • Under the Hood: Memory footprint comparison across algorithms, Solving distributed race conditions using Redis atomic Lua scripts, HTTP `429 Too Many Requests` & `Retry-After` header lifecycle.
+   • Virality Score: 🔥🔥🔥🔥🔥
+
+
+10. "The Death of Passwords: How Passkeys & WebAuthn / FIDO2 Work Under the Hood"
+    • The Hook: "Why Google, Apple, and Microsoft are replacing passwords with cryptographic biometrics."
+    • Real-World Case: Apple FaceID / TouchID, Google Titan, 1Password.
+    • Under the Hood: Asymmetric Public-Private Key cryptography, TPM / Secure Enclave hardware isolation, Cryptographic challenge-response handshakes, Eliminating phishing attacks forever.
+    • Virality Score: 🔥🔥🔥🔥
+
+
+----------------------------------------------------------------------------------------------------
+🤖 CATEGORY 4: AI INFRASTRUCTURE & LLM ENGINEERING (2026 CUTTING EDGE)
+----------------------------------------------------------------------------------------------------
+
+11. "How LLM Serving Engines (vLLM & TensorRT-LLM) Achieve 10x Throughput: Inside PagedAttention & KV Caching"
+    • The Hook: "Why naive LLM inference runs out of VRAM, and how operating system paging concepts saved AI infrastructure."
+    • Real-World Case: OpenAI, Anthropic, Mistral AI serving infrastructure.
+    • Under the Hood: Autoregressive token generation, KV Cache memory bottlenecks, Virtual memory paging applied to GPU VRAM (PagedAttention), Continuous batching vs Static batching.
+    • Virality Score: 🔥🔥🔥🔥🔥 (Massive trending topic globally).
+
+12. "How Vector Databases Work Under the Hood: HNSW Graphs & Approximate Nearest Neighbor Search"
+    • The Hook: "How Pinecone and Milvus search across 100 Million high-dimensional embeddings in 5 milliseconds."
+    • Real-World Case: Semantic search, AI RAG systems, Recommendation engines.
+    • Under the Hood: Vector embeddings math (Cosine Similarity vs Euclidean Distance), Hierarchical Navigable Small World (HNSW) graphs, Inverted File Index (IVF), Quantization (Product Quantization).
+    • Virality Score: 🔥🔥🔥🔥
