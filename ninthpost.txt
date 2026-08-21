@@ -25,7 +25,7 @@ When you hit retry, the app sends an identical `Idempotency-Key: <UUID>` header.
 • Authorization (Instant): Your bank locks the ₹800 on your card limit in 500ms.
 • Capture & Settlement (T+1 / T+2 Days): The actual money leaves your bank and reaches Zomato’s merchant account 24 to 48 hours later via batch banking clearing (NEFT/RTGS/ACH).
 
-💡 Developer Gold Rule:
+💡 Golden Rule:
 Whenever you build payment systems, ALWAYS design for network failure: implement Idempotency Keys, exponential backoff retries, and asynchronous Webhooks with dead-letter queues.
 
 💬 Have you ever faced a double-charge glitch while shopping online? How did customer support handle it? Let's discuss below! 👇

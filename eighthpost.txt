@@ -23,7 +23,7 @@ Data is horizontally sharded across thousands of database nodes using consistent
 3️⃣ Multi-Layer Caching (Memcached & Redis)
 Instagram serves over 99% of feed reads directly out of in-memory caches. Disk databases are rarely touched during normal scrolling!
 
-💡 Key Takeaway for Developers:
+💡 Key Takeaway:
 At scale, you NEVER query a relational database to build a dynamic social feed. You pre-compute timelines in memory and serve them straight from RAM.
 
 💬 What’s been your biggest architectural challenge when building high-concurrency apps: caching staleness or database locks? Drop your thoughts below! 👇
