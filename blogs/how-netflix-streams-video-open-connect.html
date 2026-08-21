@@ -70,7 +70,7 @@
         <p class="image-caption">Figure 2: Architecture of the AWS Control Plane (APIs, Auth, Transcoding) vs. Open Connect Data Plane (Direct 4K video stream from local ISP).</p>
       </div>
       
-      <div class="table-container">
+      <div class="table-wrapper">
         <table>
           <thead>
             <tr>
@@ -259,7 +259,7 @@
 
       <h2>8. Architectural Comparison: Netflix Open Connect vs. Standard CDNs</h2>
 
-      <div class="table-container">
+      <div class="table-wrapper">
         <table>
           <thead>
             <tr>
@@ -293,26 +293,22 @@
         </table>
       </div>
 
-      <!-- Summary Box -->
-      <div class="summary-box">
-        <h3>🧠 Key Architectural Takeaways</h3>
-        <ul>
-          <li><strong>Control Plane vs Data Plane:</strong> AWS handles metadata, billing, search, and encoding. Open Connect handles 100% of video streaming.</li>
-          <li><strong>Zero-Cost ISP Edge:</strong> Netflix puts custom FreeBSD appliances inside ISP networks, keeping video traffic local and latency sub-5ms.</li>
-          <li><strong>Overnight Predictive Caching:</strong> New releases are pushed at 3 AM during low-traffic windows so they are instantly ready for peak hours.</li>
-          <li><strong>DASH/HLS Chunking:</strong> Movies are split into 2-second byte chunks across 15+ resolution tiers, allowing client ABR algorithms to adapt on the fly without buffering.</li>
-        </ul>
-      </div>
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
 
-      <!-- Author Card -->
-      <div class="author-card">
-        <img src="../assets/images/harshit.jpg" alt="Harshit Joshi" class="author-card-avatar">
-        <div class="author-card-info">
-          <h3>Harshit Joshi</h3>
-          <p>Software Engineer writing deep-dive architectural breakdowns on high-scale distributed systems, web protocols, and cloud engineering.</p>
-          <a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank" class="author-btn">Connect on LinkedIn</a>
-        </div>
-      </div>
+      <h2>9. Summary &amp; Key Takeaways</h2>
+      <ul>
+        <li><strong>Control Plane vs Data Plane:</strong> AWS handles metadata, billing, search, and video encoding. Open Connect handles 100% of video streaming.</li>
+        <li><strong>Zero-Cost ISP Edge:</strong> Netflix puts custom FreeBSD appliances inside ISP networks, keeping video traffic local and latency sub-3ms.</li>
+        <li><strong>Overnight Predictive Caching:</strong> New releases are pushed at 3:00 AM during off-peak low-traffic windows so they are instantly ready for peak hours (98% cache hit ratio).</li>
+        <li><strong>DASH/HLS Chunking:</strong> Movies are split into 2-second byte chunks across 15+ resolution tiers, allowing client ABR algorithms (BOLA) to adapt on the fly without buffering spinners.</li>
+      </ul>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h3>💬 Join the Discussion</h3>
+      <p>
+        Should global streaming services build custom ISP hardware appliances like Netflix Open Connect, or rely on edge serverless CDNs like Cloudflare and Akamai Workers? Share your thoughts on <a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank">LinkedIn</a>!
+      </p>
 
     </article>
   </main>
@@ -320,7 +316,7 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="container">
-      <p>&copy; 2026 Gyaan Ki Baat by Harshit Joshi. Powered by GitHub Pages.</p>
+      <p>&copy; 2026 Gyaan Ki Baat by Harshit Joshi. Built with static HTML/CSS on GitHub Pages.</p>
     </div>
   </footer>
 

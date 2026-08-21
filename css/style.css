@@ -490,6 +490,7 @@ a:hover {
   height: 48px;
   border-radius: 50%;
   object-fit: cover;
+  object-position: 65% 22%;
   border: 2px solid var(--accent-primary);
   box-shadow: 0 0 12px rgba(99, 102, 241, 0.3);
 }
@@ -499,6 +500,7 @@ a:hover {
   height: 32px;
   border-radius: 50%;
   object-fit: cover;
+  object-position: 65% 22%;
   border: 1px solid var(--accent-cyan);
 }
 
