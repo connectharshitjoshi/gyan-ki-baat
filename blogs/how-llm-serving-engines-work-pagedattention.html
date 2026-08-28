@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How LLM Serving Engines Achieve 10x Throughput: Inside PagedAttention & KV Caching | Gyaan Ki Baat</title>
+  <meta name="description" content="Deep dive into AI infrastructure: KV Cache memory bottlenecks in LLM inference, memory fragmentation in GPU VRAM, PagedAttention virtual memory architecture, continuous batching, and vLLM benchmarks.">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="logo" id="nav-logo">
+        ☕ Gyaan Ki Baat <span class="logo-badge">AI Systems</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="../index.html" id="nav-link-home">← Back to Articles</a></li>
+        <li><a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank" class="nav-btn" id="nav-btn-linkedin">Share on LinkedIn</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Article Header -->
+  <header class="article-header">
+    <div class="container">
+      <div class="article-breadcrumb">
+        <a href="../index.html">Articles</a> / <span>AI Infrastructure & LLM Serving</span>
+      </div>
+      <h1 class="article-title">
+        How LLM Serving Engines Achieve 10x Throughput: Inside PagedAttention &amp; KV Caching
+      </h1>
+      <div class="article-author-bar">
+        <img src="../assets/images/harshit.jpg" alt="Harshit Joshi" class="author-avatar">
+        <div class="author-info">
+          <h4>Harshit Joshi</h4>
+          <p>Gyaan Ki Baat #14 • 15 min read • Published Aug 2026</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Article Body -->
+  <main class="container">
+    <article class="article-content">
+
+      <p class="lead">
+        When running Large Language Models (LLMs) like LLaMA 3, Mistral, or DeepSeek in production, serving infrastructure behaves completely differently from traditional web services. Under high traffic, server GPUs don't typically run out of compute power (FLOPs) — they run out of <strong>High-Bandwidth Video RAM (VRAM)</strong> due to the <strong>Key-Value (KV) Cache</strong>.
+      </p>
+      <p class="lead">
+        Until recently, naive LLM inference engines wasted up to <strong>80% of GPU memory</strong> on fragmentation and over-allocation. The breakthrough that changed the entire AI industry is <strong>PagedAttention</strong> (introduced by UC Berkeley's <em>vLLM</em> project), which borrowed a 60-year-old operating system concept: <strong>Virtual Memory Paging</strong>.
+      </p>
+
+      <!-- Real Hero Image -->
+      <div class="article-image-wrapper">
+        <img src="../assets/images/vllm_pagedattention_hero.jpg" alt="vLLM PagedAttention and KV Cache GPU Memory Optimization Architecture" class="article-img">
+        <p class="image-caption">Figure 1: Traditional Fragmented GPU VRAM vs. Optimized Paged Memory Blocks in vLLM PagedAttention engine.</p>
+      </div>
+
+      <h2>1. The Anatomy of Autoregressive LLM Inference</h2>
+      <p>
+        To understand why memory is the bottleneck, we must look at how Transformer models generate text:
+      </p>
+      <ol>
+        <li><strong>Prefill Phase (Prompt Processing):</strong> The model takes the entire input prompt (e.g., 500 tokens) and computes attention across all tokens in parallel. This phase is <em>compute-bound</em>.</li>
+        <li><strong>Decode Phase (Token Generation):</strong> The model generates output text one token at a time sequentially. To generate token $T_{n}$, it must attend to all previous tokens $T_1, T_2, \dots, T_{n-1}$. This phase is <em>memory-bandwidth bound</em>.</li>
+      </ol>
+
+      <p>
+        Without caching, generating token 100 would require recalculating attention keys and values for tokens 1 through 99. To prevent this quadratic compute explosion, we store the intermediate Key and Value tensors for all previous tokens in GPU memory — this is the <strong>KV Cache</strong>.
+      </p>
+
+      <h2>2. The KV Cache Math: Why VRAM Disappears</h2>
+      <p>
+        Let's calculate the memory required for the KV Cache for a single 13B parameter model (16-bit FP16 precision):
+      </p>
+
+      <div class="code-block-wrapper">
+        <div class="code-header">
+          <span>KV Cache Formula</span>
+        </div>
+        <pre><code>Memory per Token = 2 × (Layers) × (Heads) × (Head Dimension) × (Bytes per Element)
+
+For a 13B model (40 layers, 40 heads, 128 dim, 2 bytes FP16):
+Memory per Token = 2 × 40 × 40 × 128 × 2 bytes = 819,200 bytes ≈ 800 KB / token
+
+For a sequence of 4,096 tokens:
+Total KV Cache per request = 4,096 × 800 KB ≈ 3.2 GB of VRAM!
+
+If you handle 30 concurrent requests:
+30 × 3.2 GB = 96 GB of VRAM just for the KV Cache alone!</code></pre>
+      </div>
+
+      <h2>3. The Traditional Flaw: Massive Memory Fragmentation</h2>
+      <p>
+        In naive systems (like standard PyTorch or HuggingFace Transformers), the inference engine doesn't know in advance how many tokens a user will generate. Will the response be 50 tokens or 4,000 tokens?
+      </p>
+      <p>
+        To avoid dynamic GPU allocations during execution (which cause massive CUDA synchronization overhead), naive engines pre-allocate a contiguous memory buffer for the <strong>maximum sequence length</strong> (e.g., 8,192 tokens) upfront.
+      </p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Fragmentation Type</th>
+              <th>How It Happens</th>
+              <th>Impact on GPU Memory</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Reserved Memory Waste</strong></td>
+              <td>Pre-allocating for max sequence length (e.g. 8K tokens) when the actual answer is only 200 tokens.</td>
+              <td>Up to <strong>70% of VRAM sits idle</strong> and cannot be used by other concurrent requests.</td>
+            </tr>
+            <tr>
+              <td><strong>Internal Fragmentation</strong></td>
+              <td>Allocating memory in large power-of-two chunks that are only partially filled.</td>
+              <td>Unusable gaps inside memory allocations.</td>
+            </tr>
+            <tr>
+              <td><strong>External Fragmentation</strong></td>
+              <td>Requests finish at different times, leaving scattered free memory pockets too small for a new request.</td>
+              <td>Server crashes with <code>CUDA Out of Memory</code> even with 25% total free VRAM.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>4. How PagedAttention Works: Virtual Memory for GPUs</h2>
+      <p>
+        Operating systems solved this exact problem in the 1960s with <strong>Virtual Memory Paging</strong>. Instead of demanding a huge contiguous physical memory block for each program, the OS partitions RAM into small 4KB pages and maintains a Page Table to translate virtual addresses to physical pages scattered anywhere in RAM.
+      </p>
+      <p>
+        <strong>PagedAttention</strong> applies this exact architectural paradigm to the LLM KV Cache:
+      </p>
+
+      <ul>
+        <li><strong>Fixed-Size KV Blocks:</strong> GPU memory is divided into fixed-size physical blocks (e.g., each block holds the Key and Value vectors for 16 tokens).</li>
+        <li><strong>Non-Contiguous Allocation:</strong> As a user prompt generates new tokens, new KV blocks are dynamically allocated from a central memory pool. Tokens 0–15 might live in Block #4, while tokens 16–31 live in Block #92.</li>
+        <li><strong>Logical-to-Physical Block Table:</strong> A lightweight lookup table maps each request's continuous token indices to arbitrary physical blocks in GPU VRAM.</li>
+      </ul>
+
+      <h2>5. The Game Changer: Memory Sharing & Zero-Copy Branching</h2>
+      <p>
+        Because memory is managed in discrete blocks with pointers, PagedAttention enables revolutionary memory sharing patterns with <strong>zero data duplication</strong>:
+      </p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>How Traditional Serving Handles It</th>
+              <th>How vLLM PagedAttention Handles It</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Shared System Prompts</strong></td>
+              <td>Copies the 2,000-token system prompt KV Cache for every single user session.</td>
+              <td><strong>All users share the exact same physical KV blocks</strong> via read-only pointers. 0 MB extra memory!</td>
+            </tr>
+            <tr>
+              <td><strong>Parallel Sampling (Best-of-N)</strong></td>
+              <td>Spawns N separate requests, duplicating the prompt N times in VRAM.</td>
+              <td>Prompt blocks are shared. Forked generation uses <strong>Copy-on-Write (CoW)</strong> only when tokens diverge!</td>
+            </tr>
+            <tr>
+              <td><strong>Continuous (Iteration-Level) Batching</strong></td>
+              <td>Waits for the slowest request in a batch to finish before inserting new requests (Static Batching).</td>
+              <td>New requests join immediately on the next token iteration; completed requests release blocks instantly.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>6. Real-World Code: High-Throughput Serving with vLLM</h2>
+      <p>
+        Deploying a high-throughput OpenAI-compatible LLM endpoint using vLLM in Python:
+      </p>
+
+      <div class="code-block-wrapper">
+        <div class="code-header">
+          <span>serve_llm.py (vLLM Production Setup)</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+        </div>
+        <pre><code class="language-python">from vllm import LLM, SamplingParams
+
+# Configure sampling parameters
+sampling_params = SamplingParams(
+    temperature=0.7,
+    top_p=0.95,
+    max_tokens=512
+)
+
+# Initialize vLLM with PagedAttention and dynamic KV cache allocation
+llm = LLM(
+    model="meta-llama/Meta-Llama-3-8B-Instruct",
+    gpu_memory_utilization=0.90,     # Allocate 90% of GPU VRAM to Paged KV Blocks
+    max_num_seqs=256,                 # Serve up to 256 concurrent requests per GPU
+    max_model_len=8192,
+    tensor_parallel_size=1
+)
+
+# Prompts sharing common system instructions
+prompts = [
+    "System: You are an expert system architect.\nUser: Explain Redis eviction policies.",
+    "System: You are an expert system architect.\nUser: How does Kafka achieve high write throughput?"
+]
+
+# Generate tokens with zero prompt duplication
+outputs = llm.generate(prompts, sampling_params)
+
+for output in outputs:
+    print(f"Generated text: {output.outputs[0].text[:100]}...")
+</code></pre>
+      </div>
+
+      <h2>7. Architectural Benchmark: Throughput & Latency</h2>
+      <ul>
+        <li><strong>Memory Waste Reduction:</strong> Drops from &gt;70% down to under <strong>4%</strong>.</li>
+        <li><strong>Batch Size Capacity:</strong> Increases concurrent batch capacity by <strong>4x to 8x</strong> on the same GPU hardware (e.g. NVIDIA A100/H100).</li>
+        <li><strong>Token Generation Speed:</strong> Delivers <strong>2x to 4x lower Time-To-First-Token (TTFT)</strong> and up to <strong>10x higher overall serving throughput</strong> (tokens/sec/dollar).</li>
+      </ul>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h2>8. Summary &amp; Engineering Takeaways</h2>
+      <ul>
+        <li><strong>The Real Bottleneck:</strong> LLM serving at scale is bound by GPU memory capacity and bandwidth, governed primarily by the expanding KV Cache.</li>
+        <li><strong>PagedAttention Paradigm:</strong> By splitting KV Cache into small, non-contiguous blocks and using page tables, memory fragmentation is eliminated.</li>
+        <li><strong>Zero-Copy Architecture:</strong> Shared prompts, multi-candidate sampling, and continuous batching allow dramatic cost savings on expensive cloud GPUs.</li>
+      </ul>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h3>💬 Join the Discussion</h3>
+      <p>
+        Which inference serving framework are you utilizing in production: vLLM, TensorRT-LLM, TGI, SGLang, or llama.cpp? Join the discussion on <a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank">LinkedIn</a>!
+      </p>
+
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Gyaan Ki Baat by Harshit Joshi. Powered by GitHub Pages.</p>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

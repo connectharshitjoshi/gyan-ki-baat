@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" width="100%" height="auto">
+  <defs>
+    <linearGradient id="bgChart" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b0f19"/>
+      <stop offset="100%" stop-color="#060911"/>
+    </linearGradient>
+
+    <linearGradient id="goRed" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#ef4444" stop-opacity="0"/>
+    </linearGradient>
+
+    <linearGradient id="rustGreen" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#10b981" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="960" height="420" fill="url(#bgChart)"/>
+
+  <!-- Title -->
+  <rect x="40" y="20" width="880" height="45" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="60" y="48" fill="#f8fafc" font-family="'Outfit', sans-serif" font-weight="700" font-size="15">📊 THE DISCORD BENCHMARK: Go Garbage Collection Spikes vs. Rust Zero-Cost Memory</text>
+  <text x="900" y="48" fill="#94a3b8" font-family="'Inter', sans-serif" font-size="12" text-anchor="end">Latency Tail Comparison (p99 / p99.9)</text>
+
+  <!-- Chart Area -->
+  <g transform="translate(60, 85)">
+    <!-- Y-Axis Lines -->
+    <line x1="60" y1="20" x2="840" y2="20" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="50" y="24" fill="#94a3b8" font-family="'Fira Code', monospace" font-size="11" text-anchor="end">300ms</text>
+
+    <line x1="60" y1="80" x2="840" y2="80" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="50" y="84" fill="#94a3b8" font-family="'Fira Code', monospace" font-size="11" text-anchor="end">200ms</text>
+
+    <line x1="60" y1="140" x2="840" y2="140" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="50" y="144" fill="#94a3b8" font-family="'Fira Code', monospace" font-size="11" text-anchor="end">100ms</text>
+
+    <line x1="60" y1="200" x2="840" y2="200" stroke="#475569" stroke-width="1.5"/>
+    <text x="50" y="204" fill="#34d399" font-family="'Fira Code', monospace" font-size="11" text-anchor="end">0ms</text>
+
+    <!-- X-Axis Line & Labels -->
+    <line x1="60" y1="200" x2="840" y2="200" stroke="#475569" stroke-width="1.5"/>
+    <text x="120" y="225" fill="#64748b" font-family="'Inter', sans-serif" font-size="11" text-anchor="middle">0m</text>
+    <text x="240" y="225" fill="#64748b" font-family="'Inter', sans-serif" font-size="11" text-anchor="middle">2m (GC Cycle)</text>
+    <text x="360" y="225" fill="#64748b" font-family="'Inter', sans-serif" font-size="11" text-anchor="middle">4m (GC Cycle)</text>
+    <text x="480" y="225" fill="#64748b" font-family="'Inter', sans-serif" font-size="11" text-anchor="middle">6m (GC Cycle)</text>
+    <text x="600" y="225" fill="#64748b" font-family="'Inter', sans-serif" font-size="11" text-anchor="middle">8m (GC Cycle)</text>
+    <text x="720" y="225" fill="#64748b" font-family="'Inter', sans-serif" font-size="11" text-anchor="middle">10m (GC Cycle)</text>
+    <text x="820" y="225" fill="#64748b" font-family="'Inter', sans-serif" font-size="11" text-anchor="middle">12m</text>
+
+    <!-- GO SPIKE CURVE (Red jagged periodic spikes every 2 mins) -->
+    <path d="M 60 190 
+             L 210 190 L 235 30 L 245 40 L 260 190 
+             L 330 190 L 355 25 L 365 35 L 380 190 
+             L 450 190 L 475 28 L 485 38 L 500 190 
+             L 570 190 L 595 24 L 605 32 L 620 190 
+             L 690 190 L 715 30 L 725 38 L 740 190 
+             L 840 190" 
+          fill="none" stroke="#ef4444" stroke-width="2.5"/>
+
+    <!-- RUST FLAT CURVE (Green razor-flat line at <5ms) -->
+    <path d="M 60 196 L 840 196" fill="none" stroke="#10b981" stroke-width="3"/>
+
+    <!-- Legend Tags -->
+    <!-- Go Legend -->
+    <g transform="translate(140, 255)">
+      <rect width="260" height="50" rx="8" fill="#1e1318" stroke="#ef4444" stroke-width="1.2"/>
+      <line x1="15" y1="25" x2="35" y2="25" stroke="#ef4444" stroke-width="3"/>
+      <circle cx="25" cy="25" r="4" fill="#ef4444"/>
+      <text x="45" y="20" fill="#f87171" font-family="'Inter', sans-serif" font-weight="700" font-size="12">Go (Read States Cache)</text>
+      <text x="45" y="38" fill="#94a3b8" font-family="'Inter', sans-serif" font-size="10">Periodic GC Pauses spike to ~280ms</text>
+    </g>
+
+    <!-- Rust Legend -->
+    <g transform="translate(440, 255)">
+      <rect width="280" height="50" rx="8" fill="#06281e" stroke="#10b981" stroke-width="1.2"/>
+      <line x1="15" y1="25" x2="35" y2="25" stroke="#10b981" stroke-width="3"/>
+      <circle cx="25" cy="25" r="4" fill="#10b981"/>
+      <text x="45" y="20" fill="#34d399" font-family="'Inter', sans-serif" font-weight="700" font-size="12">Rust Rewrite (Zero GC)</text>
+      <text x="45" y="38" fill="#94a3b8" font-family="'Inter', sans-serif" font-size="10">10x faster tail latency &lt; 2ms constant</text>
+    </g>
+  </g>
+</svg>

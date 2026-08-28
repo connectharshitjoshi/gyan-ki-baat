@@ -342,12 +342,78 @@
         </div>
       </article>
 
+      <!-- Article 14 Card (AI Systems & LLM Infra) -->
+      <article class="post-card" data-category="architecture" data-tags="ai,llm,vllm,pagedattention,kvcache,gpu,vram,system-design,inference,machinelearning,deeplearning" id="post-card-14">
+        <div>
+          <img src="assets/images/vllm_pagedattention_hero.jpg" alt="vLLM PagedAttention and KV Cache GPU Optimization" class="card-thumbnail">
+
+          <div class="card-meta">
+            <span class="category-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: rgba(16, 185, 129, 0.4);">AI Infrastructure 🧠</span>
+            <span>⏱️ 15 min read</span>
+            <span>📅 Aug 2026</span>
+          </div>
+          <h2 class="post-title">
+            <a href="blogs/how-llm-serving-engines-work-pagedattention.html">How LLM Serving Engines Achieve 10x Throughput: Inside PagedAttention &amp; KV Caching</a>
+          </h2>
+          <p class="post-excerpt">
+            Understand why LLM inference runs out of GPU memory: KV Cache bottlenecks, VRAM fragmentation, PagedAttention virtual memory paging, and continuous batching.
+          </p>
+        </div>
+        <div class="card-footer">
+          <a href="blogs/how-llm-serving-engines-work-pagedattention.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </article>
+
+      <!-- Article 15 Card (Geospatial & Distributed Dispatch) -->
+      <article class="post-card" data-category="architecture" data-tags="uber,h3,geospatial,surge,pricing,redis,ringpop,dijkstra,system-design,distributed,architecture" id="post-card-15">
+        <div>
+          <img src="assets/images/uber_h3_geospatial_hero.jpg" alt="Uber H3 Spatial Hexagonal Surge Pricing & Dispatch Engine" class="card-thumbnail">
+
+          <div class="card-meta">
+            <span class="category-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4);">System Design 🚗</span>
+            <span>⏱️ 15 min read</span>
+            <span>📅 Aug 2026</span>
+          </div>
+          <h2 class="post-title">
+            <a href="blogs/how-uber-matches-drivers-surge-pricing-h3.html">How Uber Matches Millions of Riders &amp; Calculates Surge Pricing in 500ms: Inside H3 Hexagons &amp; Ringpop</a>
+          </h2>
+          <p class="post-excerpt">
+            Deep dive into Uber's real-time geospatial engine: Hierarchical Hexagonal Indexing (H3), Ringpop gossip protocol, dynamic surge pricing algorithms, and Dijkstra routing.
+          </p>
+        </div>
+        <div class="card-footer">
+          <a href="blogs/how-uber-matches-drivers-surge-pricing-h3.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </article>
+
+      <!-- Article 16 Card (Stories Expiration Architecture) -->
+      <article class="post-card" data-category="architecture" data-tags="instagram,whatsapp,stories,cron,ttl,redis,timing-wheels,kafka,partitioning,database,system-design,architecture" id="post-card-16">
+        <div>
+          <img src="assets/images/story_expiration_hero.jpg" alt="How Instagram & WhatsApp Stories Expire in 24 Hours without Cron" class="card-thumbnail">
+
+          <div class="card-meta">
+            <span class="category-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4);">System Design ⏳</span>
+            <span>⏱️ 15 min read</span>
+            <span>📅 Aug 2026</span>
+          </div>
+          <h2 class="post-title">
+            <a href="blogs/how-instagram-whatsapp-stories-expire-no-cron.html">How Instagram &amp; WhatsApp Stories Expire in 24 Hours: Does a Cron Job Actually Run?</a>
+          </h2>
+          <p class="post-excerpt">
+            Why cron jobs crash at 500M+ DAU scale, and the 4-tier architecture behind 24-hour expiration: Lazy filtering, Redis TTL eviction, Timing Wheels, and O(1) Time-Partitioned Drops.
+          </p>
+        </div>
+        <div class="card-footer">
+          <a href="blogs/how-instagram-whatsapp-stories-expire-no-cron.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </article>
+
     </div>
 
     <!-- View All Articles Toggle Button -->
     <div class="load-more-container" id="load-more-container">
       <button class="load-more-btn" id="load-more-btn" aria-expanded="false">
-        <span id="load-more-text">View All Articles (13)</span>
+        <span id="load-more-text">View All Articles (16)</span>
         <svg id="load-more-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
       </button>
     </div>

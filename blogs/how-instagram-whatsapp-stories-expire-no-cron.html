@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How Instagram & WhatsApp Stories Expire in 24 Hours: Does a Cron Job Actually Run? | Gyaan Ki Baat</title>
+  <meta name="description" content="Inside the distributed systems architecture of expiring stories: Why cron jobs fail at 500M+ DAU, Lazy Expiration, Redis TTL probabilistic eviction, Hierarchical Timing Wheels, and O(1) Time-Partitioned Database Drops.">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="logo" id="nav-logo">
+        ☕ Gyaan Ki Baat <span class="logo-badge">System Design</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="../index.html" id="nav-link-home">← Back to Articles</a></li>
+        <li><a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank" class="nav-btn" id="nav-btn-linkedin">Share on LinkedIn</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Article Header -->
+  <header class="article-header">
+    <div class="container">
+      <div class="article-breadcrumb">
+        <a href="../index.html">Articles</a> / <span>System Design &amp; Distributed Architecture</span>
+      </div>
+      <h1 class="article-title">
+        How Instagram &amp; WhatsApp Stories Expire in Exactly 24 Hours: Does a Cron Job Actually Run?
+      </h1>
+      <div class="article-author-bar">
+        <img src="../assets/images/harshit.jpg" alt="Harshit Joshi" class="author-avatar">
+        <div class="author-info">
+          <h4>Harshit Joshi</h4>
+          <p>Gyaan Ki Baat #16 • 15 min read • Published Aug 2026</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Article Body -->
+  <main class="container">
+    <article class="article-content">
+
+      <p class="lead">
+        Every day, over <strong>500 Million Daily Active Users (DAU)</strong> post more than <strong>1 Billion ephemeral Stories and Status updates</strong> on Instagram, WhatsApp, and Facebook. Exactly 24 hours (86,400 seconds) after publication, the story vanishes from the user's tray, becomes inaccessible to friends, and disappears from feeds worldwide.
+      </p>
+      <p class="lead">
+        If you ask a junior developer how this works, the most common answer is: <em>"A cron job runs every minute and deletes all records where <code>created_at &lt; NOW() - 24 hours</code>."</em>
+      </p>
+      <p class="lead">
+        In this deep-dive, we break down why a database cron job would bring a distributed system to its knees in seconds, and uncover the real 4-tier architecture powering 24-hour expiration at hyper-scale: <strong>Lazy Evaluation</strong>, <strong>Redis TTL Probabilistic Eviction</strong>, <strong>Hierarchical Timing Wheels</strong>, and <strong>$O(1)$ Time-Partitioned Database Drops</strong>.
+      </p>
+
+      <!-- Hero Diagram -->
+      <div class="article-image-wrapper">
+        <img src="../assets/images/story_expiration_hero.jpg" alt="Stories Expiration Architecture without Cron Jobs" class="article-img">
+        <p class="image-caption">Figure 1: High-level architectural pipeline of 24h story expiration: Client queries, Redis TTL, Timing Wheels, and Time-Partitioned Drops.</p>
+      </div>
+
+      <h2>1. The Naive Approach: Why Cron Jobs Fail at Scale</h2>
+      <p>
+        Imagine a background worker executing this SQL query every 60 seconds across a cluster storing 1,000,000,000 active story rows:
+      </p>
+
+      <div class="code-block-wrapper">
+        <div class="code-header">
+          <span>Naive Cron Approach (Crashes Databases at Scale)</span>
+        </div>
+        <pre><code class="language-sql">-- Runs every minute via cron / scheduler
+DELETE FROM user_stories 
+WHERE created_at < NOW() - INTERVAL '24 hours';
+</code></pre>
+      </div>
+
+      <p>
+        Here is what actually happens when you run this at Meta/Instagram scale:
+      </p>
+
+      <ul>
+        <li><strong>Table &amp; Row Lock Contention:</strong> A <code>DELETE</code> statement scanning and locking millions of rows across B-Tree indexes blocks incoming user writes and timeline reads.</li>
+        <li><strong>WAL &amp; Binlog Flooding:</strong> In relational databases (PostgreSQL/MySQL), every single row deletion generates a Write-Ahead Log (WAL) or binary replication log entry. Deleting 700,000 stories every minute saturates replication network bandwidth and causes massive <strong>replication lag</strong> on read-replicas.</li>
+        <li><strong>Dead Tuple Bloat &amp; Disk Fragmentation:</strong> In MVCC databases (Postgres), <code>DELETE</code> doesn't free disk space immediately; it writes a delete mask (dead tuple), requiring relentless background <code>VACUUM</code> jobs that consume 100% of server CPU and NVMe disk I/O.</li>
+        <li><strong>The "Thundering Herd" Spike:</strong> At the top of every minute (`:00`), CPU utilization spikes to 100%, causing latency spikes (P99 &gt; 5,000ms) for real-time user requests.</li>
+      </ul>
+
+      <h2>2. Layer 1: Read-Time Filtering &amp; Lazy Expiration (Zero DB Deletes)</h2>
+      <p>
+        The first law of high-throughput distributed systems is: <strong>Never do background work if you can defer it to read time.</strong>
+      </p>
+      <p>
+        When you open Instagram and your phone fetches your friends' story trays, the system does not need a background cleaner to have physically purged expired stories from the disk. Instead, the API gateway and feed services perform <strong>Logical Soft Filtering</strong>:
+      </p>
+
+      <div class="code-block-wrapper">
+        <div class="code-header">
+          <span>feed_service.go (Logical Read-Time Expiration)</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+        </div>
+        <pre><code class="language-go">type Story struct {
+    ID        string    `json:"id"`
+    UserID    string    `json:"user_id"`
+    MediaURL  string    `json:"media_url"`
+    CreatedAt time.Time `json:"created_at"`
+    ExpiresAt time.Time `json:"expires_at"` // Set to CreatedAt + 24 Hours
+}
+
+// FetchActiveStories filters out expired stories on-the-fly in O(1)
+func FetchActiveStories(stories []Story) []Story {
+    now := time.Now()
+    active := make([]Story, 0, len(stories))
+
+    for _, s := range stories {
+        // If current time exceeds expiration timestamp, silently omit
+        if s.ExpiresAt.After(now) {
+            active = append(active, s)
+        }
+    }
+    return active
+}
+</code></pre>
+      </div>
+
+      <h3>Dynamic Edge CDN Caching via Remaining TTL</h3>
+      <p>
+        When media (photos, video segments) is uploaded to Meta's Origin Storage / CDN, the Origin injects a calculated <code>Cache-Control</code> header with the exact remaining seconds until expiration:
+      </p>
+
+      <div class="code-block-wrapper">
+        <div class="code-header">
+          <span>HTTP Response Header (Origin CDN)</span>
+        </div>
+        <pre><code class="language-http">HTTP/2 200 OK
+Content-Type: video/mp4
+Date: Fri, 28 Aug 2026 14:00:00 GMT
+Expires: Sat, 29 Aug 2026 14:00:00 GMT
+Cache-Control: public, max-age=86400, s-maxage=86400
+</code></pre>
+      </div>
+
+      <p>
+        If a user requests the video 6 hours after posting, the CDN calculates <code>s-maxage = 64800</code> (18 hours remaining). When the 24-hour mark arrives, edge CDN points across the globe automatically evict the media without the origin server ever issuing a single cache-purge broadcast!
+      </p>
+
+      <h2>3. Layer 2: In-Memory Caching (Redis TTL Internals)</h2>
+      <p>
+        Active story metadata and user trays are cached entirely in RAM across distributed Redis clusters (or Meta's internal <em>TAO / Memcached</em> fleet). When a story is published, a key is written with an explicit Time-To-Live (TTL):
+      </p>
+
+      <div class="code-block-wrapper">
+        <div class="code-header">
+          <span>Redis TTL Setup</span>
+        </div>
+        <pre><code class="language-bash"># Set story metadata with 86400 seconds (24 hours) TTL
+SET story:metadata:982341 '{"user_id": "harshit", "media": "s3://..."}' EX 86400
+
+# Add to user's active story set
+ZADD user:stories:harshit 1787928995 "story:metadata:982341"
+</code></pre>
+      </div>
+
+      <h3>How Redis Evicts Millions of Expired Keys Without Blocking</h3>
+      <p>
+        Redis is single-threaded for command execution. If Redis iterated over millions of keys to find expired ones, the entire cache would freeze. Instead, Redis combines two complementary algorithms:
+      </p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Strategy</th>
+              <th>Trigger Mechanism</th>
+              <th>Complexity &amp; Behavior</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1. Passive / Lazy Expiration</strong></td>
+              <td>Client executes <code>GET story:metadata:982341</code></td>
+              <td>Redis checks if <code>expire_time &lt; current_time</code>. If expired, Redis instantly deletes the key in $O(1)$ and returns <code>nil</code>. Zero background CPU cost.</td>
+            </tr>
+            <tr>
+              <td><strong>2. Active Probabilistic Expiration</strong></td>
+              <td>Internal timer runs 10 times/sec (<code>hz = 10</code>)</td>
+              <td>
+                1. Samples 20 random keys with TTL.<br>
+                2. Deletes all expired keys found.<br>
+                3. If <strong>&gt; 25%</strong> of sampled keys were expired, it repeats step 1 immediately (capped at 25ms maximum execution time to avoid lag).
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>4. Layer 3: Event-Driven Triggers via Hierarchical Timing Wheels</h2>
+      <p>
+        What if an asynchronous background side-effect <em>must</em> occur at the exact 24-hour second mark? For example:
+      </p>
+      <ul>
+        <li>Auto-archiving the story to the user's private "Memories" archive.</li>
+        <li>Finalizing view counts and viewer impression analytics.</li>
+        <li>Removing story rings from follower graph indexes.</li>
+      </ul>
+      <p>
+        Using a standard Priority Queue (Min-Heap) for 500M timers requires $O(\log N)$ insertion and deletion, which degrades under millions of concurrent writes. High-performance systems use <strong>Hierarchical Timing Wheels</strong> (popularized by Kafka, Netty, and Linux kernel timer interrupts).
+      </p>
+
+      <div class="code-block-wrapper">
+        <div class="code-header">
+          <span>timing_wheel.py (Hierarchical O(1) Expiration Timer Concept)</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+        </div>
+        <pre><code class="language-python">class HierarchicalTimingWheel:
+    def __init__(self):
+        # 60 second buckets (1 tick = 1 sec)
+        self.second_wheel = [[] for _ in range(60)]
+        # 60 minute buckets (1 tick = 1 min)
+        self.minute_wheel = [[] for _ in range(60)]
+        # 24 hour buckets (1 tick = 1 hour)
+        self.hour_wheel = [[] for _ in range(24)]
+
+    def schedule_expiry(self, story_id, delay_seconds=86400):
+        """Schedules story cleanup in O(1) constant time"""
+        target_hour = (delay_seconds // 3600) % 24
+        self.hour_wheel[target_hour].append(story_id)
+
+    def on_hour_tick(self, current_hour):
+        """Cascades pending tasks down to minute and second wheels in O(1)"""
+        pending_stories = self.hour_wheel[current_hour]
+        self.hour_wheel[current_hour] = []
+        for story_id in pending_stories:
+            # Cascade to minute/second wheel or emit Kafka Expiration Event
+            self.emit_kafka_event("STORY_EXPIRED_EVENT", story_id)
+</code></pre>
+      </div>
+
+      <p>
+        When the timer fires, an event is emitted into an <strong>Apache Kafka</strong> topic. Consumer microservices asynchronously process the story archive pipeline, invalidate stale secondary caches, and persist analytics without touching the main OLTP database tables.
+      </p>
+
+      <h2>5. Layer 4: Hard Database Purging via $O(1)$ Time-Partitioned Table Drops</h2>
+      <p>
+        Eventually, cold story records that are days or weeks old must be wiped from persistent primary disks (PostgreSQL / MySQL / Cassandra / ScyllaDB). How do engineering teams perform this without writing millions of individual <code>DELETE</code> statements?
+      </p>
+      <p>
+        They use <strong>Time-Based Range Partitioning</strong>:
+      </p>
+
+      <div class="code-block-wrapper">
+        <div class="code-header">
+          <span>time_partitioning.sql (Instant O(1) File Drop)</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+        </div>
+        <pre><code class="language-sql">-- Master Table partitioned by Range of creation timestamp
+CREATE TABLE user_stories (
+    story_id UUID NOT NULL,
+    user_id BIGINT NOT NULL,
+    media_url VARCHAR(512),
+    created_at TIMESTAMP NOT NULL,
+    PRIMARY KEY (created_at, story_id)
+) PARTITION BY RANGE (created_at);
+
+-- Each hour or day gets its own physical partition on disk
+CREATE TABLE stories_2026_08_27_h14 PARTITION OF user_stories
+    FOR VALUES FROM ('2026-08-27 14:00:00') TO ('2026-08-27 15:00:00');
+
+-- TO CLEAN UP: A simple DDL command drops the entire table file in O(1)
+ALTER TABLE user_stories DETACH PARTITION stories_2026_08_27_h14;
+DROP TABLE stories_2026_08_27_h14;
+</code></pre>
+      </div>
+
+      <h3>Why <code>DROP TABLE</code> is $10,000\times$ Faster than <code>DELETE</code>:</h3>
+      <ul>
+        <li><code>DELETE</code> scans rows, marks dead tuples, modifies B-Trees, writes gigabytes of WAL logs, and leaves empty space fragmented on disk.</li>
+        <li><code>DROP TABLE</code> executes an instantaneous filesystem <code>unlink()</code> syscall. The operating system unlinks the file pointer in <strong>1 millisecond</strong> with <strong>zero WAL row generation and zero disk fragmentation!</strong></li>
+      </ul>
+
+      <h3>Cassandra / ScyllaDB: Time Window Compaction Strategy (TWCS)</h3>
+      <p>
+        In NoSQL systems like Apache Cassandra or ScyllaDB, tables use <strong>Time Window Compaction Strategy (TWCS)</strong>. Cassandra writes data into immutable SSTables grouped by hour. Every row has a column-level TTL (`USING TTL 86400`). Once all rows in an SSTable exceed the TTL, Cassandra drops the entire SSTable file in $O(1)$ without writing tombstones!
+      </p>
+
+      <h2>6. WhatsApp Status vs. Instagram Stories: Architectural Differences</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Dimension</th>
+              <th>Instagram Stories</th>
+              <th>WhatsApp Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Encryption</strong></td>
+              <td>Server-side TLS &amp; application-layer auth. Meta servers have full access to story metadata.</td>
+              <td><strong>End-to-End Encrypted (Signal Protocol)</strong>. WhatsApp servers cannot read media keys or status text.</td>
+            </tr>
+            <tr>
+              <td><strong>Storage Location</strong></td>
+              <td>Meta CDN (Haystack/F4) + Centralized Redis &amp; Cassandra clusters.</td>
+              <td>Ephemeral server queue until delivered; permanently stored on <strong>local device storage (SQLite)</strong>.</td>
+            </tr>
+            <tr>
+              <td><strong>Expiration Driver</strong></td>
+              <td>Edge CDN Cache-Control + Redis TTL + Kafka Timing Wheels + Partition Drops.</td>
+              <td><strong>Client-side SQLite queries</strong> (`DELETE WHERE timestamp &lt; now - 24h`) and device file garbage collection.</td>
+            </tr>
+            <tr>
+              <td><strong>Viewers Sync</strong></td>
+              <td>Real-time pull/push from Instagram metadata microservices.</td>
+              <td>Cryptographic read-receipt messages sent directly between peer contact devices.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h2>7. Summary &amp; Engineering Key Takeaways</h2>
+      <ul>
+        <li><strong>No Global Cron Deletes:</strong> Never run periodic <code>DELETE WHERE created_at &lt; ...</code> across high-volume production tables.</li>
+        <li><strong>Lazy Expiration First:</strong> Filter expired items logically at read-time in API gateways and cache layers ($O(1)$ timestamp check).</li>
+        <li><strong>Leverage Redis Dual Eviction:</strong> Redis pairs passive $O(1)$ lazy deletions with active probabilistic random sampling to clean expired keys safely.</li>
+        <li><strong>O(1) Partitions over Row Deletions:</strong> Organize time-series ephemeral data into hourly/daily table partitions and use <code>DROP PARTITION</code> to reclaim disk space instantly.</li>
+        <li><strong>Hierarchical Timing Wheels:</strong> For asynchronous side-effects, timing wheels scale to millions of timers with $O(1)$ insertion and trigger complexity.</li>
+      </ul>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h3>💬 Join the Discussion</h3>
+      <p>
+        Have you ever tackled data expiration or TTL cleanup in your own databases? How do you handle cache invalidation and background jobs? Share your thoughts on <a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank">LinkedIn</a>!
+      </p>
+
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Gyaan Ki Baat by Harshit Joshi. Powered by GitHub Pages.</p>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>
