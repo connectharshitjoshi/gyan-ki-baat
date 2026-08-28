@@ -54,13 +54,12 @@
 gyan-ki-baat/
 ├── index.html                           # Homepage with article grid, search & category filters
 ├── README.md                             # Repository documentation
-├── eighthpost.txt                        # LinkedIn Post #8 (How Social Media Apps Scale)
-├── ninthpost.txt                         # LinkedIn Post #9 (Credit Card Checkout Lifecycle)
-├── tenthpost.txt                         # LinkedIn Post #10 (WebSockets vs SSE vs gRPC)
-├── eleventhpost.txt                      # LinkedIn Post #11 (VMs vs Docker Containers)
-├── thirteenthpost.txt                    # LinkedIn Post #13 (How Netflix Streams 4K Video)
+├── flow                                 # Content roadmap & outline ideas
+├── fourteenth.jpg                       # Hero image for Post #14 (vLLM PagedAttention)
 ├── fourteenthpost.txt                    # LinkedIn Post #14 (vLLM PagedAttention & KV Cache)
+├── fifteenth.jpg                        # Hero image for Post #15 (Uber H3 Surge)
 ├── fifteenthpost.txt                     # LinkedIn Post #15 (Uber H3 Surge & Driver Matching)
+├── sixteenth.jpg                        # Hero image for Post #16 (Stories Expiration)
 ├── sixteenthpost.txt                     # LinkedIn Post #16 (Stories Expiration & Lazy Deletion)
 │
 ├── blogs/                               # Deep-dive long-form technical articles
