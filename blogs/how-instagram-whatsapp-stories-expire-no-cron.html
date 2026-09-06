@@ -58,8 +58,8 @@
 
       <!-- Hero Diagram -->
       <div class="article-image-wrapper">
-        <img src="../assets/images/story_expiration_hero.jpg" alt="Stories Expiration Architecture without Cron Jobs" class="article-img">
-        <p class="image-caption">Figure 1: High-level architectural pipeline of 24h story expiration: Client queries, Redis TTL, Timing Wheels, and Time-Partitioned Drops.</p>
+        <img src="../assets/images/story_expiration_hero.jpg" alt="Instagram Stories and WhatsApp Status 24-Hour Expiration Architecture" class="article-img">
+        <p class="image-caption">Figure 1: Real-world 24-hour expiration at scale: Instagram Stories gradient tray &amp; active viewer alongside WhatsApp Status 24-hour disappearing updates.</p>
       </div>
 
       <h2>1. The Naive Approach: Why Cron Jobs Fail at Scale</h2>
@@ -286,6 +286,15 @@ DROP TABLE stories_2026_08_27_h14;
       </p>
 
       <h2>6. WhatsApp Status vs. Instagram Stories: Architectural Differences</h2>
+      <p>
+        While both features offer users a virtually identical 24-hour disappearing experience, their underlying engineering architectures, data custody models, and expiration mechanics diverge drastically due to privacy and encryption guarantees:
+      </p>
+
+      <div class="article-image-wrapper">
+        <img src="../assets/images/whatsapp_vs_instagram_stories_ui.jpg" alt="Instagram Stories Cloud CDN vs WhatsApp Status Local SQLite Architecture" class="article-img">
+        <p class="image-caption">Figure 2: Real UI architecture comparison: Instagram Stories utilizes central Cloud CDNs and server-side Redis TTLs, whereas WhatsApp Status relies on end-to-end encryption (Signal Protocol) and on-device SQLite purging.</p>
+      </div>
+
       <div class="table-wrapper">
         <table>
           <thead>

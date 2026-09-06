@@ -45,6 +45,7 @@
 | **#14** | [How LLM Serving Engines Achieve 10x Throughput: Inside PagedAttention & KV Caching](blogs/how-llm-serving-engines-work-pagedattention.html) | AI Infrastructure | 15 min read |
 | **#15** | [How Uber Matches Millions of Riders & Calculates Surge Pricing in 500ms](blogs/how-uber-matches-drivers-surge-pricing-h3.html) | System Design & Geospatial | 15 min read |
 | **#16** | [How Instagram & WhatsApp Stories Expire in 24 Hours: Does a Cron Job Run?](blogs/how-instagram-whatsapp-stories-expire-no-cron.html) | System Design & Storage | 15 min read |
+| **#17** | [How Google Search Actually Works: How to Rank Your Portfolio on Page #1](blogs/how-to-rank-on-google-search-technical-seo.html) | Search Systems & SEO | 15 min read |
 
 ---
 
@@ -55,12 +56,12 @@ gyan-ki-baat/
 ├── index.html                           # Homepage with article grid, search & category filters
 ├── README.md                             # Repository documentation
 ├── flow                                 # Content roadmap & outline ideas
-├── fourteenth.jpg                       # Hero image for Post #14 (vLLM PagedAttention)
-├── fourteenthpost.txt                    # LinkedIn Post #14 (vLLM PagedAttention & KV Cache)
 ├── fifteenth.jpg                        # Hero image for Post #15 (Uber H3 Surge)
 ├── fifteenthpost.txt                     # LinkedIn Post #15 (Uber H3 Surge & Driver Matching)
 ├── sixteenth.jpg                        # Hero image for Post #16 (Stories Expiration)
 ├── sixteenthpost.txt                     # LinkedIn Post #16 (Stories Expiration & Lazy Deletion)
+├── seventeenth.jpg                      # Hero image for Post #17 (Google Search & Technical SEO)
+├── seventeenthpost.txt                   # LinkedIn Post #17 (Googlebot Indexing & Page #1 SEO)
 │
 ├── blogs/                               # Deep-dive long-form technical articles
 │   ├── degree-vs-skills.html
@@ -78,7 +79,8 @@ gyan-ki-baat/
 │   ├── how-netflix-streams-video-open-connect.html
 │   ├── how-llm-serving-engines-work-pagedattention.html
 │   ├── how-uber-matches-drivers-surge-pricing-h3.html
-│   └── how-instagram-whatsapp-stories-expire-no-cron.html
+│   ├── how-instagram-whatsapp-stories-expire-no-cron.html
+│   └── how-to-rank-on-google-search-technical-seo.html
 │
 ├── css/
 │   └── style.css                        # Modern CSS design system & media queries
