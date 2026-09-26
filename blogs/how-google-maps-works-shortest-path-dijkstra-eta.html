@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How Google Maps Finds the Shortest Path in Milliseconds: Inside Contraction Hierarchies, A* &amp; GNNs | Gyaan Ki Baat</title>
+  <meta name="description" content="Deep dive into Google Maps routing architecture: directed road graphs, why Dijkstra and A* fail at global scale, Contraction Hierarchies (CH), Customizable Route Planning (CRP), HMM Map Matching, and DeepMind Graph Neural Networks for dynamic ETA.">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="logo" id="nav-logo">
+        ☕ Gyaan Ki Baat <span class="logo-badge">System Design</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="../index.html" id="nav-link-home">← Back to Articles</a></li>
+        <li><a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank" class="nav-btn" id="nav-btn-linkedin">Share on LinkedIn</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Article Header -->
+  <header class="article-header">
+    <div class="container">
+      <div class="article-breadcrumb">
+        <a href="../index.html">Articles</a> / <span>Graph Algorithms &amp; Geospatial Systems</span>
+      </div>
+      <h1 class="article-title">
+        How Google Maps Finds the Shortest Path in Milliseconds: Inside Contraction Hierarchies, A* &amp; DeepMind GNNs
+      </h1>
+      <div class="article-author-bar">
+        <img src="../assets/images/harshit.jpg" alt="Harshit Joshi" class="author-avatar">
+        <div class="author-info">
+          <h4>Harshit Joshi</h4>
+          <p>Gyaan Ki Baat #18 • 16 min read • Published Sep 2026</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Article Body -->
+  <main class="container">
+    <article class="article-content">
+
+      <p class="lead">
+        You open Google Maps, type <strong>"Delhi to Bengaluru"</strong> (2,170 kilometers) or <strong>"New York to Los Angeles"</strong> (4,500 kilometers), and hit Navigate. In less than <strong>30 milliseconds</strong>, Google Maps accomplishes what seems computationally impossible:
+      </p>
+      <ul>
+        <li>Draws the exact turn-by-turn path through over <strong>100 million road segments</strong> and intersections.</li>
+        <li>Predicts your arrival time down to the minute, taking into account traffic snarls hundreds of kilometers ahead.</li>
+        <li>Provides two alternative routes showing time differences (+18 min, +42 min) and toll savings.</li>
+      </ul>
+      <p class="lead">
+        If Google ran classic computer science textbook algorithms like <strong>Dijkstra</strong> or standard <strong>Breadth-First Search (BFS)</strong> across a global road graph, your request would exhaust gigabytes of RAM, visit tens of millions of intersections, and take <strong>15 to 45 seconds per search</strong>. At Google’s scale of <strong>1+ billion active users and over 50,000 route requests per second</strong>, their servers would melt.
+      </p>
+      <p class="lead">
+        So how does Google Maps do it in under 15 milliseconds? The answer is a brilliant orchestration of <strong>Contraction Hierarchies (CH)</strong>, <strong>Customizable Route Planning (CRP)</strong>, <strong>Hidden Markov Models for Map Matching</strong>, and <strong>DeepMind Graph Neural Networks (GNNs)</strong>.
+      </p>
+
+      <!-- Real Hero Image -->
+      <div class="article-image-wrapper">
+        <img src="../assets/images/google_maps_routing_hero.jpg" alt="Google Maps Shortest Path and ETA Calculation Architecture" class="article-img">
+        <p class="image-caption">Figure 1: Google Maps Sub-30ms Routing Engine: Contraction Hierarchies, GPS Telemetry Streaming, Dynamic Edge Costing, and DeepMind Graph Neural Networks.</p>
+      </div>
+
+      <h2>1. Planet Earth as a Directed Multi-Graph</h2>
+      <p>
+        Before finding a path, the physical world must be converted into a mathematical data structure. Google Maps models the world's road network as a <strong>directed, weighted multi-graph</strong> $G = (V, E)$:
+      </p>
+      <ul>
+        <li><strong>Vertices (Nodes, $V$):</strong> Intersections, roundabouts, highway on/off-ramps, dead-ends, and road attribute transition points.</li>
+        <li><strong>Edges (Segments, $E$):</strong> The street or highway segment connecting two nodes.</li>
+        <li><strong>Edge Weights ($W$):</strong> The traversal cost. Crucially, the cost is <em>not</em> physical Euclidean distance in meters! It is <strong>Dynamic Travel Time</strong>:
+          $$\text{Cost}(e) = \frac{\text{Length}(e)}{\text{Current Speed}(e)} + \text{Turn Penalties} + \text{Toll / Traffic Light Overhead}$$
+        </li>
+      </ul>
+
+      <h3>Why Road Graphs Are Brutally Complex</h3>
+      <p>
+        In theoretical computer science, graphs are simple matrices. In the physical world, road networks break simple assumptions:
+      </p>
+      <ul>
+        <li><strong>One-Way Streets &amp; Divided Expressways:</strong> The road between Node $A$ and Node $B$ is directed ($A \to B \neq B \to A$).</li>
+        <li><strong>Turn Restrictions:</strong> You cannot simply jump from any incoming edge to any outgoing edge. A "No Left Turn between 8:00 AM – 11:00 AM" rule means the graph must store <em>turn costs</em> or be transformed into an <strong>Edge-Expanded Graph</strong>.</li>
+        <li><strong>Non-Planar Topology:</strong> Overpasses, underpasses, bridges, and double-decker expressways cross each other in 2D space without intersecting in 3D. A flat 2D intersection check would cause cars to jump off bridges!</li>
+      </ul>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h2>2. Why Classic Dijkstra &amp; A* Fail at Continental Scale</h2>
+
+      <h3>1. Dijkstra's Algorithm: The Blind Radial Explosion</h3>
+      <p>
+        Edsger Dijkstra published his famous shortest path algorithm in 1959. It maintains a priority queue of unvisited nodes, greedily exploring the closest unvisited node:
+      </p>
+      <p>
+        $$\text{Time Complexity: } \mathcal{O}((V + E) \log V)$$
+      </p>
+      <p>
+        <strong>The Fatal Flaw:</strong> Dijkstra is completely uniform and directional-blind. If you want to drive from Paris to Berlin (East), Dijkstra explores roads West toward Normandy, North toward Belgium, and South toward Lyon with equal priority. The search frontier expands as an ever-growing circle:
+      </p>
+      <ul>
+        <li>A 1,000 km journey across Europe or North America requires evaluating over <strong>25 Million nodes</strong>.</li>
+        <li>At ~200 nanoseconds per heap operation, Dijkstra takes <strong>5 to 12 seconds</strong> per query.</li>
+      </ul>
+
+      <h3>2. A* Search: Adding Directional Guidance</h3>
+      <p>
+        A* improves on Dijkstra by adding an <em>admissible heuristic</em> $h(n)$—the straight-line (Euclidean / Haversine) distance from node $n$ to the target, divided by the maximum speed limit:
+      </p>
+      <p>
+        $$f(n) = g(n) + h(n)$$
+      </p>
+      <p>
+        where $g(n)$ is the true accumulated cost from the origin to node $n$, and $h(n)$ pulls the search tree toward the destination like a magnetic field.
+      </p>
+      <p>
+        <strong>Why A* is Still Not Enough:</strong> While A* morphs the circular search wave into an ellipse pointed toward the target, it still explores hundreds of thousands of residential side streets, alleys, and cul-de-sacs along the highway corridor. A cross-country query still takes <strong>800ms to 2,000ms</strong>—still orders of magnitude too slow for a real-time web API.
+      </p>
+
+      <!-- SVG Comparison Diagram -->
+      <div class="article-image-wrapper">
+        <img src="../assets/images/google_maps_graph_routing.svg" alt="Dijkstra vs A-Star vs Contraction Hierarchies Comparison Diagram" class="article-img">
+        <p class="image-caption">Figure 2: Search Space Comparison: Dijkstra (blind radial wave, 25M nodes), A* (heuristic ellipse, 800k nodes), and Contraction Hierarchies (bidirectional upward cone, &lt;500 nodes).</p>
+      </div>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h2>3. The Breakthrough: Contraction Hierarchies (CH)</h2>
+      <p>
+        How does a human plan a drive from San Diego to Seattle?
+      </p>
+      <blockquote>
+        "You take your local neighborhood street to a collector road, merge onto Interstate 5 North, drive 1,200 miles on I-5, exit near Seattle onto an arterial avenue, and navigate the final 400 meters on residential streets."
+      </blockquote>
+      <p>
+        You <em>never</em> contemplate turning into a suburban cul-de-sac in Sacramento or Portland while cruising on I-5. You intuitively drop the local road network from your mental search space!
+      </p>
+      <p>
+        <strong>Contraction Hierarchies (CH)</strong>, invented by Geisberger et al. in 2008, formalizes this exact intuition mathematically into two phases: <strong>Offline Preprocessing</strong> and <strong>Online Querying</strong>.
+      </p>
+
+      <h3>Phase 1: Preprocessing (Node Contraction &amp; Shortcut Insertion)</h3>
+      <ol>
+        <li>Every node in the continental graph is assigned an <strong>importance rank</strong> from $1$ to $N$. Minor residential dead-ends and quiet neighborhood intersections receive low ranks; arterial road junctions receive medium ranks; major highway interchanges (e.g., NH-44, I-95, Autobahn) receive the highest ranks.</li>
+        <li>Nodes are contracted (removed from the graph) one by one in increasing order of rank.</li>
+        <li><strong>The Shortcut Invariant:</strong> When node $v$ is contracted, the algorithm checks all incoming edges $(u \to v)$ and outgoing edges $(v \to w)$. If the path $u \to v \to w$ was the <em>unique shortest path</em> between $u$ and $w$, a direct <strong>shortcut edge</strong> $(u \to w)$ is inserted with weight:
+          $$\text{Weight}(u \to w) = \text{Weight}(u \to v) + \text{Weight}(v \to w)$$
+        </li>
+      </ol>
+      <p>
+        Once all nodes are contracted, the original graph is augmented with precomputed shortcut edges that bypass all minor roads!
+      </p>
+
+      <h3>Phase 2: Online Query (Bidirectional Upward Dijkstra)</h3>
+      <p>
+        When you request a route from Source ($S$) to Target ($T$):
+      </p>
+      <ul>
+        <li><strong>Forward Search:</strong> Runs Dijkstra starting from $S$, but with one strict rule: <strong>only follow edges leading to nodes of HIGHER rank</strong> ($u \to v$ where $\text{Rank}(v) > \text{Rank}(u)$).</li>
+        <li><strong>Backward Search:</strong> Runs Dijkstra backwards starting from $T$, following incoming edges from nodes of <strong>HIGHER rank</strong>.</li>
+        <li><strong>The Meeting Point:</strong> Because both searches only travel upwards in the hierarchy, they quickly climb out of local neighborhoods and meet at the highest-ranked highway apex node!</li>
+      </ul>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Routing Algorithm</th>
+              <th>Nodes Explored (1,000 km)</th>
+              <th>Query Execution Time</th>
+              <th>Speedup vs Dijkstra</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Standard Dijkstra</strong></td>
+              <td>~25,000,000 nodes</td>
+              <td>~8,500 ms</td>
+              <td>1x (Baseline)</td>
+            </tr>
+            <tr>
+              <td><strong>Bidirectional A* (Euclidean)</strong></td>
+              <td>~850,000 nodes</td>
+              <td>~750 ms</td>
+              <td>~11x faster</td>
+            </tr>
+            <tr>
+              <td><strong>Contraction Hierarchies (CH)</strong></td>
+              <td><strong>~400 to 1,200 nodes</strong></td>
+              <td><strong>&lt; 2.5 ms</strong></td>
+              <td><strong>~3,400x faster</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h2>4. The Live Traffic Problem: Customizable Route Planning (CRP)</h2>
+      <p>
+        There is a catch: <strong>Vanilla Contraction Hierarchies take hours to precompute.</strong>
+      </p>
+      <p>
+        If an accident happens on the highway or a thunderstorm causes waterlogging, the travel time doubles. Re-running hours of precomputations across hundreds of millions of nodes every 2 minutes is computationally impossible.
+      </p>
+      <p>
+        Google Maps solves this using <strong>Customizable Contraction Hierarchies (CCH)</strong> and <strong>Customizable Route Planning (CRP)</strong> (also known as Multilevel Metric Partitioning):
+      </p>
+
+      <div class="code-block-wrapper">
+        <div class="code-header">
+          <span>Three-Tier Customizable Routing Architecture</span>
+        </div>
+        <pre><code class="language-plaintext">┌────────────────────────────────────────────────────────────────────────┐
+│ 1. Metric-Independent Topology (Static - Computed Once a Month)        │
+│    Road geography, physical coordinates, turns, speed limits           │
+└──────────────────────────────────┬─────────────────────────────────────┘
+                                   ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ 2. Graph Partitioning into Multi-Level Cells (Inertial Flow / KaHIP)   │
+│    Divides the world into small nested cells (~250 nodes per cell)     │
+└──────────────────────────────────┬─────────────────────────────────────┘
+                                   ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ 3. Metric Customization (Dynamic - Recomputed Every 30 to 60 Seconds)  │
+│    Live speeds, lane closures, weather & accident delays               │
+│    Updates ONLY boundary shortcut distance matrices in milliseconds!   │
+└────────────────────────────────────────────────────────────────────────┘
+</code></pre>
+      </div>
+
+      <p>
+        By decoupling the <strong>graph topology</strong> (which rarely changes) from the <strong>traversal metric</strong> (which changes every minute), Google can recalculate live traffic weights across entire continents in under <strong>1 second</strong> using SIMD parallelized vector instructions.
+      </p>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h2>5. How Google Knows Traffic: Floating Car Data &amp; Map Matching</h2>
+      <p>
+        Where does Google get accurate, up-to-the-second speed data for billions of road segments?
+      </p>
+
+      <h3>1. Floating Car Data (FCD)</h3>
+      <p>
+        Hundreds of millions of Android phones, Android Auto devices, and iOS Google Maps users continuously transmit anonymized telemetry packets:
+      </p>
+      <ul>
+        <li>GPS Coordinate (Latitude, Longitude)</li>
+        <li>Timestamp</li>
+        <li>Instantaneous Speed (via accelerometer + GPS Doppler shift)</li>
+        <li>Heading / Compass Direction</li>
+      </ul>
+
+      <h3>2. The Map Matching Problem (Hidden Markov Models)</h3>
+      <p>
+        Consumer GPS chips have an error radius of 5 to 15 meters. If you are driving on an elevated expressway and a service road runs directly underneath it, a raw GPS ping might place you on either road!
+      </p>
+      <p>
+        Google Maps runs <strong>Hidden Markov Models (HMM) with the Viterbi Algorithm</strong> to decode the true trajectory:
+      </p>
+      <ul>
+        <li><strong>Emission Probability:</strong> How close is the raw GPS ping to candidate road segments?</li>
+        <li><strong>Transition Probability:</strong> Given the car's speed and heading, is it physically possible to move from road segment $R_1$ to road segment $R_2$ in 3 seconds? (e.g., jumping from an expressway to a parallel alleyway would violate physical acceleration limits).</li>
+      </ul>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h2>6. Next-Gen ETA: DeepMind Graph Neural Networks (GNNs)</h2>
+      <p>
+        In traditional navigation systems, your ETA is estimated using simple point-in-time speeds: if a road is 10 km long and currently moving at 60 km/h, the system predicts 10 minutes.
+      </p>
+      <p>
+        <strong>The Problem:</strong> By the time you reach that 10 km stretch 45 minutes into your trip, rush hour may have peaked and traffic may have come to a complete standstill!
+      </p>
+      <p>
+        To solve this, Google collaborated with <strong>Google DeepMind</strong> to deploy <strong>Graph Neural Networks (GNNs)</strong> for predictive travel times:
+      </p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>Traditional Navigation</th>
+              <th>DeepMind GNN Architecture</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Spatial Representation</strong></td>
+              <td>Isolated, independent road edges.</td>
+              <td>Connected "Supersegments" capturing topological highway flow and bottleneck ripple effects.</td>
+            </tr>
+            <tr>
+              <td><strong>Temporal Horizon</strong></td>
+              <td>Static instantaneous current speed.</td>
+              <td>Dynamic spatiotemporal forecasting: predicts traffic propagation 10 to 60 minutes into the future.</td>
+            </tr>
+            <tr>
+              <td><strong>Context Inputs</strong></td>
+              <td>Speed only.</td>
+              <td>Historical trends, road quality, speed limits, live weather, construction schedules, and incident reports.</td>
+            </tr>
+            <tr>
+              <td><strong>ETA Accuracy Impact</strong></td>
+              <td>High error rate during transition hours.</td>
+              <td><strong>Up to 50% reduction in negative ETA errors</strong> in major metropolitan areas (Berlin, Tokyo, NYC, Mumbai).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h2>7. Code Simulation: How Shortcut Edges Are Formed</h2>
+      <p>
+        Below is a clean Node.js / JavaScript demonstration showing the fundamental mathematical principle of <strong>Node Contraction</strong>: removing a low-rank vertex and inserting shortcut edges to preserve shortest path invariants.
+      </p>
+
+      <div class="code-block-wrapper">
+        <div class="code-header">
+          <span>contraction-hierarchy-simulator.js</span>
+        </div>
+        <pre><code class="language-javascript">/**
+ * Gyaan Ki Baat: Minimal Contraction Hierarchy Simulation
+ * Illustrates shortcut insertion during node contraction.
+ */
+
+class RoadGraph {
+  constructor() {
+    this.edges = new Map(); // node -> [{ to, weight }]
+    this.shortcuts = [];
+  }
+
+  addEdge(u, v, weight) {
+    if (!this.edges.has(u)) this.edges.set(u, []);
+    this.edges.get(u).push({ to: v, weight });
+  }
+
+  getNeighbors(u) {
+    return this.edges.get(u) || [];
+  }
+
+  /**
+   * Contract a node v: Remove it from active search
+   * and insert shortcuts between predecessors and successors.
+   */
+  contractNode(v) {
+    console.log(`\n[Contraction] Contracting Node: ${v}...`);
+
+    // Find all incoming edges (u -> v)
+    const incoming = [];
+    for (const [u, neighborList] of this.edges.entries()) {
+      for (const edge of neighborList) {
+        if (edge.to === v) incoming.push({ from: u, weight: edge.weight });
+      }
+    }
+
+    // Find all outgoing edges (v -> w)
+    const outgoing = this.getNeighbors(v);
+
+    // Evaluate if u -> v -> w needs a shortcut
+    for (const inEdge of incoming) {
+      for (const outEdge of outgoing) {
+        const u = inEdge.from;
+        const w = outEdge.to;
+
+        if (u === w) continue; // Skip self-loops
+
+        const contractedPathWeight = inEdge.weight + outEdge.weight;
+
+        // In a real CH engine, a local "witness search" verifies if
+        // an alternative path <= contractedPathWeight already exists.
+        console.log(` -> Inserting Shortcut Edge: ${u} ➔ ${w} (Weight: ${contractedPathWeight}s)`);
+        
+        this.addEdge(u, w, contractedPathWeight);
+        this.shortcuts.push({ from: u, to: w, weight: contractedPathWeight, bypassed: v });
+      }
+    }
+
+    // Remove node v from the graph
+    this.edges.delete(v);
+  }
+}
+
+// Demo Execution: Local residential intersection bypassed
+const cityGrid = new RoadGraph();
+
+// Arterial North (A) -> Residential Intersection (B) -> Arterial South (C)
+cityGrid.addEdge("Arterial_A", "Local_B", 45); // 45 seconds
+cityGrid.addEdge("Local_B", "Arterial_C", 55); // 55 seconds
+cityGrid.addEdge("Highway_H1", "Arterial_A", 120);
+
+// Contract the residential intersection
+cityGrid.contractNode("Local_B");
+
+console.log("\nGenerated Shortcuts:", cityGrid.shortcuts);
+// Query engines now jump Arterial_A ➔ Arterial_C directly in 100s, bypassing Local_B!
+</code></pre>
+      </div>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h2>8. Multi-Objective &amp; Eco-Routing</h2>
+      <p>
+        The "shortest" or "fastest" path is no longer the only route Google Maps calculates. Today, navigation engines optimize across multiple competing objective functions:
+      </p>
+      <ul>
+        <li><strong>Fuel-Efficient / Eco-Routing:</strong> Driving 110 km/h on a hilly highway consumes more fuel than cruising steadily at 80 km/h on a level expressway. Google computes elevation grade, engine powertrain efficiency (EV vs Hybrid vs Diesel), and constant-speed cruise corridors.</li>
+        <li><strong>Alternative Route Diversity (Pareto-Optimality):</strong> Riders do not want two routes that share 98% of the same streets. Google filters candidates to generate strictly distinct alternatives: <em>Fastest Route</em>, <em>Toll-Free Route</em>, and <em>Scenic / Minimal Maneuvers Route</em>.</li>
+      </ul>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h2>9. Summary &amp; Engineering Key Takeaways</h2>
+      <ul>
+        <li><strong>Dijkstra is Unusable at Web Scale:</strong> Blind radial search across 100M+ road segments explodes memory and takes seconds. Heuristic A* improves performance but still explores thousands of irrelevant local alleys.</li>
+        <li><strong>Hierarchy is the Superpower:</strong> By contracting minor roads and inserting shortcut edges (Contraction Hierarchies), the search space drops from 25 million nodes to under 1,000 nodes, reducing query latency to <strong>&lt; 3 milliseconds</strong>.</li>
+        <li><strong>Decouple Topology from Metrics:</strong> Customizable Route Planning (CRP) separates physical map geometry from dynamic traffic speeds, allowing real-time network re-weighting in under 1 second.</li>
+        <li><strong>Hidden Markov Models Clean Noisy Reality:</strong> Viterbi algorithms map noisy GPS pings to exact directional road lanes and elevated highway bridges.</li>
+        <li><strong>DeepMind GNNs Predict the Future:</strong> Graph Neural Networks forecast traffic ripple effects across supersegments, replacing point-in-time guesses with predictive ETAs.</li>
+      </ul>
+
+      <hr style="border-color: var(--border-color); margin: 3rem 0;">
+
+      <h3>💬 Join the Discussion</h3>
+      <p>
+        Have you implemented graph algorithms like A*, Dijkstra, or Contraction Hierarchies in your projects? How do you tackle real-time weight updates in distributed systems? Share your insights with me on <a href="https://www.linkedin.com/in/harshit-joshi-140aa0217/" target="_blank">LinkedIn</a>!
+      </p>
+
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Gyaan Ki Baat by Harshit Joshi. Powered by GitHub Pages.</p>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

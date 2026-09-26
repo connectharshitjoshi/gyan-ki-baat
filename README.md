@@ -46,6 +46,7 @@
 | **#15** | [How Uber Matches Millions of Riders & Calculates Surge Pricing in 500ms](blogs/how-uber-matches-drivers-surge-pricing-h3.html) | System Design & Geospatial | 15 min read |
 | **#16** | [How Instagram & WhatsApp Stories Expire in 24 Hours: Does a Cron Job Run?](blogs/how-instagram-whatsapp-stories-expire-no-cron.html) | System Design & Storage | 15 min read |
 | **#17** | [How Google Search Actually Works: How to Rank Your Portfolio on Page #1](blogs/how-to-rank-on-google-search-technical-seo.html) | Search Systems & SEO | 15 min read |
+| **#18** | [How Google Maps Finds the Shortest Path in Milliseconds: Inside Contraction Hierarchies, A* & DeepMind GNNs](blogs/how-google-maps-works-shortest-path-dijkstra-eta.html) | Graph Routing & Geospatial | 16 min read |
 
 ---
 
@@ -62,6 +63,8 @@ gyan-ki-baat/
 ├── sixteenthpost.txt                     # LinkedIn Post #16 (Stories Expiration & Lazy Deletion)
 ├── seventeenth.jpg                      # Hero image for Post #17 (Google Search & Technical SEO)
 ├── seventeenthpost.txt                   # LinkedIn Post #17 (Googlebot Indexing & Page #1 SEO)
+├── eighteenth.jpg                       # Hero image for Post #18 (Google Maps Routing & ETAs)
+├── eighteenthpost.txt                    # LinkedIn Post #18 (Contraction Hierarchies & DeepMind GNNs)
 │
 ├── blogs/                               # Deep-dive long-form technical articles
 │   ├── degree-vs-skills.html
@@ -80,7 +83,8 @@ gyan-ki-baat/
 │   ├── how-llm-serving-engines-work-pagedattention.html
 │   ├── how-uber-matches-drivers-surge-pricing-h3.html
 │   ├── how-instagram-whatsapp-stories-expire-no-cron.html
-│   └── how-to-rank-on-google-search-technical-seo.html
+│   ├── how-to-rank-on-google-search-technical-seo.html
+│   └── how-google-maps-works-shortest-path-dijkstra-eta.html
 │
 ├── css/
 │   └── style.css                        # Modern CSS design system & media queries
