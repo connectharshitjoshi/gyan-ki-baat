@@ -62,349 +62,25 @@
   <main class="container" id="articles">
     <div class="posts-grid" id="posts-grid">
 
-      <!-- Article 1 Card -->
-      <article class="post-card" data-category="career" data-tags="career,college,skills,degree,placements" id="post-card-1">
+      <!-- Article 18 Card (Google Maps Shortest Path Routing) -->
+      <article class="post-card" data-category="architecture" data-tags="google,maps,shortest-path,dijkstra,a-star,contraction-hierarchies,gnn,deepmind,routing,geospatial,algorithms,system-design,architecture" id="post-card-18">
         <div>
-          <img src="assets/images/degree_vs_skills.jpg" alt="Degree vs Skills Balance" class="card-thumbnail">
+          <img src="assets/images/google_maps_routing_hero.jpg" alt="How Google Maps Finds the Shortest Path in Milliseconds" class="card-thumbnail">
+
           <div class="card-meta">
-            <span class="category-badge">Gyaan Ki Baat #1</span>
-            <span>⏱️ 5 min read</span>
-            <span>📅 Aug 2026</span>
+            <span class="category-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: rgba(16, 185, 129, 0.4);">Graph Routing 🗺️</span>
+            <span>⏱️ 16 min read</span>
+            <span>📅 Sep 2026</span>
           </div>
           <h2 class="post-title">
-            <a href="blogs/degree-vs-skills.html">The "Degree vs. Skills" Reality Check: What College Students Need to Know</a>
+            <a href="blogs/how-google-maps-works-shortest-path-dijkstra-eta.html">How Google Maps Finds the Shortest Path in Milliseconds: The Plain-English Engineering Guide</a>
           </h2>
           <p class="post-excerpt">
-            A real-world breakdown on why college degrees, CGPA cutoffs, and backlogs matter in campus placements, and how to balance academics with upskilling.
+            Why checking roads one-by-one freezes computers, how Contraction Hierarchies mimic human highway driving to find routes in &lt;3ms, and where those live red traffic lines actually come from.
           </p>
         </div>
         <div class="card-footer">
-          <a href="blogs/degree-vs-skills.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-      </article>
-
-      <!-- Article 2 Card -->
-      <article class="post-card" data-category="security" data-tags="security,protocols,cookies,storage,ssl" id="post-card-2">
-        <div>
-          <img src="assets/images/gyan_ki_baat_hero.jpg" alt="Cookies, Storage, SSL & HTTPS" class="card-thumbnail">
-          <div class="card-meta">
-            <span class="category-badge">Gyaan Ki Baat #2</span>
-            <span>⏱️ 12 min read</span>
-            <span>📅 Aug 2026</span>
-          </div>
-          <h2 class="post-title">
-            <a href="blogs/cookies-vs-session-storage.html">Cookies, Web Storage, SSL/TLS & HTTPS: The Masterclass Guide</a>
-          </h2>
-          <p class="post-excerpt">
-            Exhaustive breakdown of Cookies, LocalStorage, IndexedDB, 4-step TLS 1.3 handshakes, security headers, and browser architecture.
-          </p>
-        </div>
-        <div class="card-footer">
-          <a href="blogs/cookies-vs-session-storage.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-      </article>
-
-      <!-- Article 3 Card -->
-      <article class="post-card" data-category="protocols" data-tags="protocols,http,status-codes,api,rest" id="post-card-3">
-        <div>
-          <img src="assets/images/http_status_codes_hero.jpg" alt="HTTP Status Codes" class="card-thumbnail">
-          <div class="card-meta">
-            <span class="category-badge">Gyaan Ki Baat #3</span>
-            <span>⏱️ 10 min read</span>
-            <span>📅 Aug 2026</span>
-          </div>
-          <h2 class="post-title">
-            <a href="blogs/http-status-codes.html">HTTP Status Codes Masterclass: 401 vs. 403, 502 vs. 504 & Method Idempotency</a>
-          </h2>
-          <p class="post-excerpt">
-            Deep dive into HTTP status codes, REST API response contracts, 401 vs 403 auth errors, 502 vs 504 gateway failures, and idempotent HTTP methods.
-          </p>
-        </div>
-        <div class="card-footer">
-          <a href="blogs/http-status-codes.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-      </article>
-
-      <!-- Article 4 Card -->
-      <article class="post-card" data-category="security" data-tags="security,jwt,oauth,auth,tokens" id="post-card-4">
-        <div>
-          <img src="assets/images/jwt_anatomy.jpg" alt="JWT Security" class="card-thumbnail">
-          <div class="card-meta">
-            <span class="category-badge">Gyaan Ki Baat #4</span>
-            <span>⏱️ 11 min read</span>
-            <span>📅 Aug 2026</span>
-          </div>
-          <h2 class="post-title">
-            <a href="blogs/jwt-and-oauth-security.html">JWT & OAuth 2.0 Security Architecture: Tokens, Payloads & Signature Attacks</a>
-          </h2>
-          <p class="post-excerpt">
-            Deep dive into JSON Web Tokens (JWT), OAuth 2.0 grant types, RS256 vs HS256 signatures, PKCE security, and token tampering vulnerabilities.
-          </p>
-        </div>
-        <div class="card-footer">
-          <a href="blogs/jwt-and-oauth-security.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-      </article>
-
-      <!-- Article 5 Card -->
-      <article class="post-card" data-category="protocols" data-tags="performance,browser,rendering,dom,cssom" id="post-card-5">
-        <div>
-          <img src="assets/images/critical_rendering_path.jpg" alt="Browser Rendering Pipeline" class="card-thumbnail">
-          <div class="card-meta">
-            <span class="category-badge">Gyaan Ki Baat #5</span>
-            <span>⏱️ 9 min read</span>
-            <span>📅 Aug 2026</span>
-          </div>
-          <h2 class="post-title">
-            <a href="blogs/browser-rendering-pipeline.html">Under the Hood: The Browser Rendering Pipeline (DOM, CSSOM, Layout & Compositing)</a>
-          </h2>
-          <p class="post-excerpt">
-            Deep dive into DOM, CSSOM, Render Tree, Layout Reflows, Repaints, GPU Compositing, and web performance optimization.
-          </p>
-        </div>
-        <div class="card-footer">
-          <a href="blogs/browser-rendering-pipeline.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-      </article>
-
-      <!-- Article 6 Card -->
-      <article class="post-card" data-category="security" data-tags="architecture,system-design,caching,redis,cdn" id="post-card-6">
-        <div>
-          <img src="assets/images/caching_patterns.jpg" alt="Caching Patterns" class="card-thumbnail">
-          <div class="card-meta">
-            <span class="category-badge">Gyaan Ki Baat #6</span>
-            <span>⏱️ 11 min read</span>
-            <span>📅 Aug 2026</span>
-          </div>
-          <h2 class="post-title">
-            <a href="blogs/system-design-caching-strategies.html">System Design Essentials: Caching Strategies, Eviction Policies & Thundering Herds</a>
-          </h2>
-          <p class="post-excerpt">
-            Master System Design caching patterns: Cache-Aside, Write-Through, Write-Back, LRU Eviction, Redis architecture, and CDN edge caching.
-          </p>
-        </div>
-        <div class="card-footer">
-          <a href="blogs/system-design-caching-strategies.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-      </article>
-
-      <!-- Article 7 Card -->
-      <article class="post-card" data-category="fintech" data-tags="fintech,upi,npci,banking,phonepe,paytm,supermoney,architecture,security" id="post-card-7">
-        <div>
-          <img src="assets/images/upi_ecosystem_hero.jpg" alt="How UPI Works Architecture" class="card-thumbnail">
-
-          <div class="card-meta">
-            <span class="category-badge">Gyaan Ki Baat #7</span>
-            <span>⏱️ 14 min read</span>
-            <span>📅 Aug 2026</span>
-          </div>
-          <h2 class="post-title">
-            <a href="blogs/how-upi-works.html">How UPI Works Under the Hood: Architecture, NPCI Switch & UPI vs. UPI Apps (PhonePe, Paytm, Supermoney)</a>
-          </h2>
-          <p class="post-excerpt">
-            Master the UPI 4-party ecosystem, TPAPs vs Sponsor PSP Banks, VPA resolution, MPIN cryptographic security, and the 8-step instant transaction lifecycle.
-          </p>
-        </div>
-        <div class="card-footer">
-          <a href="blogs/how-upi-works.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-      </article>
-
-      <!-- Article 8 Card -->
-      <article class="post-card" data-category="architecture" data-tags="architecture,system-design,scalability,instagram,caching,sharding,loadbalancing,fanout" id="post-card-8">
-        <div>
-          <img src="assets/images/social_scaling_hero.jpg" alt="How Instagram Scales" class="card-thumbnail">
-
-          <div class="card-meta">
-            <span class="category-badge">Gyaan Ki Baat #8</span>
-            <span>⏱️ 15 min read</span>
-            <span>📅 Aug 2026</span>
-          </div>
-          <h2 class="post-title">
-            <a href="blogs/how-social-media-scales.html">How Instagram & Social Media Apps Scale to 100M+ Concurrent Users Without Crashing</a>
-          </h2>
-          <p class="post-excerpt">
-            Master High-Concurrency System Design: Load Balancers, Fan-out on Write vs Read (The Celebrity Problem), DB Sharding, and Edge CDNs.
-          </p>
-        </div>
-        <div class="card-footer">
-          <a href="blogs/how-social-media-scales.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-      </article>
-
-      <!-- Article 9 Card -->
-      <article class="post-card" data-category="fintech" data-tags="fintech,payments,creditcard,stripe,razorpay,tokenization,idempotency,zomato,amazon" id="post-card-9">
-        <div>
-          <img src="assets/images/card_checkout_hero.jpg" alt="Credit Card Checkout Lifecycle" class="card-thumbnail">
-
-          <div class="card-meta">
-            <span class="category-badge">Gyaan Ki Baat #9</span>
-            <span>⏱️ 14 min read</span>
-            <span>📅 Aug 2026</span>
-          </div>
-          <h2 class="post-title">
-            <a href="blogs/credit-card-payment-gateway-lifecycle.html">What Actually Happens When You Pay via Credit Card on Amazon or Zomato?</a>
-          </h2>
-          <p class="post-excerpt">
-            Deep dive into the online card checkout loop: Payment Gateways vs Aggregators, RBI Card Tokenization, 3D Secure 2.0, Webhook Idempotency, and T+1 Settlements.
-          </p>
-        </div>
-        <div class="card-footer">
-          <a href="blogs/credit-card-payment-gateway-lifecycle.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-      </article>
-
-      <!-- Article 10 Card -->
-      <article class="post-card" data-category="protocols" data-tags="protocols,websockets,sse,grpc,realtime,chatgpt,whatsapp,http,streaming" id="post-card-10">
-        <div>
-          <img src="assets/images/realtime_proto_hero.jpg" alt="Real-Time Protocols" class="card-thumbnail">
-
-          <div class="card-meta">
-            <span class="category-badge">Gyaan Ki Baat #10</span>
-            <span>⏱️ 13 min read</span>
-            <span>📅 Aug 2026</span>
-          </div>
-          <h2 class="post-title">
-            <a href="blogs/realtime-protocols-websockets-sse-grpc.html">Real-Time Communication Explained Simply: Why ChatGPT Uses SSE, WhatsApp Uses WebSockets & Uber Uses gRPC</a>
-          </h2>
-          <p class="post-excerpt">
-            Understand real-time web protocols with simple analogies: WebSockets for 2-way live chat, SSE for AI streaming, Long Polling, and gRPC binary microservices.
-          </p>
-        </div>
-        <div class="card-footer">
-          <a href="blogs/realtime-protocols-websockets-sse-grpc.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-      </article>
-
-      <!-- Article 11 Card -->
-      <article class="post-card" data-category="devops" data-tags="devops,docker,containers,virtualmachines,linux,namespaces,cgroups,overlayfs,architecture" id="post-card-11">
-        <div>
-          <img src="assets/images/vm_docker_hero.jpg" alt="VMs vs Docker Containers" class="card-thumbnail">
-
-          <div class="card-meta">
-            <span class="category-badge">Gyaan Ki Baat #11</span>
-            <span>⏱️ 14 min read</span>
-            <span>📅 Aug 2026</span>
-          </div>
-          <h2 class="post-title">
-            <a href="blogs/virtual-machines-vs-docker-containers.html">Virtual Machines vs. Docker Containers Under the Hood: Why Containers Boot in 200ms</a>
-          </h2>
-          <p class="post-excerpt">
-            Learn why containers are NOT mini VMs: Hypervisors vs. Linux Namespaces, Control Groups (cgroups), and Copy-on-Write OverlayFS storage layers.
-          </p>
-        </div>
-        <div class="card-footer">
-          <a href="blogs/virtual-machines-vs-docker-containers.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-      </article>
-
-      <!-- Article 12 Card (Independence Day Special) -->
-      <article class="post-card" data-category="architecture" data-tags="vscode,india,webassembly,pyodide,python,ide,architecture,satire,frontend,javascript,devops" id="post-card-12">
-        <div>
-          <img src="assets/images/vscode_india_hero.jpg" alt="What If VS Code Was Built in India" class="card-thumbnail">
-
-          <div class="card-meta">
-            <span class="category-badge" style="background: rgba(249, 115, 22, 0.2); color: #fb923c; border-color: rgba(249, 115, 22, 0.4);">Gyaan Ki Baat #12 🇮🇳</span>
-            <span>⏱️ 12 min read</span>
-            <span>📅 Aug 15, 2026</span>
-          </div>
-          <h2 class="post-title">
-            <a href="blogs/what-if-vscode-was-built-in-india.html">What If VS Code Was Built by the Indian Government? 🇮🇳 Inside "VS Code India"</a>
-          </h2>
-          <p class="post-excerpt">
-            A humorous yet technically deep exploration of "Sarkari" UI archetypes, in-browser Pyodide WebAssembly Python execution, Shuddh Hindi transpiler, and sovereign IDE architecture.
-          </p>
-        </div>
-        <div class="card-footer">
-          <a href="blogs/what-if-vscode-was-built-in-india.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-      </article>
-
-      <!-- Article 13 Card (International System Design Special) -->
-      <article class="post-card" data-category="architecture" data-tags="netflix,cdn,openconnect,system-design,architecture,video,streaming,dash,hls,aws,caching,devops" id="post-card-13">
-        <div>
-          <img src="assets/images/netflix_open_connect_hero.jpg" alt="Netflix Open Connect Server Rack Infrastructure" class="card-thumbnail">
-
-          <div class="card-meta">
-            <span class="category-badge">System Design 🍿</span>
-            <span>⏱️ 15 min read</span>
-            <span>📅 Aug 2026</span>
-          </div>
-          <h2 class="post-title">
-            <a href="blogs/how-netflix-streams-video-open-connect.html">How Netflix Streams 4K Video Globally Without Crashing the Internet: Inside Open Connect & Adaptive Bitrate Streaming</a>
-          </h2>
-          <p class="post-excerpt">
-            Deep dive into Netflix Open Connect CDN architecture: AWS Control Plane vs Data Plane, custom FreeBSD Open Connect Appliances (OCAs), DASH/HLS chunking, and 3 AM predictive pre-warming.
-          </p>
-        </div>
-        <div class="card-footer">
-          <a href="blogs/how-netflix-streams-video-open-connect.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-      </article>
-
-      <!-- Article 14 Card (AI Systems & LLM Infra) -->
-      <article class="post-card" data-category="architecture" data-tags="ai,llm,vllm,pagedattention,kvcache,gpu,vram,system-design,inference,machinelearning,deeplearning" id="post-card-14">
-        <div>
-          <img src="assets/images/vllm_pagedattention_hero.jpg" alt="vLLM PagedAttention and KV Cache GPU Optimization" class="card-thumbnail">
-
-          <div class="card-meta">
-            <span class="category-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: rgba(16, 185, 129, 0.4);">AI Infrastructure 🧠</span>
-            <span>⏱️ 15 min read</span>
-            <span>📅 Aug 2026</span>
-          </div>
-          <h2 class="post-title">
-            <a href="blogs/how-llm-serving-engines-work-pagedattention.html">How LLM Serving Engines Achieve 10x Throughput: Inside PagedAttention &amp; KV Caching</a>
-          </h2>
-          <p class="post-excerpt">
-            Understand why LLM inference runs out of GPU memory: KV Cache bottlenecks, VRAM fragmentation, PagedAttention virtual memory paging, and continuous batching.
-          </p>
-        </div>
-        <div class="card-footer">
-          <a href="blogs/how-llm-serving-engines-work-pagedattention.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-      </article>
-
-      <!-- Article 15 Card (Geospatial & Distributed Dispatch) -->
-      <article class="post-card" data-category="architecture" data-tags="uber,h3,geospatial,surge,pricing,redis,ringpop,dijkstra,system-design,distributed,architecture" id="post-card-15">
-        <div>
-          <img src="assets/images/uber_h3_geospatial_hero.jpg" alt="Uber H3 Spatial Hexagonal Surge Pricing & Dispatch Engine" class="card-thumbnail">
-
-          <div class="card-meta">
-            <span class="category-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4);">System Design 🚗</span>
-            <span>⏱️ 15 min read</span>
-            <span>📅 Aug 2026</span>
-          </div>
-          <h2 class="post-title">
-            <a href="blogs/how-uber-matches-drivers-surge-pricing-h3.html">How Uber Matches Millions of Riders &amp; Calculates Surge Pricing in 500ms: Inside H3 Hexagons &amp; Ringpop</a>
-          </h2>
-          <p class="post-excerpt">
-            Deep dive into Uber's real-time geospatial engine: Hierarchical Hexagonal Indexing (H3), Ringpop gossip protocol, dynamic surge pricing algorithms, and Dijkstra routing.
-          </p>
-        </div>
-        <div class="card-footer">
-          <a href="blogs/how-uber-matches-drivers-surge-pricing-h3.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-      </article>
-
-      <!-- Article 16 Card (Stories Expiration Architecture) -->
-      <article class="post-card" data-category="architecture" data-tags="instagram,whatsapp,stories,cron,ttl,redis,timing-wheels,kafka,partitioning,database,system-design,architecture" id="post-card-16">
-        <div>
-          <img src="assets/images/story_expiration_hero.jpg" alt="How Instagram & WhatsApp Stories Expire in 24 Hours without Cron" class="card-thumbnail">
-
-          <div class="card-meta">
-            <span class="category-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4);">System Design ⏳</span>
-            <span>⏱️ 15 min read</span>
-            <span>📅 Aug 2026</span>
-          </div>
-          <h2 class="post-title">
-            <a href="blogs/how-instagram-whatsapp-stories-expire-no-cron.html">How Instagram &amp; WhatsApp Stories Expire in 24 Hours: Does a Cron Job Actually Run?</a>
-          </h2>
-          <p class="post-excerpt">
-            Why cron jobs crash at 500M+ DAU scale, and the 4-tier architecture behind 24-hour expiration: Lazy filtering, Redis TTL eviction, Timing Wheels, and O(1) Time-Partitioned Drops.
-          </p>
-        </div>
-        <div class="card-footer">
-          <a href="blogs/how-instagram-whatsapp-stories-expire-no-cron.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          <a href="blogs/how-google-maps-works-shortest-path-dijkstra-eta.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
         </div>
       </article>
 
@@ -430,25 +106,349 @@
         </div>
       </article>
 
-      <!-- Article 18 Card (Google Maps Shortest Path Routing) -->
-      <article class="post-card" data-category="architecture" data-tags="google,maps,shortest-path,dijkstra,a-star,contraction-hierarchies,gnn,deepmind,routing,geospatial,algorithms,system-design,architecture" id="post-card-18">
+      <!-- Article 16 Card (Stories Expiration Architecture) -->
+      <article class="post-card" data-category="architecture" data-tags="instagram,whatsapp,stories,cron,ttl,redis,timing-wheels,kafka,partitioning,database,system-design,architecture" id="post-card-16">
         <div>
-          <img src="assets/images/google_maps_routing_hero.jpg" alt="How Google Maps Finds the Shortest Path in Milliseconds" class="card-thumbnail">
+          <img src="assets/images/story_expiration_hero.jpg" alt="How Instagram & WhatsApp Stories Expire in 24 Hours without Cron" class="card-thumbnail">
 
           <div class="card-meta">
-            <span class="category-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: rgba(16, 185, 129, 0.4);">Graph Routing 🗺️</span>
-            <span>⏱️ 16 min read</span>
-            <span>📅 Sep 2026</span>
+            <span class="category-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4);">System Design ⏳</span>
+            <span>⏱️ 15 min read</span>
+            <span>📅 Aug 2026</span>
           </div>
           <h2 class="post-title">
-            <a href="blogs/how-google-maps-works-shortest-path-dijkstra-eta.html">How Google Maps Finds the Shortest Path in Milliseconds: The Plain-English Engineering Guide</a>
+            <a href="blogs/how-instagram-whatsapp-stories-expire-no-cron.html">How Instagram &amp; WhatsApp Stories Expire in 24 Hours: Does a Cron Job Actually Run?</a>
           </h2>
           <p class="post-excerpt">
-            Why checking roads one-by-one freezes computers, how Contraction Hierarchies mimic human highway driving to find routes in &lt;3ms, and where those live red traffic lines actually come from.
+            Why cron jobs crash at 500M+ DAU scale, and the 4-tier architecture behind 24-hour expiration: Lazy filtering, Redis TTL eviction, Timing Wheels, and O(1) Time-Partitioned Drops.
           </p>
         </div>
         <div class="card-footer">
-          <a href="blogs/how-google-maps-works-shortest-path-dijkstra-eta.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          <a href="blogs/how-instagram-whatsapp-stories-expire-no-cron.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </article>
+
+      <!-- Article 15 Card (Geospatial & Distributed Dispatch) -->
+      <article class="post-card" data-category="architecture" data-tags="uber,h3,geospatial,surge,pricing,redis,ringpop,dijkstra,system-design,distributed,architecture" id="post-card-15">
+        <div>
+          <img src="assets/images/uber_h3_geospatial_hero.jpg" alt="Uber H3 Spatial Hexagonal Surge Pricing & Dispatch Engine" class="card-thumbnail">
+
+          <div class="card-meta">
+            <span class="category-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4);">System Design 🚗</span>
+            <span>⏱️ 15 min read</span>
+            <span>📅 Aug 2026</span>
+          </div>
+          <h2 class="post-title">
+            <a href="blogs/how-uber-matches-drivers-surge-pricing-h3.html">How Uber Matches Millions of Riders &amp; Calculates Surge Pricing in 500ms: Inside H3 Hexagons &amp; Ringpop</a>
+          </h2>
+          <p class="post-excerpt">
+            Deep dive into Uber's real-time geospatial engine: Hierarchical Hexagonal Indexing (H3), Ringpop gossip protocol, dynamic surge pricing algorithms, and Dijkstra routing.
+          </p>
+        </div>
+        <div class="card-footer">
+          <a href="blogs/how-uber-matches-drivers-surge-pricing-h3.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </article>
+
+      <!-- Article 14 Card (AI Systems & LLM Infra) -->
+      <article class="post-card" data-category="architecture" data-tags="ai,llm,vllm,pagedattention,kvcache,gpu,vram,system-design,inference,machinelearning,deeplearning" id="post-card-14">
+        <div>
+          <img src="assets/images/vllm_pagedattention_hero.jpg" alt="vLLM PagedAttention and KV Cache GPU Optimization" class="card-thumbnail">
+
+          <div class="card-meta">
+            <span class="category-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: rgba(16, 185, 129, 0.4);">AI Infrastructure 🧠</span>
+            <span>⏱️ 15 min read</span>
+            <span>📅 Aug 2026</span>
+          </div>
+          <h2 class="post-title">
+            <a href="blogs/how-llm-serving-engines-work-pagedattention.html">How LLM Serving Engines Achieve 10x Throughput: Inside PagedAttention &amp; KV Caching</a>
+          </h2>
+          <p class="post-excerpt">
+            Understand why LLM inference runs out of GPU memory: KV Cache bottlenecks, VRAM fragmentation, PagedAttention virtual memory paging, and continuous batching.
+          </p>
+        </div>
+        <div class="card-footer">
+          <a href="blogs/how-llm-serving-engines-work-pagedattention.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </article>
+
+      <!-- Article 13 Card (International System Design Special) -->
+      <article class="post-card" data-category="architecture" data-tags="netflix,cdn,openconnect,system-design,architecture,video,streaming,dash,hls,aws,caching,devops" id="post-card-13">
+        <div>
+          <img src="assets/images/netflix_open_connect_hero.jpg" alt="Netflix Open Connect Server Rack Infrastructure" class="card-thumbnail">
+
+          <div class="card-meta">
+            <span class="category-badge">System Design 🍿</span>
+            <span>⏱️ 15 min read</span>
+            <span>📅 Aug 2026</span>
+          </div>
+          <h2 class="post-title">
+            <a href="blogs/how-netflix-streams-video-open-connect.html">How Netflix Streams 4K Video Globally Without Crashing the Internet: Inside Open Connect & Adaptive Bitrate Streaming</a>
+          </h2>
+          <p class="post-excerpt">
+            Deep dive into Netflix Open Connect CDN architecture: AWS Control Plane vs Data Plane, custom FreeBSD Open Connect Appliances (OCAs), DASH/HLS chunking, and 3 AM predictive pre-warming.
+          </p>
+        </div>
+        <div class="card-footer">
+          <a href="blogs/how-netflix-streams-video-open-connect.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </article>
+
+      <!-- Article 12 Card (Independence Day Special) -->
+      <article class="post-card" data-category="architecture" data-tags="vscode,india,webassembly,pyodide,python,ide,architecture,satire,frontend,javascript,devops" id="post-card-12">
+        <div>
+          <img src="assets/images/vscode_india_hero.jpg" alt="What If VS Code Was Built in India" class="card-thumbnail">
+
+          <div class="card-meta">
+            <span class="category-badge" style="background: rgba(249, 115, 22, 0.2); color: #fb923c; border-color: rgba(249, 115, 22, 0.4);">Gyaan Ki Baat #12 🇮🇳</span>
+            <span>⏱️ 12 min read</span>
+            <span>📅 Aug 15, 2026</span>
+          </div>
+          <h2 class="post-title">
+            <a href="blogs/what-if-vscode-was-built-in-india.html">What If VS Code Was Built by the Indian Government? 🇮🇳 Inside "VS Code India"</a>
+          </h2>
+          <p class="post-excerpt">
+            A humorous yet technically deep exploration of "Sarkari" UI archetypes, in-browser Pyodide WebAssembly Python execution, Shuddh Hindi transpiler, and sovereign IDE architecture.
+          </p>
+        </div>
+        <div class="card-footer">
+          <a href="blogs/what-if-vscode-was-built-in-india.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </article>
+
+      <!-- Article 11 Card -->
+      <article class="post-card" data-category="devops" data-tags="devops,docker,containers,virtualmachines,linux,namespaces,cgroups,overlayfs,architecture" id="post-card-11">
+        <div>
+          <img src="assets/images/vm_docker_hero.jpg" alt="VMs vs Docker Containers" class="card-thumbnail">
+
+          <div class="card-meta">
+            <span class="category-badge">Gyaan Ki Baat #11</span>
+            <span>⏱️ 14 min read</span>
+            <span>📅 Aug 2026</span>
+          </div>
+          <h2 class="post-title">
+            <a href="blogs/virtual-machines-vs-docker-containers.html">Virtual Machines vs. Docker Containers Under the Hood: Why Containers Boot in 200ms</a>
+          </h2>
+          <p class="post-excerpt">
+            Learn why containers are NOT mini VMs: Hypervisors vs. Linux Namespaces, Control Groups (cgroups), and Copy-on-Write OverlayFS storage layers.
+          </p>
+        </div>
+        <div class="card-footer">
+          <a href="blogs/virtual-machines-vs-docker-containers.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </article>
+
+      <!-- Article 10 Card -->
+      <article class="post-card" data-category="protocols" data-tags="protocols,websockets,sse,grpc,realtime,chatgpt,whatsapp,http,streaming" id="post-card-10">
+        <div>
+          <img src="assets/images/realtime_proto_hero.jpg" alt="Real-Time Protocols" class="card-thumbnail">
+
+          <div class="card-meta">
+            <span class="category-badge">Gyaan Ki Baat #10</span>
+            <span>⏱️ 13 min read</span>
+            <span>📅 Aug 2026</span>
+          </div>
+          <h2 class="post-title">
+            <a href="blogs/realtime-protocols-websockets-sse-grpc.html">Real-Time Communication Explained Simply: Why ChatGPT Uses SSE, WhatsApp Uses WebSockets & Uber Uses gRPC</a>
+          </h2>
+          <p class="post-excerpt">
+            Understand real-time web protocols with simple analogies: WebSockets for 2-way live chat, SSE for AI streaming, Long Polling, and gRPC binary microservices.
+          </p>
+        </div>
+        <div class="card-footer">
+          <a href="blogs/realtime-protocols-websockets-sse-grpc.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </article>
+
+      <!-- Article 9 Card -->
+      <article class="post-card" data-category="fintech" data-tags="fintech,payments,creditcard,stripe,razorpay,tokenization,idempotency,zomato,amazon" id="post-card-9">
+        <div>
+          <img src="assets/images/card_checkout_hero.jpg" alt="Credit Card Checkout Lifecycle" class="card-thumbnail">
+
+          <div class="card-meta">
+            <span class="category-badge">Gyaan Ki Baat #9</span>
+            <span>⏱️ 14 min read</span>
+            <span>📅 Aug 2026</span>
+          </div>
+          <h2 class="post-title">
+            <a href="blogs/credit-card-payment-gateway-lifecycle.html">What Actually Happens When You Pay via Credit Card on Amazon or Zomato?</a>
+          </h2>
+          <p class="post-excerpt">
+            Deep dive into the online card checkout loop: Payment Gateways vs Aggregators, RBI Card Tokenization, 3D Secure 2.0, Webhook Idempotency, and T+1 Settlements.
+          </p>
+        </div>
+        <div class="card-footer">
+          <a href="blogs/credit-card-payment-gateway-lifecycle.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </article>
+
+      <!-- Article 8 Card -->
+      <article class="post-card" data-category="architecture" data-tags="architecture,system-design,scalability,instagram,caching,sharding,loadbalancing,fanout" id="post-card-8">
+        <div>
+          <img src="assets/images/social_scaling_hero.jpg" alt="How Instagram Scales" class="card-thumbnail">
+
+          <div class="card-meta">
+            <span class="category-badge">Gyaan Ki Baat #8</span>
+            <span>⏱️ 15 min read</span>
+            <span>📅 Aug 2026</span>
+          </div>
+          <h2 class="post-title">
+            <a href="blogs/how-social-media-scales.html">How Instagram & Social Media Apps Scale to 100M+ Concurrent Users Without Crashing</a>
+          </h2>
+          <p class="post-excerpt">
+            Master High-Concurrency System Design: Load Balancers, Fan-out on Write vs Read (The Celebrity Problem), DB Sharding, and Edge CDNs.
+          </p>
+        </div>
+        <div class="card-footer">
+          <a href="blogs/how-social-media-scales.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </article>
+
+      <!-- Article 7 Card -->
+      <article class="post-card" data-category="fintech" data-tags="fintech,upi,npci,banking,phonepe,paytm,supermoney,architecture,security" id="post-card-7">
+        <div>
+          <img src="assets/images/upi_ecosystem_hero.jpg" alt="How UPI Works Architecture" class="card-thumbnail">
+
+          <div class="card-meta">
+            <span class="category-badge">Gyaan Ki Baat #7</span>
+            <span>⏱️ 14 min read</span>
+            <span>📅 Aug 2026</span>
+          </div>
+          <h2 class="post-title">
+            <a href="blogs/how-upi-works.html">How UPI Works Under the Hood: Architecture, NPCI Switch & UPI vs. UPI Apps (PhonePe, Paytm, Supermoney)</a>
+          </h2>
+          <p class="post-excerpt">
+            Master the UPI 4-party ecosystem, TPAPs vs Sponsor PSP Banks, VPA resolution, MPIN cryptographic security, and the 8-step instant transaction lifecycle.
+          </p>
+        </div>
+        <div class="card-footer">
+          <a href="blogs/how-upi-works.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </article>
+
+      <!-- Article 6 Card -->
+      <article class="post-card" data-category="security" data-tags="architecture,system-design,caching,redis,cdn" id="post-card-6">
+        <div>
+          <img src="assets/images/caching_patterns.jpg" alt="Caching Patterns" class="card-thumbnail">
+          <div class="card-meta">
+            <span class="category-badge">Gyaan Ki Baat #6</span>
+            <span>⏱️ 11 min read</span>
+            <span>📅 Aug 2026</span>
+          </div>
+          <h2 class="post-title">
+            <a href="blogs/system-design-caching-strategies.html">System Design Essentials: Caching Strategies, Eviction Policies & Thundering Herds</a>
+          </h2>
+          <p class="post-excerpt">
+            Master System Design caching patterns: Cache-Aside, Write-Through, Write-Back, LRU Eviction, Redis architecture, and CDN edge caching.
+          </p>
+        </div>
+        <div class="card-footer">
+          <a href="blogs/system-design-caching-strategies.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </article>
+
+      <!-- Article 5 Card -->
+      <article class="post-card" data-category="protocols" data-tags="performance,browser,rendering,dom,cssom" id="post-card-5">
+        <div>
+          <img src="assets/images/critical_rendering_path.jpg" alt="Browser Rendering Pipeline" class="card-thumbnail">
+          <div class="card-meta">
+            <span class="category-badge">Gyaan Ki Baat #5</span>
+            <span>⏱️ 9 min read</span>
+            <span>📅 Aug 2026</span>
+          </div>
+          <h2 class="post-title">
+            <a href="blogs/browser-rendering-pipeline.html">Under the Hood: The Browser Rendering Pipeline (DOM, CSSOM, Layout & Compositing)</a>
+          </h2>
+          <p class="post-excerpt">
+            Deep dive into DOM, CSSOM, Render Tree, Layout Reflows, Repaints, GPU Compositing, and web performance optimization.
+          </p>
+        </div>
+        <div class="card-footer">
+          <a href="blogs/browser-rendering-pipeline.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </article>
+
+      <!-- Article 4 Card -->
+      <article class="post-card" data-category="security" data-tags="security,jwt,oauth,auth,tokens" id="post-card-4">
+        <div>
+          <img src="assets/images/jwt_anatomy.jpg" alt="JWT Security" class="card-thumbnail">
+          <div class="card-meta">
+            <span class="category-badge">Gyaan Ki Baat #4</span>
+            <span>⏱️ 11 min read</span>
+            <span>📅 Aug 2026</span>
+          </div>
+          <h2 class="post-title">
+            <a href="blogs/jwt-and-oauth-security.html">JWT & OAuth 2.0 Security Architecture: Tokens, Payloads & Signature Attacks</a>
+          </h2>
+          <p class="post-excerpt">
+            Deep dive into JSON Web Tokens (JWT), OAuth 2.0 grant types, RS256 vs HS256 signatures, PKCE security, and token tampering vulnerabilities.
+          </p>
+        </div>
+        <div class="card-footer">
+          <a href="blogs/jwt-and-oauth-security.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </article>
+
+      <!-- Article 3 Card -->
+      <article class="post-card" data-category="protocols" data-tags="protocols,http,status-codes,api,rest" id="post-card-3">
+        <div>
+          <img src="assets/images/http_status_codes_hero.jpg" alt="HTTP Status Codes" class="card-thumbnail">
+          <div class="card-meta">
+            <span class="category-badge">Gyaan Ki Baat #3</span>
+            <span>⏱️ 10 min read</span>
+            <span>📅 Aug 2026</span>
+          </div>
+          <h2 class="post-title">
+            <a href="blogs/http-status-codes.html">HTTP Status Codes Masterclass: 401 vs. 403, 502 vs. 504 & Method Idempotency</a>
+          </h2>
+          <p class="post-excerpt">
+            Deep dive into HTTP status codes, REST API response contracts, 401 vs 403 auth errors, 502 vs 504 gateway failures, and idempotent HTTP methods.
+          </p>
+        </div>
+        <div class="card-footer">
+          <a href="blogs/http-status-codes.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </article>
+
+      <!-- Article 2 Card -->
+      <article class="post-card" data-category="security" data-tags="security,protocols,cookies,storage,ssl" id="post-card-2">
+        <div>
+          <img src="assets/images/gyan_ki_baat_hero.jpg" alt="Cookies, Storage, SSL & HTTPS" class="card-thumbnail">
+          <div class="card-meta">
+            <span class="category-badge">Gyaan Ki Baat #2</span>
+            <span>⏱️ 12 min read</span>
+            <span>📅 Aug 2026</span>
+          </div>
+          <h2 class="post-title">
+            <a href="blogs/cookies-vs-session-storage.html">Cookies, Web Storage, SSL/TLS & HTTPS: The Masterclass Guide</a>
+          </h2>
+          <p class="post-excerpt">
+            Exhaustive breakdown of Cookies, LocalStorage, IndexedDB, 4-step TLS 1.3 handshakes, security headers, and browser architecture.
+          </p>
+        </div>
+        <div class="card-footer">
+          <a href="blogs/cookies-vs-session-storage.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </article>
+
+      <!-- Article 1 Card -->
+      <article class="post-card" data-category="career" data-tags="career,college,skills,degree,placements" id="post-card-1">
+        <div>
+          <img src="assets/images/degree_vs_skills.jpg" alt="Degree vs Skills Balance" class="card-thumbnail">
+          <div class="card-meta">
+            <span class="category-badge">Gyaan Ki Baat #1</span>
+            <span>⏱️ 5 min read</span>
+            <span>📅 Aug 2026</span>
+          </div>
+          <h2 class="post-title">
+            <a href="blogs/degree-vs-skills.html">The "Degree vs. Skills" Reality Check: What College Students Need to Know</a>
+          </h2>
+          <p class="post-excerpt">
+            A real-world breakdown on why college degrees, CGPA cutoffs, and backlogs matter in campus placements, and how to balance academics with upskilling.
+          </p>
+        </div>
+        <div class="card-footer">
+          <a href="blogs/degree-vs-skills.html" class="read-more">Read Full Article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
         </div>
       </article>
 
