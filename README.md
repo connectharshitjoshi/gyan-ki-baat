@@ -46,7 +46,7 @@
 | **#15** | [How Uber Matches Millions of Riders & Calculates Surge Pricing in 500ms](blogs/how-uber-matches-drivers-surge-pricing-h3.html) | System Design & Geospatial | 15 min read |
 | **#16** | [How Instagram & WhatsApp Stories Expire in 24 Hours: Does a Cron Job Run?](blogs/how-instagram-whatsapp-stories-expire-no-cron.html) | System Design & Storage | 15 min read |
 | **#17** | [How Google Search Actually Works: How to Rank Your Portfolio on Page #1](blogs/how-to-rank-on-google-search-technical-seo.html) | Search Systems & SEO | 15 min read |
-| **#18** | [How Google Maps Finds the Shortest Path in Milliseconds: Inside Contraction Hierarchies, A* & DeepMind GNNs](blogs/how-google-maps-works-shortest-path-dijkstra-eta.html) | Graph Routing & Geospatial | 16 min read |
+| **#18** | [How Google Maps Finds the Shortest Path in Milliseconds: The Plain-English Engineering Guide](blogs/how-google-maps-works-shortest-path-dijkstra-eta.html) | Graph Routing & Systems | 14 min read |
 
 ---
 
